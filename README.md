@@ -17,7 +17,7 @@ Project's source code is located in local folder on your computer. But you are n
 builder can download bootstrap project from a gallery of published projects. These projects already have components or 
 libraries of components, and other helpful things like css/less/fonts files or webpack predefined configurations, etc.
 
-To access projects gallery you can from the builder, also you can preview pages with components in selected project, 
+You can access the projects gallery right from the builder, also you can preview pages with components in selected project, 
 and download source code of the project into specified local folder.
 
 Feel free to ask questions in [React UI Builder group](https://groups.google.com/forum/#!forum/react-ui-builder)
@@ -60,7 +60,7 @@ Clone project you liked by specifying local folder where you want to see the sou
 This folder should exist and be empty.
 
 Cloning and preparing of the project will take some time. 
-Most time will be spend by npm installer, builder starts the installation of dependent npm modules automatically after project is downloaded.
+Most time will be spent by npm installer, builder starts the installation of dependent npm modules automatically after project is downloaded.
 
 Now you can compose components on page, consider page as a desk where you combine components with each other. 
 
