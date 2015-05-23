@@ -207,13 +207,13 @@ Structure of **components-index.js** file:
 	    }
     };
 
-    module.expotrs = Components;
+    module.exports = Components;
 
 **LibraryComponents** - library of components, for example: ReactBootstrap
 
 **Group1, Group2** - groups of components, which will be displayed on left-side panel of builder.
 
-**Component1, Component2, …** - React classes, names has to be unique whithin Components space
+**Component1, Component2, …** - React classes, names has to be unique within Components space
 	
 	Note: builder displays the source code of a component  
 	      if it finds the following expression for component variable:
