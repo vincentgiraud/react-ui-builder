@@ -20,6 +20,8 @@ libraries of components, and other helpful things like css/less/fonts files or w
 You can access the projects gallery right from the builder, also you can preview pages with components in selected project, 
 and download source code of the project into specified local folder.
 
+Before you continue reading, please, watch this [Tutorial](https://www.youtube.com/watch?v=5nqOFSjXKPI) 
+
 Feel free to ask questions in [React UI Builder group](https://groups.google.com/forum/#!forum/react-ui-builder)
 
 Features
