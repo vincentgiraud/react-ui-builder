@@ -13,7 +13,13 @@ var ApplicationActions = Reflux.createActions([
     'stopAutosaveProjectModel',
     'previewProject',
     'startDownloadProject',
-    'downloadProject'
+    'downloadProject',
+    'loadUserProfile',
+    'initUserCredentials',
+    'removeUserCredentials',
+    'createUserProfile',
+    'goToSignInForm',
+    'goToSignUpForm'
 ]);
 
 module.exports = ApplicationActions;

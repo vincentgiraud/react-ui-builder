@@ -5,10 +5,8 @@ var ApplicationStore = require('../store/ApplicationStore.js');
 var ModalProgressTrigger = require('./ModalProgressTrigger.js');
 var ModalVariantsTrigger = require('./ModalVariantsTrigger.js');
 var ModalProjectSettingsTrigger = require('./ModalProjectSettingsTrigger.js');
-//var FormSignIn = require('./FormSignIn.js');
-//var FormSignUp = require('./FormSignUp.js');
-//var FormUserProfile = require('./FormUserProfile.js');
-//var FormCreateProject = require('./FormCreateProject.js');
+var FormSignIn = require('./FormSignIn.js');
+var FormSignUp = require('./FormSignUp.js');
 var FormStart = require('./FormStart.js');
 var FormBrowseGallery = require('./FormBrowseGallery.js');
 var FormDownloadProject = require('./FormDownloadProject.js');
@@ -29,6 +27,8 @@ var Button = ReactBootstrap.Button;
 var Nav = ReactBootstrap.Nav;
 var CollapsibleNav = ReactBootstrap.CollapsibleNav;
 var Navbar = ReactBootstrap.Navbar;
+var DropdownButton = ReactBootstrap.DropdownButton;
+var MenuItem = ReactBootstrap.MenuItem;
 var NavItem = ReactBootstrap.NavItem;
 
 /**
@@ -68,6 +68,18 @@ var Application = React.createClass({
                 </NavItem>
             );
         }
+        var logOut = null;
+        if(this.state.userName){
+            logOut = (
+                <DropdownButton className='bg-primary' title={this.state.userName}>
+                    <MenuItem onClick={this._handleLogout} eventKey={'1'}><span>Log Out</span></MenuItem>
+                </DropdownButton>
+            );
+        } else {
+            logOut = (
+                <NavItem href="#" onSelect={this._handleLogin}>{'Log In'}</NavItem>
+            );
+        }
         var navBar = (
             <Navbar
                 brand={
@@ -87,6 +99,7 @@ var Application = React.createClass({
                         <NavItem href="mailto:umyprotoservice@gmail.com?subject=React UI Builder question">
                             <span className='fa fa-envelope-o fa-fw'></span>Write to us
                         </NavItem>
+                        {logOut}
                     </Nav>
                 </CollapsibleNav>
             </Navbar>
@@ -124,6 +137,14 @@ var Application = React.createClass({
             content = (
                 <Desk/>
             );
+        } else if(this.state.stage === 'signInForm'){
+            content = (
+                <FormSignIn errors={this.state.errors}/>
+            );
+        } else if(this.state.stage === 'signUpForm'){
+            content = (
+                <FormSignUp errors={this.state.errors}/>
+            );
         } else if(this.state.stage === 'errors'){
             content = (
                 <PageErrors errors={this.state.errors}/>
@@ -147,6 +168,14 @@ var Application = React.createClass({
         e.preventDefault();
         e.stopPropagation();
         ApplicationActions.goToStartPage();
+    },
+
+    _handleLogout: function(){
+        ApplicationActions.removeUserCredentials();
+    },
+
+    _handleLogin: function(){
+        ApplicationActions.goToSignInForm();
     }
 
 });

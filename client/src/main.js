@@ -23,7 +23,7 @@ $(document).ready(function(){
     plugins.init();
 
     React.render(<Application/>, document.body, function(){
-        ApplicationActions.refreshServerInfo();
+        ApplicationActions.refreshServerInfo({user: user, pass: pass});
     });
 
     Server.init({io: window.io});

@@ -491,6 +491,65 @@ module.exports = {
                 }
             }
         );
+    },
+
+    /**
+     *
+     * @param {object} options
+     * @param {string} options.user
+     * @param {string} options.pass
+     * @param {function} callback
+     */
+    initUserCredentials: function(options, callback){
+        Client.configModel.user = options.user;
+        Client.configModel.pass = options.pass;
+        callback({});
+    },
+
+    /**
+     *
+     * @param {object} options
+     * @param {function} callback
+     */
+    removeUserCredentials: function(options, callback){
+        Client.configModel.user = null;
+        Client.configModel.pass = null;
+        callback({});
+    },
+
+    /**
+     *
+     * @param {object} options
+     * @param {string} options.user
+     * @param {string} options.pass
+     * @param {string} options.email
+     * @param {function} callback
+     */
+    createUserProfile: function(options, callback){
+        var userProfile = {
+            login: options.user,
+            pwd: options.pass,
+            email: options.email
+        };
+        Client.post("/addUser", userProfile, callback, false);
+    },
+
+    /**
+     *
+     * @param {object} options
+     * @param {function} callback
+     */
+    loadUserProfile: function(options, callback){
+        var userProfile = {
+            login: Client.configModel.user
+        };
+        Client.post("/secure/getUserProfile", userProfile, function(data){
+            if(data.error === true){
+                callback(data);
+            } else {
+                callback({data:{userName: Client.configModel.user}});
+            }
+        }, true);
     }
 
 };

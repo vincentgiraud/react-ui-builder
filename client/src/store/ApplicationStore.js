@@ -8,7 +8,6 @@ var PanelAvailableComponentsActions = require('../action/PanelAvailableComponent
 var Server = require('../api/Server.js');
 var docCookie = require('../api/cookies.js');
 var Repository = require('../api/Repository.js');
-//var ModalCodeGeneratorTriggerActions = require('../action/ModalCodeGeneratorTriggerActions.js');
 
 var defaultModel = {
     stage: 'start',
@@ -97,7 +96,7 @@ var ApplicationStore = Reflux.createStore({
         );
     },
 
-    onRefreshServerInfo: function(){
+    onRefreshServerInfo: function(options){
         var self = this;
         Server.invoke("getPackageConfig",
             {},
@@ -112,11 +111,11 @@ var ApplicationStore = Reflux.createStore({
                     function(errors){
                         //self.onGoToErrors(errors);
                         self.onStoreBuilderConfig(self.model.builderConfig);
-                        self.trigger(self.model);
+                        self.onInitUserCredentials(options);
                     },
                     function(response){
                         self.model.builderConfig = response;
-                        self.trigger(self.model);
+                        self.onInitUserCredentials(options);
                     }
                 );
             }
@@ -254,6 +253,78 @@ var ApplicationStore = Reflux.createStore({
             this.model.errors = ['Please specify local directory path'];
             this.trigger(this.model);
         }
+    },
+
+    onLoadUserProfile: function(showError){
+        Server.invoke("loadUserProfile", {},
+            function(errors){
+                if(showError){
+                    this.onGoToSignInForm(errors);
+                } else {
+                    this.model.userName = undefined;
+                    this.onGoToStartPage();
+                }
+            }.bind(this),
+            function(response){
+                this.model.userName = response.userName;
+                this.onGoToStartPage();
+            }.bind(this)
+        );
+    },
+
+    /**
+     *
+     * @param options { user, pass, remember }
+     */
+    onInitUserCredentials: function(options){
+        Server.invoke("initUserCredentials", options,
+            function(err){},
+            function(response){
+                if(options.remember === true){
+                    docCookie.setItem("umyproto-react-builder-user", options.user, 31536e3, "/");
+                    docCookie.setItem("umyproto-react-builder-pass", options.pass, 31536e3, "/");
+                }
+                this.onLoadUserProfile(options.showError);
+            }.bind(this));
+    },
+
+    onRemoveUserCredentials: function(){
+        Server.invoke("removeUserCredentials", {},
+            function(err){},
+            function(response){
+                docCookie.removeItem("umyproto-react-builder-user", "/");
+                docCookie.removeItem("umyproto-react-builder-pass", "/");
+                this.onLoadUserProfile();
+            }.bind(this));
+    },
+
+    /**
+     *
+     * @param options {user, pass, remember}
+     */
+    onCreateUserProfile: function(options){
+        Server.invoke("createUserProfile", options,
+            function(errors){
+                this.onGoToSignUpForm(errors);
+            }.bind(this),
+            function(response){
+                this.onInitUserCredentials(
+                    {user: options.user, pass: options.pass, remember: options.remember}
+                );
+            }.bind(this)
+        );
+    },
+
+    onGoToSignInForm: function(errors){
+        this.model.stage = 'signInForm';
+        this.model.errors = errors;
+        this.trigger(this.model);
+    },
+
+    onGoToSignUpForm: function(errors){
+        this.model.stage = 'signUpForm';
+        this.model.errors = errors;
+        this.trigger(this.model);
     }
 
 

@@ -617,20 +617,6 @@ var Common = {
             if(searchResult.foundProp && searchResult.foundProp === '/!#child'){
                 searchResult.parent.children.splice(searchResult.index, 1);
             }
-            // todo: in case we want to delete nested components uncomment this
-            //else {
-            //    if(searchResult.parent.props){
-            //        searchResult.parent.props[searchResult.foundProp] = null;
-            //    }
-            //}
-            //for(i = 0; i < projectModel.pages.length; i++){
-            //    var pageModel = projectModel.pages[i];
-            //    if(searchResult.component){
-            //        Common.setupAllWithComponentName(pageModel, searchResult.component);
-            //    } else if(searchResult.found.componentName){
-            //        Common.setupAllWithComponentName(pageModel, searchResult.found);
-            //    }
-            //}
         }
         return projectModel;
     }

@@ -4,8 +4,8 @@ var fs = require('fs-extra');
 var request = require('request');
 
 var defaultConfiguration = {
-    serviceURL: 'http://umyproto.com/react-builder-service'
-    //serviceURL: 'http://localhost:8888/react-builder-service'
+//    serviceURL: 'http://umyproto.com/react-builder-service'
+    serviceURL: 'http://localhost:8888/react-builder-service'
 };
 
 var Client = {
