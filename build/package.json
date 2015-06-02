@@ -1,7 +1,7 @@
 {
   "name": "react-ui-builder",
-  "version": "0.2.4",
-  "description": "The visual tool for building and generating source code of React components and Reflux actions",
+  "version": "0.2.5",
+  "description": "The visual building and generating code for React components and Reflux actions",
   "main": "react-ui-builder.js",
   "scripts": {
     "start": "node react-ui-builder.js"

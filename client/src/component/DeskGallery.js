@@ -10,6 +10,11 @@ var Alert = ReactBootstrap.Alert;
 var Button = ReactBootstrap.Button;
 var SplitButton = ReactBootstrap.SplitButton;
 var MenuItem = ReactBootstrap.MenuItem;
+var Nav = ReactBootstrap.Nav;
+var CollapsibleNav = ReactBootstrap.CollapsibleNav;
+var Navbar = ReactBootstrap.Navbar;
+var DropdownButton = ReactBootstrap.DropdownButton;
+var NavItem = ReactBootstrap.NavItem;
 var ApplicationActions = require('../action/ApplicationActions.js');
 
 var Desk = React.createClass({
@@ -22,36 +27,27 @@ var Desk = React.createClass({
 
     render: function(){
 
-        var toolbarTopStyle = {
-            position: 'absolute',
-            //display: 'table',
-            top: '5px',
-            left: '5px',
-            right: '5px',
-            height: '4em'
-        };
-
         var topPanelHeight = 4;
 
         var bodyStyle = {
             position: 'absolute',
             top: topPanelHeight + 'em',
-            left: '5px',
+            left: '0px',
             //bottom: 'calc(5px + ' + bottomPanelHeight + 'px)',
-            overflow: 'auto',
-            bottom: '5px',
+            overflow: 'hidden',
+            bottom: '0px',
             WebkitOverflowScrolling: 'touch',
-            right: '5px'
+            right: '0px'
         };
 
         var iframeStyle = {
-            "height" : "calc(100% - 5px)",
-            //"height" : "100%",
+            //"height" : "calc(100% - 0px)",
+            "height" : "100%",
             "width" : "100%",
             "minWidth" : "320px",
             "margin" : "0",
             "padding" : "0",
-            "border" : "1px solid #000000"
+            "border" : "0"
         };
 
         var pageSwitcher = null;
@@ -67,40 +63,54 @@ var Desk = React.createClass({
                 );
             }
             pageSwitcher = (
-                <div className="dropdown">
-                    <button className="btn btn-default btn-xs dropdown-toggle"
-                            type="button"
+                <li className="dropdown">
+                    <a href='#' className="dropdown-toggle"
+                            role="button"
                             id="dropdownMenu"
                             data-toggle="dropdown"
                             aria-expanded="true">
                         <span>{this.props.projectModel.pages[this.state.activePageIndex].pageName}</span>
                         <span className="fa fa-caret-down fa-fw"></span>
-                    </button>
+                    </a>
                     <ul className="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
                         {items}
                     </ul>
-                </div>
+                </li>
             );
         }
 
+        var navBarGallery = (
+            <Navbar
+                brand={
+                    <div style={{position: 'relative'}}>
+                        <span>Project pages</span>
+                        <span style={{fontSize: '8px', position: 'absolute', top: '0.5em', right: '-0.5em', color: 'red'}} className="badge">
+                            {this.props.projectModel.pages.length}
+                        </span>
+                    </div>
+                }
+                staticTop={true}
+                fixedTop={true} toggleNavKey={0}>
+                <CollapsibleNav eventKey={0}>
+                    <Nav navbar left={true}>
+                        <span>Switch:   </span>
+                        {pageSwitcher}
+                    </Nav>
+                    <Nav navbar right={true}>
+                        <NavItem href="#" onClick={this._handleClone}>
+                            Clone project
+                        </NavItem>
+                        <NavItem href="#" onClick={this._handleClosePreview}>
+                            Back to gallery
+                        </NavItem>
+                    </Nav>
+                </CollapsibleNav>
+            </Navbar>
+        );
+
         return (
             <div>
-                <div style={toolbarTopStyle}>
-                    <table style={{width: '100%'}}>
-                        <tr>
-                            <td><h4 style={{marginRight: '0.5em'}}>Page:</h4></td>
-                            <td style={{width: '90%'}}>
-                                {pageSwitcher}
-                            </td>
-                            <td>
-                                <Button bsStyle='primary' onClick={this._handleClone}>Clone project</Button>
-                            </td>
-                            <td>
-                                <Button bsStyle='warning' onClick={this._handleClosePreview}>Back to gallery</Button>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
+                {navBarGallery}
                 <div style={bodyStyle}>
                     <iframe style={iframeStyle} ref='iframeElement' src={this.props.src} />
                 </div>

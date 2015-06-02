@@ -76,14 +76,6 @@ var ApplicationStore = Reflux.createStore({
 
             function(response){
                 this.model.stage = 'gallery';
-                //this.model.projects = [
-                //    {
-                //        projectId: 111,
-                //        projectName: 'ReactBootstrap Project',
-                //        description: 'This is react-bootstrap library. This is react-bootstrap library. ',
-                //        countDownloads: 10
-                //    }
-                //];
                 this.model.projects = response;
                 if(this.model.projects.length % 2 > 0){
                     this.model.projects.push({

@@ -7,6 +7,7 @@ var fs = require('fs-extra');
 var exec = require('child_process').exec;
 
 var Compiler = require('./Compiler.js');
+var Client = require('./Client.js');
 var StorageManager = require('./StorageManager.js');
 var ComponentsIndexManager = require('./ComponentsIndexManager.js');
 var ComponentGenerator = require('./ComponentGenerator.js');
@@ -26,7 +27,7 @@ var FacadeProjectLocal = {
      * @param {function} callback(err, data)
      * {object} data
      */
-    loadProjectConfig: function(options, callback){
+    loadProjectModel: function(options, callback){
         if(options.dirPath && options.dirPath.length > 0){
             //
             projectDirPath = options.dirPath;
@@ -60,7 +61,7 @@ var FacadeProjectLocal = {
         }
     },
 
-    saveProjectConfig: function(options, callback){
+    saveProjectModel: function(options, callback){
         if(projectConfDirPath && projectConfDirPath.length > 0){
             //
             fs.lstat(projectConfDirPath, function(err, stat){
@@ -86,6 +87,30 @@ var FacadeProjectLocal = {
         } else {
             callback('Project config directory path was not specified.');
         }
+    },
+
+    readLocalConfig: function(callback){
+        StorageManager.readObject(path.join(projectConfDirPath, 'config.json'), function(err, data){
+            if(err){
+                callback(err);
+            } else {
+                //
+                callback(null, data);
+                //
+            }
+        });
+    },
+
+    storeLocalConfig: function(options, callback){
+        StorageManager.writeObject(path.join(projectConfDirPath, 'config.json'), options, function(err, data){
+            if(err){
+                callback(err);
+            } else {
+                //
+                callback(null, {});
+                //
+            }
+        });
     },
 
     loadProjectProxyUrl: function(options, callback){
@@ -577,6 +602,84 @@ var FacadeProjectLocal = {
         } else {
             callback('components-index.js file was not specified.');
         }
+    },
+
+    /**
+     *
+     * @param options
+     * @param callback
+     */
+    readFilesInProjectDir: function(options, callback){
+        StorageManager.readDirFlat(projectDirPath, function(err, data){
+            if(err){
+                callback(err);
+            } else {
+                callback(null, data);
+            }
+        });
+    },
+
+    /**
+     *
+     * @param options
+     * @param callback
+     */
+    uploadFilesToGallery: function(options, callback){
+        var toRemoveFile1 = path.join(projectDirPath, 'builder.tar.gz');
+        var toRemoveFile2 = path.join(projectDirPath, 'app.tar.gz');
+        StorageManager.packTarGz(
+            [
+                {
+                    sourcePath: path.join(projectDirPath, '.builder'),
+                    destFilePath: toRemoveFile1,
+                    entries: null
+                },
+                {
+                    sourcePath: projectDirPath,
+                    destFilePath: toRemoveFile2,
+                    entries: options.entries
+                }
+            ],
+            function(err){
+                if(err){
+                    callback(err);
+                } else {
+                    Client.upload(
+                        [
+                            {
+                                url: '/secure/uploadProject/' + options.projectId,
+                                filePaths:[
+                                    toRemoveFile1, toRemoveFile2
+                                ]
+                            }
+                        ],
+                        function(err){
+                            if(err){
+                                callback(err);
+                            } else {
+                                StorageManager.removeFiles(
+                                    [
+                                        {filePath: toRemoveFile1},
+                                        {filePath: toRemoveFile2}
+                                    ],
+                                    function (err) {
+                                        if (err) {
+                                            callback(err);
+                                        } else {
+                                            callback();
+                                        }
+                                    },
+                                    0
+                                );
+                            }
+                        },
+                        true,
+                        0
+                    );
+                }
+            },
+            0
+        );
     }
 
 

@@ -4,8 +4,8 @@ var fs = require('fs-extra');
 var request = require('request');
 
 var defaultConfiguration = {
-//    serviceURL: 'http://umyproto.com/react-builder-service'
-    serviceURL: 'http://localhost:8888/react-builder-service'
+    serviceURL: 'http://umyproto.com/react-builder-service'
+    //serviceURL: 'http://localhost:8888/react-builder-service'
 };
 
 var Client = {
@@ -40,30 +40,36 @@ var Client = {
                 request(
                     requestOptions,
                     function (error, response, body) {
-                        if(response.statusCode !== 200){
-                            if(response.statusCode === 401){
+                        if(response){
+                            if(response.statusCode !== 200){
+                                if(response.statusCode === 401){
+                                    if(callback){
+                                        callback({error: true, errors:['User is not authenticated']})
+                                    }
+                                } else {
+                                    if(callback){
+                                        callback(
+                                            {
+                                                error: true,
+                                                errors:
+                                                    ['Got error code ' + response.statusCode + ' processing request to ' + url]
+                                            }
+                                        )
+                                    }
+                                }
+                            } else if(error){
+                                //console.error('Error connection to ' + self.configModel.serviceURL);
                                 if(callback){
-                                    callback({error: true, errors:['User is not authenticated']})
+                                    callback({error: true, errors:['Error connection to ' + self.configModel.serviceURL]});
                                 }
                             } else {
                                 if(callback){
-                                    callback(
-                                        {
-                                            error: true,
-                                            errors:
-                                                ['Got error code ' + response.statusCode + ' processing request to ' + url]
-                                        }
-                                    )
+                                    callback(body);
                                 }
-                            }
-                        } else if(error){
-                            console.error('Error connection to ' + self.configModel.serviceURL);
-                            if(callback){
-                                callback({error: true, errors:['Error connection to ' + self.configModel.serviceURL]});
                             }
                         } else {
                             if(callback){
-                                callback(body);
+                                callback({error: true, errors:['Error connection to ' + self.configModel.serviceURL]});
                             }
                         }
                     }
@@ -118,31 +124,131 @@ var Client = {
                     request(
                         requestOptions,
                         function (error, response, body) {
-                            if(response.statusCode !== 200){
-                                if(response.statusCode === 401){
+                            if(response){
+                                if(response.statusCode !== 200){
+                                    if(response.statusCode === 401){
+                                        if(callback){
+                                            callback('User is not authenticated');
+                                        }
+                                    } else {
+                                        if(callback){
+                                            callback('Got error code ' + response.statusCode + ' processing request to ' + url);
+                                        }
+                                    }
+                                } else if(error){
                                     if(callback){
-                                        callback('User is not authenticated');
+                                        callback('Error connection to ' + self.configModel.serviceURL);
                                     }
                                 } else {
-                                    if(callback){
-                                        callback('Got error code ' + response.statusCode + ' processing request to ' + url);
-                                    }
+                                    //console.log(body);
+                                    fs.writeFile(path, body, {encoding: null}, function(err){
+                                        if(err){
+                                            if(callback){
+                                                callback(err);
+                                            }
+                                        } else {
+                                            self.download(optionArray, callback, isAuth, ++index);
+                                        }
+                                    });
                                 }
-                            } else if(error){
+                            } else {
                                 if(callback){
                                     callback('Error connection to ' + self.configModel.serviceURL);
                                 }
-                            } else {
-                                //console.log(body);
-                                fs.writeFile(path, body, {encoding: null}, function(err){
-                                    if(err){
+                            }
+                        }
+                    )
+                } catch(e){
+                    if(callback){
+                        callback('Error: ' + e.message);
+                    }
+                }
+            }, 0);
+        } else {
+            if(callback){
+                callback();
+            }
+        }
+    },
+
+    /**
+     *
+     * @param {array} optionArray
+     * {string} url
+     * {string} destPath
+     * {array} filePaths
+     * @param {function} callback
+     * @param {boolean} isAuth
+     * @param {int} index
+     */
+    upload: function(optionArray, callback, isAuth, index){
+        if(index >= 0 && index < optionArray.length){
+            var self = this;
+            var url = self.configModel.serviceURL + optionArray[index].url;
+            var requestOptions = {
+                uri: url,
+                method: 'POST'
+            };
+            if(isAuth){
+                if(self.configModel.user && self.configModel.pass){
+                    requestOptions.auth = {
+                        'user': self.configModel.user,
+                        'pass': self.configModel.pass,
+                        'sendImmediately': true
+                    }
+                } else {
+                    if(callback){
+                        callback('Specify user name and password or create new account.');
+                    }
+                    return;
+                }
+            }
+            requestOptions.formData = {};
+            if(optionArray[index].filePaths && optionArray[index].filePaths.length > 0){
+                optionArray[index].filePaths.map(function(filePath, index){
+                    requestOptions.formData['file_' + index] = fs.createReadStream(filePath);
+                });
+            }
+            setTimeout(function(){
+                try{
+                    request(
+                        requestOptions,
+                        function (error, response, body) {
+                            if(response){
+                                if(response.statusCode !== 200){
+                                    if(response.statusCode === 401){
                                         if(callback){
-                                            callback(err);
+                                            callback('User is not authenticated');
                                         }
                                     } else {
-                                        self.download(optionArray, callback, isAuth, ++index);
+                                        if(callback){
+                                            callback('Got error code ' + response.statusCode + ' processing request to ' + url);
+                                        }
                                     }
-                                });
+                                } else if(error){
+                                    if(callback){
+                                        callback('Error connection to ' + self.configModel.serviceURL);
+                                    }
+                                } else {
+                                    if(body){
+                                        try{
+                                            var responseObj = JSON.parse(body);
+                                            if(responseObj.error === true){
+                                                callback(body);
+                                            } else {
+                                                self.upload(optionArray, callback, isAuth, ++index);
+                                            }
+                                        } catch(e){
+                                            callback(body);
+                                        }
+                                    } else {
+                                        self.upload(optionArray, callback, isAuth, ++index);
+                                    }
+                                }
+                            } else {
+                                if(callback){
+                                    callback('Error connection to ' + self.configModel.serviceURL);
+                                }
                             }
                         }
                     )

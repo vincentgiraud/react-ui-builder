@@ -13,6 +13,7 @@ var Input = ReactBootstrap.Input;
 var ListGroup = ReactBootstrap.ListGroup;
 var ListGroupItem = ReactBootstrap.ListGroupItem;
 
+var CollapsibleHorizontalDivider = require('./elements/CollapsibleHorizontalDivider.js');
 var ModalProgressTrigger = require('./ModalProgressTrigger.js');
 var FormMixin = require('./FormMixin.js');
 
@@ -56,11 +57,11 @@ var FormStart = React.createClass({
         if(this.props.projects && this.props.projects.length > 0){
             for(i = 0; i < this.props.projects.length; i += 2){
                 projectThumbnails.push(
-                    <Row>
-                        <Col xs={12} md={6} sm={6} lg={6}>
+                    <Row key={'row' + i}>
+                        <Col key={'1'} xs={12} md={6} sm={6} lg={6}>
                             <ProjectThumbnail key={'thumbNail' + i} {...this.props.projects[i]} />
                         </Col>
-                        <Col xs={12} md={6} sm={6} lg={6}>
+                        <Col key={'2'} xs={12} md={6} sm={6} lg={6}>
                             <ProjectThumbnail key={'thumbNail' + i} {...this.props.projects[i+1]} />
                         </Col>
                     </Row>
@@ -69,8 +70,24 @@ var FormStart = React.createClass({
         }
         return (
             <Grid fluent={true} style={{marginTop: '70px'}}>
-                <h3>Choose project you want to clone</h3>
-                <hr></hr>
+                <h4>Choose project you want to clone</h4>
+                <CollapsibleHorizontalDivider style={{margin: '0.3em 0 0.3em 0'}} title='Legal stuff'>
+                    <div style={{padding: '1em'}}>
+                        <p>Data published to the React UI Builder gallery is not part of React UI Builder itself,
+                            and is the sole property of the publisher. While every effort is made to ensure accountability,
+                            there is absolutely no guarantee, warranty, or assertion expressed or implied as to the quality,
+                            fitness for a specific purpose, or lack of malice in any given project in the gallery.</p>
+                        <p>If you have a complaint about a project in the React UI Builder gallery,
+                            please email&nbsp;&nbsp;<a href='mailto:umyprotoservice@gmail.com'>umyprotoservice(at)gmail.com</a>
+                            &nbsp;&nbsp;and explain the situation.</p>
+                        <p>Any data published to the React UI Builder gallery (including user account information)
+                            may be removed or modified at the sole discretion of the UMyProto Team administration.</p>
+                        <p className='lead'>Users can publish Bad Stuff. It will be removed promptly if reported.
+                            But there is no vetting process for published projects, and you use them at your own risk.
+                            Please inspect the source.
+                        </p>
+                    </div>
+                </CollapsibleHorizontalDivider>
                 {alert}
                 {projectThumbnails}
             </Grid>

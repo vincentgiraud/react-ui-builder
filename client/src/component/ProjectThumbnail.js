@@ -31,7 +31,9 @@ var ProjectThumbnail = React.createClass({
             }
             return (
                 <Panel style={{height: '21.5em'}}>
-                    <h4 style={{height: '1em', overflow: 'hidden'}}><span >{projectName}</span></h4>
+                    <h4 style={{marginBottom: '.5em', overflow: 'hidden'}}>
+                        <span >{projectName}</span>
+                    </h4>
                     <hr></hr>
                     <div style={{overflow: 'auto', height: '4em'}}>
                         <p><span>{this.props.description}</span></p>
@@ -39,6 +41,8 @@ var ProjectThumbnail = React.createClass({
                     <p style={{marginTop: '1em'}}>
                         <span>{this.props.countDownload}</span>
                         <small style={{ marginLeft: '0.5em' }} className={ 'text-muted'}>downloads</small>
+                        <small className='text-muted'>{'  |  Author: ' + this.props.userProfile.login}</small>
+                        <small className='text-muted'>{'  |  License: ' + this.props.license}</small>
                     </p>
                     <hr></hr>
                     <ButtonGroup>

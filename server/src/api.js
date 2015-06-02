@@ -137,6 +137,29 @@ module.exports = {
         });
     },
 
+    readLocalConfiguration: function(options, callback){
+        FacadeProjectLocal.readLocalConfig(function(err, data){
+            if(err){
+                callback({
+                    error: true,
+                    errors: [ err ]
+                });
+            } else {
+                callback({data: data});
+            }
+        });
+    },
+
+    storeLocalConfiguration: function(options, callback){
+        FacadeProjectLocal.storeLocalConfig(options, function(err){
+            if(err){
+                callback({error: true, errors:[err]});
+            } else {
+                callback(options);
+            }
+        });
+    },
+
     getPackageConfig: function(options, callback){
         StorageManager.readObject(path.join(systemEnv.builderDir, 'package.json'), function(err, data){
             if(err){
@@ -150,38 +173,44 @@ module.exports = {
         });
     },
 
-    /**
-     *
-     * @param {object} options
-     * @param {string} options.name
-     * @param {function} callback
-     */
-    loadProjectModel: function(options, callback){
-        var self = this;
-        Client.post("/secure/loadProject", options, function(response){
-            if(response.error){
-                callback(response);
-            } else {
-                try{
-                    self.createProject(JSON.parse(response.data), callback);
-                } catch(e){
-                    callback({ error: true, errors:[e.message] })
+    createProject: function(options, callback){
+        var projectGallery = {
+            projectName: options.projectName,
+            description: options.projectDescription,
+            license: options.projectLicense
+        };
+        var entries = [];
+        if(options.files && options.files.length > 0){
+            options.files.map(function(file){
+                if(file.checked === true){
+                    entries.push(file.name);
                 }
-            }
-        }, true);
-    },
-
-    createProjectModel: function(options, callback){
-        var self = this;
-        Client.post("/secure/createProject", options, function(response){
-            if(response.error){
-                callback(response);
+            });
+        }
+        Client.post("/secure/createProject", projectGallery, function(data){
+            if(data.error === true){
+                callback(data);
             } else {
-                try{
-                    self.createProject(JSON.parse(response.data), callback);
-                } catch(e){
-                    callback({ error: true, errors:[e.message] })
-                }
+                    if(data.data){
+                        FacadeProjectLocal.uploadFilesToGallery(
+                            {
+                                entries: entries,
+                                projectId: data.data.id
+                            },
+                            function(err){
+                                if(err){
+                                    callback({
+                                        error: true,
+                                        errors: [ err ]
+                                    });
+                                } else {
+                                    callback(data);
+                                }
+                            }
+                        );
+                    } else {
+                        callback(data);
+                    }
             }
         }, true);
     },
@@ -223,23 +252,6 @@ module.exports = {
         );
     },
 
-    /**
-     *
-     * @param {object} options
-     * @param {string} options.name
-     * @param {string} options.model
-     * @param callback
-     */
-    saveProjectModel: function(options, callback){
-        FacadeProjectLocal.saveProjectConfig(options, function(err){
-            if(err){
-                callback({ error: true, errors:[err] });
-            } else {
-                callback({data: 'OK'});
-            }
-        });
-    },
-
     prepareLocalProject: function (options, callback) {
         var response = {};
         if (options.dirPath && options.dirPath.length > 0) {
@@ -249,7 +261,7 @@ module.exports = {
             response.htmlURLPrefix = htmlURLPrefix;
             this.addProjectStaticRoute(htmlURLPrefix, htmlDirPath);
             //
-            FacadeProjectLocal.loadProjectConfig(options,
+            FacadeProjectLocal.loadProjectModel(options,
                 function (err, data) {
                     if (err) {
                         //console.error(err);
@@ -296,6 +308,23 @@ module.exports = {
                 }
             );
         }
+    },
+
+    /**
+     *
+     * @param {object} options
+     * @param {string} options.name
+     * @param {string} options.model
+     * @param callback
+     */
+    saveProjectModel: function(options, callback){
+        FacadeProjectLocal.saveProjectModel(options, function(err){
+            if(err){
+                callback({ error: true, errors:[err] });
+            } else {
+                callback({data: 'OK'});
+            }
+        });
     },
 
     watchLocalProject: function(options, callback){
@@ -550,6 +579,17 @@ module.exports = {
                 callback({data:{userName: Client.configModel.user}});
             }
         }, true);
+    },
+
+    readProjectFiles: function(options, callback){
+        FacadeProjectLocal.readFilesInProjectDir({}, function(err, data){
+            if (err) {
+                //console.error(err);
+                callback({error: true, errors: [err]});
+            } else {
+                callback({data: data});
+            }
+        });
     }
 
 };

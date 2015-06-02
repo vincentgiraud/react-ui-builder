@@ -405,6 +405,29 @@ var StorageManager = {
 
     /**
      *
+     * @param optionArray
+     * @param callback
+     * @param index
+     */
+    packTarGz: function(optionArray, callback, index){
+        if(index === undefined) index = 0;
+        if(index >= 0 && index < optionArray.length){
+            //
+            var destFile = fs.createWriteStream(optionArray[index].destFilePath);
+            //
+            tar.pack(optionArray[index].sourcePath, {entries: optionArray[index].entries}).pipe(zlib.createGzip()).pipe(destFile)
+                .on('finish', function(){ this.packTarGz(optionArray, callback, ++index); }.bind(this))
+                .on('error', function(err){ callback(err) });
+            //
+        } else {
+            if(callback){
+                callback();
+            }
+        }
+    },
+
+    /**
+     *
      * @param {array} optionArray
      * @param {function} callback
      * @param {int} index
@@ -519,7 +542,7 @@ var StorageManager = {
                             }
                         }
                     });
-                };
+                }
 
                 // Read through all the files in this directory
                 if (stat.isDirectory()) {
@@ -537,6 +560,46 @@ var StorageManager = {
                 }
             }
         )
+    },
+
+    readDirFlat: function(dirPath, callback){
+        var self = this;
+        // Use lstat to resolve symlink if we are passed a symlink
+        fs.lstat(dirPath, function (err, stat) {
+            if (err) {
+                return callback(err);
+            }
+            var found = {files: []},
+                total = 0;
+
+            // Read through all the files in this directory
+            if (stat.isDirectory()) {
+                fs.readdir(dirPath, function (err, files) {
+                    total = files.length;
+                    if (total === 0) {
+                        callback(null, found);
+                    }
+                    for (var x = 0, l = files.length; x < l; x++) {
+                        var absPath = path.join(dirPath, files[x]);
+                        fs.stat(absPath, (function(_path, _name, _x){
+                            return function (err, stat) {
+                                found.files.push({
+                                    name: _name,
+                                    path: _path,
+                                    isDirectory: stat.isDirectory()
+                                });
+                                if(_x === total - 1){
+                                    callback(null, found);
+                                }
+                            }
+                        })(absPath, files[x], x));
+                    }
+                });
+            } else {
+                return callback(new Error("path: " + start + " is not a directory"));
+            }
+
+        });
     }
 
 };

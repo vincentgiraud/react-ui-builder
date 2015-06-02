@@ -20,16 +20,19 @@ libraries of components, and other helpful things like css/less/fonts files or w
 To access projects gallery you can from the builder, also you can preview pages with components in selected project, 
 and download source code of the project into specified local folder.
 
+And finally, you can publish your own project into the gallery.
+
 Feel free to ask questions in [React UI Builder group](https://groups.google.com/forum/#!forum/react-ui-builder)
 
 Features
 --------
 
-* A gallery of bootstrap projects with React components and their predefined variants (only react-bootstrap so far).
+* A gallery of bootstrap projects with reusable components and their predefined variants.
 * Generate source code for new component from any combination of other components.
 * Edit source code of the project in other IDEs, builder will reload changes automatically.
 * Generate Flux/Reflux actions/store for components.
 * Include and use third-party components in builder.
+* Publish own projects into the gallery.
 
 Installation
 ------------
@@ -224,8 +227,10 @@ There is one more restrictions for Reflux files: if you want to see source code 
 please give them the same name as component has plus suffix Action and Store. For example see the source code which was created by the builder. 
 
 
+### Publishing your project into Builder's Gallery
 
-
+To publish project into the Gallery you have to create an account. Find in navigation bar 'Login' link, enter login and password and email of your account on Sign Up form.
+Now you are eligible to publish projects into gallery. To do this, please open your project, go to main menu (left side bar) and select 'Publish project' option.
 
     
 > About bugs or if you have any ideas please write to [umyproto.com](http://umyproto.com) or [React UI Builder group](https://groups.google.com/forum/#!forum/react-ui-builder)

@@ -5,6 +5,7 @@ var ApplicationStore = require('../store/ApplicationStore.js');
 var ModalProgressTrigger = require('./ModalProgressTrigger.js');
 var ModalVariantsTrigger = require('./ModalVariantsTrigger.js');
 var ModalProjectSettingsTrigger = require('./ModalProjectSettingsTrigger.js');
+var ModalFileListUploadTrigger = require('./ModalFileListUploadTrigger.js');
 var FormSignIn = require('./FormSignIn.js');
 var FormSignUp = require('./FormSignUp.js');
 var FormStart = require('./FormStart.js');
@@ -160,6 +161,7 @@ var Application = React.createClass({
                 <ModalProgressTrigger/>
                 <ModalVariantsTrigger/>
                 <ModalProjectSettingsTrigger/>
+                <ModalFileListUploadTrigger/>
             </div>
         );
     },

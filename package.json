@@ -18,6 +18,7 @@
   "homepage": "https://github.com/ipselon/react-ui-builder",
   "dependencies": {
     "body-parser": "^1.12.2",
+    "classnames": "^2.1.2",
     "css-loader": "^0.9.1",
     "escodegen": "^1.6.1",
     "esformatter": "^0.6.1",
