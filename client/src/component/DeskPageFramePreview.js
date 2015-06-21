@@ -2,6 +2,7 @@
 
 var React = require('react/addons');
 var _ = require("underscore");
+var Server = require('../api/Server.js');
 var FormMixin = require('./FormMixin.js');
 var Repository = require('../api/Repository.js');
 
@@ -18,6 +19,9 @@ var DeskPageFramePreview = React.createClass({
         domNode.onload = (function(){
             this._renderFrameContent();
         }).bind(this);
+        Server.onSocketEmit('compilerWatcher.success', function(data){
+            domNode.src = Repository.getHtmlForDesk();
+        }.bind(this));
     },
 
     _renderFrameContent: function() {

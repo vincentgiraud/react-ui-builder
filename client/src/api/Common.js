@@ -102,57 +102,77 @@ var Common = {
      *
      * @param {object} modelItem
      * @param {object} value
-     * @returns {object} {parent, found, index}
+     * @param {function} visitorCallback
+     * @param {array} parentList
+     * @returns boolean true if umyId is equals to component id
      */
-    findByPropsUmyId: function(modelItem, value){
+    _findByPropsUmyId: function(modelItem, value, visitorCallback, parentList){
+        //
+        var _parentList = [];
+        if(parentList && parentList.length > 0){
+            parentList.map(function(parent){
+                _parentList.push(parent);
+            });
+        }
         //
         if(modelItem.props && modelItem.props['data-umyid'] === value){
-            return {
-                //component: modelComponent,
-                found: modelItem
-            };
+            return true;
         } else {
-            var result = null;
             if(modelItem.props){
                 _.mapObject(modelItem.props,
                     function(propValue, prop){
-                        if(!result && _.isObject(propValue) && propValue.type){
-                            var _result1 = this.findByPropsUmyId(propValue, value);
-                            if(_result1 && _result1.found){
-                                result = {
-                                    foundProp: _result1.foundProp || prop,
-                                    parent: _result1.parent || modelItem,
-                                    found: _result1.found
-                                };
-                                if(_result1.index == undefined){
-                                    result.index = 0;
-                                } else {
-                                    result.index = _result1.index;
-                                }
+                        if(_.isObject(propValue) && propValue.type){
+                            _parentList.push(propValue);
+                            if(this._findByPropsUmyId(propValue, value, visitorCallback, _parentList)){
+                                visitorCallback({
+                                    found: propValue,
+                                    foundProp: prop,
+                                    parent: modelItem,
+                                    index: 0,
+                                    parentList: _parentList
+                                });
                             }
                         }
                     }, this);
             }
-            if(!result && modelItem.children && modelItem.children.length > 0){
+            if(modelItem.children && modelItem.children.length > 0){
+                _parentList.push(modelItem);
                 for(var i = 0; i < modelItem.children.length; i++){
-                    var _result = this.findByPropsUmyId(modelItem.children[i], value);
-                    if(_result && _result.found){
-                        result = {
-                            foundProp: _result.foundProp || '/!#child',
-                            parent: _result.parent || modelItem,
-                            found: _result.found
-                        };
-                        if(_result.index == undefined){
-                            result.index = i;
-                        } else {
-                            result.index = _result.index;
-                        }
-                        break;
+                    if(this._findByPropsUmyId(modelItem.children[i], value, visitorCallback, _parentList)){
+                        visitorCallback({
+                            found: modelItem.children[i],
+                            foundProp: '/!#child',
+                            parent: modelItem,
+                            index: i,
+                            parentList: _parentList
+                        });
                     }
                 }
             }
-            return result;
+            return false;
         }
+    },
+
+    /**
+     *
+     * @param {object} model
+     * @param {string} umyId
+     * @returns {object}
+     */
+    findByUmyId: function(model, umyId){
+        var items = [];
+        var searchResult = null;
+        Common._findByPropsUmyId(model, umyId, function(item){
+            items.push(item);
+        });
+        if(items.length == 1){
+            searchResult = items[0];
+        } else if(items.length > 1){
+            console.error('There are multiple components with the same id: ' + umyId);
+        } else {
+            console.error('Component with id: ' + umyId + ' was not found');
+        }
+        return searchResult;
     },
 
     /**
@@ -271,10 +291,10 @@ var Common = {
             var searchResult = null;
             for(var i = 0; i < projectModel.pages.length; i++){
                 if(!srcSearchResult){
-                    srcSearchResult = Common.findByPropsUmyId(projectModel.pages[i], srcUmyId);
+                    srcSearchResult = Common.findByUmyId(projectModel.pages[i], srcUmyId);
                 }
                 if(!searchResult){
-                    searchResult = Common.findByPropsUmyId(projectModel.pages[i], destUmyId);
+                    searchResult = Common.findByUmyId(projectModel.pages[i], destUmyId);
                 }
             }
             if (searchResult && srcSearchResult) {
@@ -364,7 +384,7 @@ var Common = {
             var searchResult = null;
             for(var i = 0; i < projectModel.pages.length; i++){
                 if(!searchResult){
-                    searchResult = Common.findByPropsUmyId(projectModel.pages[i], destUmyId);
+                    searchResult = Common.findByUmyId(projectModel.pages[i], destUmyId);
                 }
             }
 
@@ -452,10 +472,10 @@ var Common = {
             var srcSearchResult = null;
             for(var i = 0; i < projectModel.pages.length; i++){
                 if(!destSearchResult){
-                    destSearchResult = Common.findByPropsUmyId(projectModel.pages[i], destUmyId);
+                    destSearchResult = Common.findByUmyId(projectModel.pages[i], destUmyId);
                 }
                 if(!srcSearchResult){
-                    srcSearchResult = Common.findByPropsUmyId(projectModel.pages[i], srcUmyId);
+                    srcSearchResult = Common.findByUmyId(projectModel.pages[i], srcUmyId);
                 }
             }
             //
@@ -549,7 +569,7 @@ var Common = {
         var searchResult = null;
         for(var i = 0; i < projectModel.pages.length; i++){
             if(!searchResult){
-                searchResult = Common.findByPropsUmyId(projectModel.pages[i], umyId);
+                searchResult = Common.findByUmyId(projectModel.pages[i], umyId);
             }
         }
         if(searchResult
@@ -576,7 +596,7 @@ var Common = {
         var searchResult = null;
         for(var i = 0; i < projectModel.pages.length; i++){
             if(!searchResult){
-                searchResult = Common.findByPropsUmyId(projectModel.pages[i], umyId);
+                searchResult = Common.findByUmyId(projectModel.pages[i], umyId);
             }
         }
         if(searchResult
@@ -602,7 +622,7 @@ var Common = {
         var searchResult = null;
         for(var i = 0; i < projectModel.pages.length; i++){
             if(!searchResult){
-                searchResult = Common.findByPropsUmyId(projectModel.pages[i], umyId);
+                searchResult = Common.findByUmyId(projectModel.pages[i], umyId);
                 if(searchResult
                     && searchResult.parent == projectModel.pages[i]
                     && searchResult.parent.children

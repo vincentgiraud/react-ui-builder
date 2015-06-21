@@ -8,6 +8,7 @@ var PanelComponentsHierarchy = require('./PanelComponentsHierarchy.js');
 var ModalPropsEditorTrigger = require('./ModalPropsEditorTrigger.js');
 var ModalCodeGeneratorTrigger = require('./ModalCodeGeneratorTrigger.js');
 var ToolbarTop = require('./ToolbarTop.js');
+var ToolbarBreadcrumbs = require('./ToolbarBreadcrumbs.js');
 var DeskPageFrame = require('./DeskPageFrame.js');
 var DeskPageFramePreview = require('./DeskPageFramePreview.js');
 var Repository = require('../api/Repository.js');
@@ -48,6 +49,13 @@ var Desk = React.createClass({
             bottomPanelInner = (<PanelComponentsHierarchy />);
         }
 
+        var rightPanelWidth = 0;
+        var rightPanelInner = null;
+        if(this.state.isStyleOptionsButtonActive){
+            rightPanelWidth = 300;
+            rightPanelInner = (<div>Right Panel</div>);
+        }
+
         var leftPanelStyle = {
             position: 'absolute',
             top: 0,
@@ -61,25 +69,48 @@ var Desk = React.createClass({
         var bottomPanelStyle = {
             position: 'absolute',
             left: 'calc(4em + ' + leftPanelWidth +'px)',
-            right: '5px',
+            right: 'calc(5px + ' + rightPanelWidth + 'px)',
             bottom: '0px',
             height: bottomPanelHeight + "px"
         };
 
-        var toolbarTopStyle = {
+        var rightPanelStyle = {
             position: 'absolute',
-            //display: 'table',
             top: 0,
-            left: 'calc(4em + ' + leftPanelWidth + 'px)',
-            right: '5px',
-            height: '4em'
+            right: '0px',
+            bottom: '0px',
+            width: rightPanelWidth + "px",
+            paddingLeft: '5px',
+            overflow: 'auto'
         };
 
         var topComponent = null;
         var topPanelHeight = 0;
+        var breadcrumbsComponent = null;
+
         if(!this.state.isLivePreviewMode){
+            var toolbarTopStyle = {
+                position: 'absolute',
+                top: 0,
+                left: 'calc(4em + ' + leftPanelWidth + 'px)',
+                right: 'calc(5px + ' + rightPanelWidth + 'px)',
+                height: '3em'
+            };
             topComponent = <ToolbarTop style={toolbarTopStyle}/>;
-            topPanelHeight = 4;
+            topPanelHeight = 3;
+
+            if(!this.state.isComponentsHierarchyButtonActive){
+                var breadcrumbsTopStyle = {
+                    position: 'absolute',
+                    top: '3em',
+                    left: 'calc(4em + ' + leftPanelWidth + 'px)',
+                    right: 'calc(5px + ' + rightPanelWidth + 'px)',
+                    height: '3em'
+                };
+                breadcrumbsComponent = <ToolbarBreadcrumbs style={breadcrumbsTopStyle}></ToolbarBreadcrumbs>
+                topPanelHeight += 3;
+            }
+
         }
 
         var bodyStyle = {
@@ -90,7 +121,7 @@ var Desk = React.createClass({
             overflow: 'auto',
             bottom: bottomPanelHeight + 'px',
             WebkitOverflowScrolling: 'touch',
-            right: '5px'
+            right: 'calc(5px + ' + rightPanelWidth + 'px)'
         };
 
         var iframeStyle = {
@@ -122,8 +153,12 @@ var Desk = React.createClass({
                     {leftPanelInner}
                 </div>
                 {topComponent}
+                {breadcrumbsComponent}
                 <div style={bodyStyle}>
                     {pageFrame}
+                </div>
+                <div style={rightPanelStyle}>
+                    {rightPanelInner}
                 </div>
                 <div style={bottomPanelStyle}>
                     {bottomPanelInner}

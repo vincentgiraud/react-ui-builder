@@ -39,14 +39,14 @@ var OverlayButtons = React.createClass({
             }(this.props.buttons[i].onClick));
             var inners = [];
             if (this.props.buttons[i].icon) {
-                inners.push(<span className={'fa fa-fw ' + this.props.buttons[i].icon}></span>);
+                inners.push(<span key={'buttonIcon' + i} className={'fa fa-fw ' + this.props.buttons[i].icon}></span>);
             }
             if (this.props.buttons[i].label) {
-                inners.push(<span>{this.props.buttons[i].label}</span>);
+                inners.push(<span key={'buttonLabel' + i}>{this.props.buttons[i].label}</span>);
             }
             var className = 'btn btn-primary' + (this.props.buttons[i].btnClass ? ' ' + this.props.buttons[i].btnClass : '');
             buttons.push(
-                <button type='button' style={{display: 'table-cell'}} className={className} onClick={onClick}>
+                <button key={'button' + i} type='button' style={{display: 'table-cell'}} className={className} onClick={onClick}>
                     {inners}
                 </button>
             );

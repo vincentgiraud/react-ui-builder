@@ -179,6 +179,7 @@ var Compiler = {
                         callback(null, {
                             compiledProcessCount: ++compiledProcessCount
                         });
+                        //console.log("Called callback for socket.io emitter: " + compiledProcessCount);
                     }
                 }
                 lastWatcherHash = jsonStats.hash;

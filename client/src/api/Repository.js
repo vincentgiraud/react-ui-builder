@@ -207,7 +207,7 @@ var Repository = {
     },
 
     findInCurrentPageModelByUmyId: function(umyId){
-        var searchResult = Common.findByPropsUmyId(currentPageModel, umyId);
+        var searchResult = Common.findByUmyId(currentPageModel, umyId);
         return Common.fulex(searchResult);
     },
 

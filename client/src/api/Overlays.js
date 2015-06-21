@@ -7,14 +7,10 @@ var DeskPageFrameActions = require('../action/DeskPageFrameActions.js');
 
 var Overlays = {
 
-    createComponentOverlay: function(frameWindow, domNode, domNodeId){
+    createComponentOverlay: function(frameWindow, domNodeId, modelNode){
 
-        var searchResult = Repository.findInCurrentPageModelByUmyId(domNodeId);
-        var shortLabel = 'Unknown';
+        var shortLabel = modelNode.found.type || 'Unknown';
         var labelClass = 'umyproto-button-success';
-        if(searchResult){
-            shortLabel = searchResult.found.type;
-        }
 
         var overlayModel = {
             pageFrameWindow: frameWindow,
@@ -25,104 +21,98 @@ var Overlays = {
             {
                 label: '&lt;' + shortLabel + '&gt;',
                 btnClass: labelClass,
-                onClick: (function (_node, _nodeId) {
+                onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        var searchResult = Repository.findInCurrentPageModelByUmyId(domNodeId);
-                        Common.cleanPropsUmyId(searchResult.found);
-                        console.log("Variant:");
-                        console.log(JSON.stringify(searchResult.found));
-                        searchResult = null;
-
                     }
-                })(domNode, domNodeId)
+                })(domNodeId)
             });
         overlayModel.buttons.push(
             {
                 icon: "umyproto-icon-level-up",
                 tooltip: 'Select parent component',
-                onClick: (function (_node, _nodeId) {
+                onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         DeskPageFrameActions.selectParentComponent(_nodeId);
                     }
-                })(domNode, domNodeId)
+                })(domNodeId)
             });
-        if(searchResult.foundProp === '/!#child'){
+        if(modelNode.foundProp === '/!#child'){
             overlayModel.buttons.push(
                 {
                     icon: 'umyproto-icon-arrow-up',
                     tooltip: 'Move component up',
-                    onClick: (function (_node, _nodeId) {
+                    onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
                             e.stopPropagation();
                             DeskPageFrameActions.moveUpComponent(_nodeId);
                         }
-                    })(domNode, domNodeId)
+                    })(domNodeId)
                 });
             overlayModel.buttons.push(
                 {
                     icon: 'umyproto-icon-arrow-down',
                     tooltip: 'Move component down',
-                    onClick: (function (_node, _nodeId) {
+                    onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
                             e.stopPropagation();
                             DeskPageFrameActions.moveDownComponent(_nodeId);
                         }
-                    })(domNode, domNodeId)
+                    })(domNodeId)
                 });
         }
         overlayModel.buttons.push(
             {
                 icon: 'umyproto-icon-cut',
                 tooltip: 'Cut component into clipboard',
-                onClick: (function (_node, _nodeId) {
+                onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         DeskPageFrameActions.startCutPasteComponent(_nodeId);
                     }
-                })(domNode, domNodeId)
+                })(domNodeId)
             });
         overlayModel.buttons.push(
             {
                 icon: 'umyproto-icon-clipboard',
                 tooltip: 'Copy component into clipboard',
-                onClick: (function (_node, _nodeId) {
+                onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         DeskPageFrameActions.startCopyComponent(_nodeId);
                     }
-                })(domNode, domNodeId)
+                })(domNodeId)
             });
         overlayModel.buttons.push(
             {
                 icon: 'umyproto-icon-copy',
                 tooltip: 'Duplicate component',
-                onClick: (function (_node, _nodeId) {
+                onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         DeskPageFrameActions.duplicateComponent(_nodeId);
                     }
-                })(domNode, domNodeId)
+                })(domNodeId)
             });
         overlayModel.buttons.push(
             {
                 icon: 'umyproto-icon-trash-o',
                 tooltip: 'Remove component from page',
-                onClick: (function (_node, _nodeId) {
+                onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         DeskPageFrameActions.deleteComponent(_nodeId);
                     }
-                })(domNode, domNodeId)
+                })(domNodeId)
             });
         overlayModel.buttons.push(
             {
@@ -139,14 +129,11 @@ var Overlays = {
         return $("<div></div>").umyComponentOverlay(overlayModel);
     },
 
-    createCopyPasteOverlay: function(frameWindow, domNode, domNodeId){
+    createCopyPasteOverlay: function(frameWindow, domNodeId, modelNode){
 
-        var searchResult = Repository.findInCurrentPageModelByUmyId(domNodeId);
-        var shortLabel = 'Unknown';
+        var shortLabel = modelNode.found.type || 'Unknown';
         var labelClass = 'umyproto-button-success';
-        if(searchResult){
-            shortLabel = searchResult.found.type;
-        }
+
         var overlayModel = {
             pageFrameWindow: frameWindow,
             onClose: DeskPageFrameActions.deselectComponent,
@@ -154,101 +141,101 @@ var Overlays = {
                 {
                     label: '&lt;' + shortLabel + '&gt;',
                     btnClass: labelClass,
-                    onClick: (function (_node, _nodeId) {
+                    onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
                             e.stopPropagation();
                         }
-                    })(domNode, domNodeId)
+                    })(domNodeId)
                 },
                 {
                     icon: "umyproto-icon-level-up",
                     tooltip: 'Select parent component',
-                    onClick: (function (_node, _nodeId) {
+                    onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
                             e.stopPropagation();
                             DeskPageFrameActions.selectParentComponent(_nodeId);
                         }
-                    })(domNode, domNodeId)
+                    })(domNodeId)
                 },
                 {
                     label: 'Before',
                     tooltip: 'Add component in clipboard before selected one',
-                    onClick: (function (_node, _nodeId) {
+                    onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
                             e.stopPropagation();
                             DeskPageFrameActions.addBefore();
                         }
-                    })(domNode, domNodeId)
+                    })(domNodeId)
                 },
                 {
                     label: 'First',
                     tooltip: 'Insert component in clipboard into selected one as the first child component',
-                    onClick: (function (_node, _nodeId) {
+                    onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
                             e.stopPropagation();
                             DeskPageFrameActions.insertFirst();
                         }
-                    })(domNode, domNodeId)
+                    })(domNodeId)
                 },
                 {
                     label: 'Wrap',
                     tooltip: 'Wrap selected component with component in clipboard',
-                    onClick: (function (_node, _nodeId) {
+                    onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
                             e.stopPropagation();
                             DeskPageFrameActions.wrap();
                         }
-                    })(domNode, domNodeId)
+                    })(domNodeId)
                 },
                 {
                     label: 'Replace',
                     tooltip: 'Replace selected component with component in clipboard',
-                    onClick: (function (_node, _nodeId) {
+                    onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
                             e.stopPropagation();
                             DeskPageFrameActions.replace();
                         }
-                    })(domNode, domNodeId)
+                    })(domNodeId)
                 },
                 {
                     label: 'Last',
                     tooltip: 'Insert component in clipboard into selected one as the last child component',
-                    onClick: (function (_node, _nodeId) {
+                    onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
                             e.stopPropagation();
                             DeskPageFrameActions.insertLast();
                         }
-                    })(domNode, domNodeId)
+                    })(domNodeId)
                 },
                 {
                     label: 'After',
                     tooltip: 'Add component in clipboard after selected one',
-                    onClick: (function (_node, _nodeId) {
+                    onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
                             e.stopPropagation();
                             DeskPageFrameActions.addAfter();
                         }
-                    })(domNode, domNodeId)
+                    })(domNodeId)
                 },
                 {
                     label: 'Cancel',
                     tooltip: 'Clear clipboard',
                     btnClass: 'umyproto-button-success',
-                    onClick: (function (_node, _nodeId) {
+                    onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
                             e.stopPropagation();
                             DeskPageFrameActions.stopClipboardForOptions();
                         }
-                    })(domNode, domNodeId)
+                    })(domNodeId)
                 }
             ]
         };

@@ -65,27 +65,27 @@ var DeskStore = Reflux.createStore({
     onToggleAvailableComponents: function(){
         if(!this.model.isAvailableComponentsButtonActive){
             this.model.isAvailableComponentsButtonActive = true;
-            this.model.isComponentOptionsButtonActive = false;
-            this.model.isStyleOptionsButtonActive = false;
+            //this.model.isComponentOptionsButtonActive = false;
+            //this.model.isStyleOptionsButtonActive = false;
         }  else {
             this.model.isAvailableComponentsButtonActive = false;
         }
         this.trigger(this.model);
     },
-    onToggleComponentOptions: function(){
-        if(!this.model.isComponentOptionsButtonActive){
-            this.model.isAvailableComponentsButtonActive = false;
-            this.model.isComponentOptionsButtonActive = true;
-            this.model.isStyleOptionsButtonActive = false;
-        } else {
-            this.model.isComponentOptionsButtonActive = false;
-        }
-        this.trigger(this.model);
-    },
+    //onToggleComponentOptions: function(){
+    //    if(!this.model.isComponentOptionsButtonActive){
+    //        this.model.isAvailableComponentsButtonActive = false;
+    //        this.model.isComponentOptionsButtonActive = true;
+    //        //this.model.isStyleOptionsButtonActive = false;
+    //    } else {
+    //        this.model.isComponentOptionsButtonActive = false;
+    //    }
+    //    this.trigger(this.model);
+    //},
     onToggleStyleOptions: function(){
         if(!this.model.isStyleOptionsButtonActive){
-            this.model.isAvailableComponentsButtonActive = false;
-            this.model.isComponentOptionsButtonActive = false;
+            //this.model.isAvailableComponentsButtonActive = false;
+            //this.model.isComponentOptionsButtonActive = false;
             this.model.isStyleOptionsButtonActive = true;
         } else {
             this.model.isStyleOptionsButtonActive = false;

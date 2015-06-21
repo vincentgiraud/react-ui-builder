@@ -108,7 +108,7 @@ var ModalPropsEditorTriggerStore = Reflux.createStore({
             var searchResult = null;
             for(var i = 0; i < projectModel.pages.length; i++){
                 if(!searchResult){
-                    searchResult = Common.findByPropsUmyId(projectModel.pages[i], this.model.selectedUmyId);
+                    searchResult = Common.findByUmyId(projectModel.pages[i], this.model.selectedUmyId);
                 }
             }
             //
@@ -231,7 +231,7 @@ var ModalPropsEditorTriggerStore = Reflux.createStore({
             var searchResult = null;
             for(var i = 0; i < projectModel.pages.length; i++){
                 if(!searchResult){
-                    searchResult = Common.findByPropsUmyId(projectModel.pages[i], this.model.selectedUmyId);
+                    searchResult = Common.findByUmyId(projectModel.pages[i], this.model.selectedUmyId);
                 }
             }
             //
@@ -309,7 +309,7 @@ var ModalPropsEditorTriggerStore = Reflux.createStore({
                 var searchResult = null;
                 for(var i = 0; i < projectModel.pages.length; i++){
                     if(!searchResult){
-                        searchResult = Common.findByPropsUmyId(projectModel.pages[i], this.model.selectedUmyId);
+                        searchResult = Common.findByUmyId(projectModel.pages[i], this.model.selectedUmyId);
                     }
                 }
                 //
@@ -375,7 +375,7 @@ var ModalPropsEditorTriggerStore = Reflux.createStore({
             var searchResult = null;
             for(var i = 0; i < projectModel.pages.length; i++){
                 if(!searchResult){
-                    searchResult = Common.findByPropsUmyId(projectModel.pages[i], this.model.selectedUmyId);
+                    searchResult = Common.findByUmyId(projectModel.pages[i], this.model.selectedUmyId);
                 }
             }
             //

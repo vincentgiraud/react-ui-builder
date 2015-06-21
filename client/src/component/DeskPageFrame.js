@@ -44,7 +44,7 @@ var DeskPageFrame = React.createClass({
         Server.onSocketEmit('compilerWatcher.success', function(data){
             //this._hideModalProgress();
             //this._showModalProgress('Please wait. Loading page...', 0);
-            if(data.compiledProcessCount > 1){
+            if(data.compiledProcessCount >= 1){
                 if(domNode.contentDocument && domNode.contentDocument.documentElement){
                     this.contentScrollTop = domNode.contentDocument.documentElement.scrollTop;
                 }

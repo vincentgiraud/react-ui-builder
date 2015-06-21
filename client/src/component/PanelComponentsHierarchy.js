@@ -1,7 +1,10 @@
 'use strict';
 
 var _ = require('underscore');
+var ReactBootstrap = require('react-bootstrap');
+var Button = ReactBootstrap.Button;
 var React = require('react');
+var DeskAction = require('../action/DeskActions.js');
 var PanelComponentsHierarchyStore = require('../store/PanelComponentsHierarchyStore.js');
 var PanelComponentsHierarchyActions = require('../action/PanelComponentsHierarchyActions.js');
 var DeskPageFrameActions = require('../action/DeskPageFrameActions.js');
@@ -151,6 +154,12 @@ var PanelComponentsHierarchy = React.createClass({
         //
         return (
             <div style={style}>
+                <Button bsSize='xsmall'
+                        style={
+                            {padding: '0.2em', position: 'absolute', top: '-1.5em', left: '1em', width: '2em', height: '2em', zIndex: '1050'}
+                        } onClick={DeskAction.toggleComponentsHierarchy}>
+                    <span className='fa fa-times fa-fw'></span>
+                </Button>
                 <ul className='umy-treeview-list' style={{border: 0}}>
                     {listItems}
                 </ul>

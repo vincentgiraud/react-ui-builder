@@ -47,7 +47,7 @@ var esformatterOptions = {
             "brace_style": "collapse",
             "indent_char": " ",
             //indentScripts: "keep",
-            "indent_size": 2,
+            "indent_size": 4,
             "max_preserve_newlines": 2,
             "preserve_newlines": true
             //unformatted: ["a", "sub", "sup", "b", "i", "u" ],

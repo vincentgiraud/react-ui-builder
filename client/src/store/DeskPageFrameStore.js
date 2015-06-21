@@ -16,6 +16,7 @@ var PanelAvailableComponentsStore = require('./PanelAvailableComponentsStore.js'
 var PanelAvailableComponentsActions = require('../action/PanelAvailableComponentsActions.js');
 var ModalPropsEditorTriggerActions = require('../action/ModalPropsEditorTriggerActions.js');
 var ToolbarTopActions = require('../action/ToolbarTopActions.js');
+var ToolbarBreadcrumbsActions = require('../action/ToolbarBreadcrumbsActions.js');
 
 var componentOverlay = null;
 var umyIdToCutPaste = null;
@@ -72,19 +73,21 @@ var DeskPageFrameStore = Reflux.createStore({
         this.model.selectedUmyId = domNodeId || this.model.selectedUmyId;
 
         if(this.model.selectedUmyId){
+            var searchResult = Repository.findInCurrentPageModelByUmyId(this.model.selectedUmyId);
             var frameWindow = Repository.getCurrentPageWindow();
             var domNode = Repository.getCurrentPageDomNode(this.model.selectedUmyId);
-            if(frameWindow && domNode){
+            if(frameWindow && domNode && searchResult){
                 if(this.model.clipboardActiveMode){
-                    componentOverlay = Overlays.createCopyPasteOverlay(frameWindow, domNode, this.model.selectedUmyId);
+                    componentOverlay = Overlays.createCopyPasteOverlay(frameWindow, this.model.selectedUmyId, searchResult);
                 } else {
-                    componentOverlay = Overlays.createComponentOverlay(frameWindow, domNode, this.model.selectedUmyId);
+                    componentOverlay = Overlays.createComponentOverlay(frameWindow, this.model.selectedUmyId, searchResult);
                 }
                 componentOverlay.append(domNode);
+                ToolbarBreadcrumbsActions.selectItem(searchResult);
+                setTimeout(function(){
+                    PanelComponentsHierarchyActions.selectTreeviewItem(this.model.selectedUmyId, this.model.clipboardActiveMode);
+                }.bind(this), 0);
             }
-            setTimeout(function(){
-                PanelComponentsHierarchyActions.selectTreeviewItem(this.model.selectedUmyId, this.model.clipboardActiveMode);
-            }.bind(this), 0);
         }
     },
 
@@ -103,6 +106,7 @@ var DeskPageFrameStore = Reflux.createStore({
             componentOverlay = null;
         }
         PanelComponentsHierarchyActions.deselectTreeviewItem();
+        ToolbarBreadcrumbsActions.deselectItem();
     },
 
     onStartClipboardForOptions: function(options){

@@ -80,6 +80,14 @@ var ToolbarLeft = React.createClass({
                         <span className="fa fa-code" />
                     </Button>
 
+                    {/*<Button
+                        bsStyle={this.props.isStyleOptionsButtonActive ? 'primary' : 'default'}
+                        style={{marginTop: '0.25em', width: '100%'}}
+                        disabled={!this.props.isEditMode}
+                        onClick={DeskAction.toggleStyleOptions}>
+                        <span className="fa fa-home" />
+                    </Button>*/}
+
                     <Button
                         bsStyle={this.props.isEditMode ? 'primary' : 'default'}
                         style={{marginTop: '1em', width: '100%'}}
