@@ -8,7 +8,7 @@ var DeskPageFrameActions = require('../action/DeskPageFrameActions.js');
 var FormMixin = require('./FormMixin.js');
 
 var Repository = require('../api/Repository.js');
-
+var Common = require('../api/Common.js');
 
 var DeskPageFrame = React.createClass({
     mixins: [FormMixin],
@@ -73,6 +73,9 @@ var DeskPageFrame = React.createClass({
             Repository.setCurrentPageDocument(doc);
             Repository.setCurrentPageWindow(win);
 
+            //var cssList = Common.getCSSClasses(doc);
+            //console.log(JSON.stringify(cssList, null, 4));
+
             var self = this;
             this.frameEndpoint = win.endpoint;
             self.frameEndpoint.onComponentDidUpdate = function(){
@@ -93,6 +96,16 @@ var DeskPageFrame = React.createClass({
 
     _changeFrameContent: function(){
         if(this.frameEndpoint){
+            React.addons.TestUtils.findAllInRenderedTree(this.frameEndpoint.Page,
+                function(component){
+                    var props = component.props;
+                    if(props && props['data-umyid'] && props['data-umyid'].length > 0){
+                        var domNode = this.frameEndpoint.Page.findDOMNodeInPage(component);
+                        $(domNode).off("mousedown.umy");
+                    }
+                    return true;
+                }.bind(this)
+            );
             this.frameEndpoint.replaceState(Repository.getCurrentPageModel());
         }
     },

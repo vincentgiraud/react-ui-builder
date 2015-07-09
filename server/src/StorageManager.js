@@ -34,13 +34,13 @@ var esformatterOptions = {
         "formatJSX": true,
         // keep the node attributes on the same line as the open tag. Default is true.
         // Setting this to false will put each one of the attributes on a single line
-        "attrsOnSameLineAsTag": true,
+        "attrsOnSameLineAsTag": false,
         // how many attributes should the node have before having to put each
         // attribute in a new line. Default 1
-        "maxAttrsOnTag": 1,
+        "maxAttrsOnTag": 2,
         // if the attributes are going to be put each one on its own line, then keep the first
         // on the same line as the open tag
-        "firstAttributeOnSameLine": false,
+        "firstAttributeOnSameLine": true,
         // align the attributes with the first attribute (if the first attribute was kept on the same line as on the open tag)
         "alignWithFirstAttribute": true,
         "htmlOptions": { // same as the ones passed to jsbeautifier.html

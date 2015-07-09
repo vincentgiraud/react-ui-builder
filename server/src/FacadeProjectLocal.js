@@ -380,12 +380,31 @@ var FacadeProjectLocal = {
         );
     },
 
+    checkSourceCode: function(options){
+        var result = null;
+        var checkMessage = ComponentCodeRewriter.checkCode({sourceCode: options.sourceCode});
+        if(!checkMessage){
+            checkMessage = ComponentCodeRewriter.checkCode({sourceCode: options.actionsSourceCode});
+            if(!checkMessage){
+                checkMessage = ComponentCodeRewriter.checkCode({sourceCode: options.storeSourceCode});
+                if(checkMessage){
+                    result = 'Store source code error: ' + checkMessage;
+                }
+            } else {
+                result = 'Actions source code error: ' + checkMessage;
+            }
+        } else {
+            result = 'Component source code error: ' + checkMessage;
+        }
+        return result;
+    },
+
     rewriteComponentSourceCode: function(options, callback){
         if(projectComponentsIndexFilePath && projectComponentsIndexFilePath.length > 0){
             //
             var f = function(){
                 ComponentCodeRewriter.repairComponentReferences({
-                    data: options.data,
+                    data: options.sourceCode,
                     indexFilePath: projectComponentsIndexFilePath,
                     componentGroup: options.componentGroup
                 }, function(err, data){
@@ -479,7 +498,7 @@ var FacadeProjectLocal = {
                 actionsFilePath = path.join(indexFileDirPath, 'actions', options.componentName + 'Actions.js');
                 relativeSourceFilePath = './' + path.join('components', options.componentName + '.js');
             }
-            //
+
             var f = function(){
                 //
                 ComponentCodeRewriter.repairComponentReferences({

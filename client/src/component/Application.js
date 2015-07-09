@@ -84,9 +84,11 @@ var Application = React.createClass({
         var navBar = (
             <Navbar
                 brand={
-                    <div><a href='http://umyproto.com'>UMyProto</a>
-                    <span style={{marginLeft: '1em'}}>React UI Builder</span>
-                    <span className='text-muted' ref='brandTitle' style={{marginLeft: '1em'}}>{'(' + this.state.packageVersion + ')'}</span>
+                    <div style={{position: 'relative'}}>
+                        <div className='umy-logo' style={{position: 'absolute', left: '-40px', top: '0'}}></div>
+                        <a href='http://umyproto.com'>UMyProto</a>
+                        <span style={{marginLeft: '1em'}}>React UI Builder</span>
+                        <span className='text-muted' ref='brandTitle' style={{marginLeft: '1em'}}>{'(' + this.state.packageVersion + ')'}</span>
                     </div>
                 }
                 staticTop={true}

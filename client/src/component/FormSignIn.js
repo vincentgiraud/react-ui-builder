@@ -80,8 +80,10 @@ var FormSignIn = React.createClass({
                                         ref="rememberInput"
                                         label="Remember me" />
                                 </p>
-                                <Button type='submit' bsStyle='primary' >Sign In</Button>
-                                <Button bsStyle='default' onClick={this._handleCreateNew}>Create new account</Button>
+                                <div style={{display: 'table', textAlign: 'right', width: '100%'}}>
+                                    <Button bsStyle='default' onClick={this._handleCreateNew}>Create new account</Button>
+                                    <Button type='submit' bsStyle='primary' >Sign In</Button>
+                                </div>
                             </form>
                         </Panel>
                     </Col>

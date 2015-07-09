@@ -87,8 +87,10 @@ var FormSignUp = React.createClass({
                                         ref="rememberInput"
                                         label="Remember me" />
                                 </p>
-                                <Button type='submit' bsStyle='primary'>Create</Button>
-                                <Button bsStyle='default' onClick={this._handleCancel}>Cancel</Button>
+                                <div style={{display: 'table', textAlign: 'right', width: '100%'}}>
+                                    <Button bsStyle='default' onClick={this._handleCancel}>Cancel</Button>
+                                    <Button type='submit' bsStyle='primary'>Create</Button>
+                                </div>
                             </form>
                         </Panel>
                     </Col>

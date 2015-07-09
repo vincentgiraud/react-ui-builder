@@ -13,7 +13,7 @@ var Input = ReactBootstrap.Input;
 var ListGroup = ReactBootstrap.ListGroup;
 var ListGroupItem = ReactBootstrap.ListGroupItem;
 
-var CollapsibleHorizontalDivider = require('./elements/CollapsibleHorizontalDivider.js');
+var CollapsibleHorizontalDivider = require('./element/CollapsibleHorizontalDivider.js');
 var ModalProgressTrigger = require('./ModalProgressTrigger.js');
 var FormMixin = require('./FormMixin.js');
 

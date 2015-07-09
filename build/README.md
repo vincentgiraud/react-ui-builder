@@ -6,7 +6,7 @@ In builder you can easily combine available components with each other, and see 
 Then you can generate a source code of new component from the combination, and builder will include all children and dependencies.
 Moreover you can generate Reflux actions/store for your component.
 
-The source code of newly created component can be edited right in the builder or in your favorite IDE it doesn't matter for builder, 
+The source code of newly created component can be edited right in the builder or in your favorite IDE - it doesn't matter for builder, 
 the source code will be automatically compiled and reloaded in builder's pages.
 
 You can include the source code of other third-party components manually ( **'Builder's projects source code structure'** section ).
@@ -42,6 +42,7 @@ Installation
 For upgrading of version it is better to uninstall and then install:
  
     npm uninstall react-ui-builder -g
+    npm install react-ui-builder -g
 
 
 Running
@@ -56,16 +57,13 @@ Usage
 
 Go to **http://localhost:2222/builder** in browser. 
 
-Browse gallery of published projects. There are a limited amount of completed projects so far, 
-but we intensely working on a feature where any user will be available to publish project.
+1. Browse gallery of published projects. There are a limited amount of completed projects so far, please don't hesitate to publish projects into gallery.
 
-Clone project you liked by specifying local folder where you want to see the source code of the project. 
-This folder should exist and be empty.
+2. Clone project you liked by specifying __absolute path__ to local folder where you want to see the source code of the project. This folder should exist and be empty.
 
-Cloning and preparing of the project will take some time. 
-Most time will be spend by npm installer, builder starts the installation of dependent npm modules automatically after project is downloaded.
+3. Cloning and preparing of the project will take some time. Most time will be spent by npm installer, builder starts the installation of dependent npm modules automatically after project is downloaded.
 
-Now you can compose components on page, consider page as a desk where you combine components with each other. 
+4. Now you can compose components on page. Consider page as a desk where you combine components with each other. 
 
 ### First look at builder's interface
 

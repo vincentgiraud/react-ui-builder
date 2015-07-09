@@ -3,6 +3,8 @@
 var Reflux = require('reflux');
 var PanelComponentsHierarchyActions = require('../action/PanelComponentsHierarchyActions.js');
 var Repository = require('../api/Repository.js');
+var Common = require('../api/Common.js');
+var DeskPageFrameActions = require('../action/DeskPageFrameActions.js');
 
 var frameWindow = null;
 
@@ -56,6 +58,22 @@ var PanelComponentsHierarchyStore = Reflux.createStore({
     onRemoveCutMark: function(){
         this.model.cutMarkUmyId = null;
         this.trigger(this.model);
+    },
+
+    onInlineTextSubmit: function(options){
+        var projectModel = Repository.getCurrentProjectModel();
+        var searchResult = null;
+        for(var i = 0; i < projectModel.pages.length; i++){
+            if(!searchResult){
+                searchResult = Common.findByUmyId(projectModel.pages[i], options.umyId);
+            }
+        }
+        //
+        if(searchResult.found.text && options.textValue){
+            searchResult.found.text = options.textValue;
+        }
+        Repository.renewCurrentProjectModel(projectModel);
+        DeskPageFrameActions.renderPageFrame();
     }
 });
 

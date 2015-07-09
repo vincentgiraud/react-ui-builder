@@ -10,68 +10,8 @@ var PanelComponentsHierarchyActions = require('../action/PanelComponentsHierarch
 var DeskPageFrameActions = require('../action/DeskPageFrameActions.js');
 var OverlayTreeviewItemPaste = require('./OverlayTreeviewItemPaste.js');
 var OverlayTreeviewItem = require('./OverlayTreeviewItem.js');
-
-var PanelComponentItem = React.createClass({
-
-    render: function(){
-
-        var overlay = null;
-        if(this.props.selected === this.props.umyid){
-            if(this.props.clipboardActive){
-                overlay = <OverlayTreeviewItemPaste />
-            } else {
-                overlay = <OverlayTreeviewItem domNodeId={this.props.umyid} />
-            }
-        }
-
-        var content = null;
-
-        var className = 'umy-treeview-list-item' + (this.props.selected === this.props.umyid ? ' bg-info' : '');
-        if(this.props.copyMark === this.props.umyid){
-            className += ' umy-grid-basic-border-copy';
-        }
-        if(this.props.cutMark === this.props.umyid){
-            className += ' umy-grid-basic-border-cut';
-        }
-        //
-        var linkClassName = '';
-        var label = this.props.type;
-        //
-        if(this.props.children && this.props.children.length > 0){
-            content = (
-                <li className={className}>
-                    {overlay}
-                    <a key={'toplink'} className={linkClassName} href='#' onClick={this._handleClick}>
-                        <span>{'<' + label + '>'}</span>
-                    </a>
-                    {this.props.children}
-                    <a key={'bottomlink'} className={linkClassName} href='#' onClick={this._handleClick}>
-                        <span>{'</' + label + '>'}</span>
-                    </a>
-                </li>
-            );
-        } else {
-            content = (
-                <li className={className}>
-                    {overlay}
-                    <a  className={linkClassName} href='#' onClick={this._handleClick}>
-                        <span>{'<' + label + '/>'}</span>
-                    </a>
-                </li>
-            );
-        }
-
-        return content;
-    },
-
-    _handleClick: function(e){
-        e.preventDefault();
-        e.stopPropagation();
-        DeskPageFrameActions.deselectComponent();
-        DeskPageFrameActions.selectComponentById(this.props.umyid);
-    }
-
-});
+var PanelComponentHierarchyItem = require('./PanelComponentHierarchyItem.js');
+var PanelComponentHierarchyTextItem = require('./PanelComponentHierarchyTextItem.js');
 
 var scrollToSelected = function($frameWindow){
     setTimeout((function(_frameWindow){
@@ -80,12 +20,12 @@ var scrollToSelected = function($frameWindow){
             if($selected && $selected.length > 0){
                 var diff = ($selected.offset().top + _frameWindow.scrollTop()) - _frameWindow.offset().top;
                 var margin = parseInt(_frameWindow.css("height"))/5;
-                _frameWindow[0].scrollTop = (diff - margin);
+                //_frameWindow[0].scrollTop = (diff - margin);
                 //console.log("Scroll to " + (diff - margin));
-                //_frameWindow.animate(
-                //    { scrollTop: (diff - margin) },
-                //    200
-                //);
+                _frameWindow.animate(
+                    { scrollTop: (diff - margin) },
+                    300
+                );
                 diff = null;
                 margin = null;
             }
@@ -132,6 +72,7 @@ var PanelComponentsHierarchy = React.createClass({
             overflow: 'auto'
             //border: '1px solid #ffffff'
         };
+
         //
         var pageModel = this.state.currentPageModel;
         var self = this;
@@ -176,7 +117,9 @@ var PanelComponentsHierarchy = React.createClass({
                 text = text.substr(0, 150) + " [...]";
             }
             inner.push(
-                <span key={'text' + rootItem.props['data-umyid']} className='text-muted'> {text} </span>
+                <PanelComponentHierarchyTextItem umyid={rootItem.props['data-umyid']}
+                                                 key={'text' + rootItem.props['data-umyid']}
+                                                 textValue={text} />
             )
         }
         var innerProps = [];
@@ -203,7 +146,7 @@ var PanelComponentsHierarchy = React.createClass({
         }
 
         return (
-            <PanelComponentItem
+            <PanelComponentHierarchyItem
                 key={'listitem' + rootItem.props['data-umyid']}
                 componentName={rootItem.componentName}
                 selected={this.state.selectedUmyId}
@@ -214,7 +157,7 @@ var PanelComponentsHierarchy = React.createClass({
 
                 clipboardActive={this.state.clipboardActive}>
                 {inner}
-            </PanelComponentItem>
+            </PanelComponentHierarchyItem>
         );
     }
 

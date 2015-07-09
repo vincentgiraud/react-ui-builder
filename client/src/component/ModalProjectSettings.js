@@ -5,7 +5,7 @@ var React = require('react');
 var ReactBootstrap = require('react-bootstrap');
 var Modal = ReactBootstrap.Modal;
 var Button = ReactBootstrap.Button;
-var ProxyInput = require('./elements/ProxyInput.js');
+var ProxyInput = require('./element/ProxyInput.js');
 var ModalProjectSettingsTriggerActions = require('../action/ModalProjectSettingsTriggerActions.js');
 
 var ModalProjectSettings = React.createClass({

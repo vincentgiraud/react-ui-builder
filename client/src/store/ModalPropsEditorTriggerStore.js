@@ -23,6 +23,8 @@ var ModalPropsEditorTriggerStore = Reflux.createStore({
             //
             this.model.actionsSourceCode = false;
             this.model.storeSourceCode = false;
+            this.model.wizard = 'None';
+            this.model.isSourceCodeGenerated = false;
             //
             this.model.selectedUmyId = options.selectedUmyId;
 
@@ -39,7 +41,6 @@ var ModalPropsEditorTriggerStore = Reflux.createStore({
                 this.model.errors = [];
                 this.model.sourceCode = null;
                 this.model.isProjectComponent = false;
-                this.model.isSourceCodeChanged = false;
                 //
                 var componentTypeValue = Repository.getComponentFromTree(copy.type);
                 this.model.componentName = copy.type;
@@ -62,7 +63,6 @@ var ModalPropsEditorTriggerStore = Reflux.createStore({
                             this.trigger(this.model);
                         }.bind(this),
                         function(data){
-                            this.model.isSourceCodeChanged = true;
                             this.model.sourceCode = data;
                             Server.invoke('loadFluxFiles',
                                 {
@@ -102,7 +102,6 @@ var ModalPropsEditorTriggerStore = Reflux.createStore({
         try{
             //
             this.model.isModalOpen = true;
-            this.model.isSourceCodeChanged = false;
             //
             var projectModel = Repository.getCurrentProjectModel();
             var searchResult = null;
@@ -112,7 +111,8 @@ var ModalPropsEditorTriggerStore = Reflux.createStore({
                 }
             }
             //
-            var changedProps = JSON.parse(options.propsScript);
+            this.model.propsScript = options.propsScript;
+            var changedProps = JSON.parse(this.model.propsScript);
             changedProps['data-umyid'] = this.model.selectedUmyId;
             searchResult.found.props = changedProps;
             //
@@ -123,30 +123,14 @@ var ModalPropsEditorTriggerStore = Reflux.createStore({
                     throw new Error('Text value is empty. Please enter text.');
                 }
             }
+            this.model.actionsSourceCode = options.actionsSourceCode;
+            this.model.storeSourceCode = options.storeSourceCode;
+            this.model.sourceCode = options.sourceCode;
             //
-            if(options.sourceCodeOptions && options.sourceCodeOptions.sourceCode){
+            if(options.sourceCode){
+
                 var componentTypeValue = Repository.getComponentFromTree(this.model.componentName);
-                //
-                try{
-                    esprima.parse(options.sourceCodeOptions.sourceCode);
-                } catch(e){
-                    throw new Error('Component code error: ' + e.message);
-                }
-                if(options.actionsSourceCode){
-                    try{
-                        esprima.parse(options.actionsSourceCode)
-                    } catch(e){
-                        throw new Error('Actions code error: ' + e.message);
-                    }
-                }
-                if(options.storeSourceCode){
-                    try{
-                        esprima.parse(options.storeSourceCode)
-                    } catch(e){
-                        throw new Error('Store code error: ' + e.message);
-                    }
-                }
-                //
+
                 if(componentTypeValue
                     && componentTypeValue.value
                     && componentTypeValue.value.type === 'ProjectComponent'){
@@ -154,7 +138,7 @@ var ModalPropsEditorTriggerStore = Reflux.createStore({
                     Server.invoke('rewriteComponentSourceCode',
                         {
                             filePath: componentTypeValue.value.sourcePath,
-                            data: options.sourceCodeOptions.sourceCode,
+                            sourceCode: options.sourceCode,
                             componentGroup: this.model.componentGroup,
                             componentName: this.model.componentName,
                             actionsSourceCode: options.actionsSourceCode,
@@ -165,14 +149,23 @@ var ModalPropsEditorTriggerStore = Reflux.createStore({
                             this.trigger(this.model);
                         }.bind(this),
                         function(response){
-                            if(this.model.isChildrenRewritten){
-                                searchResult.found.children = [];
-                            }
-                            Repository.renewCurrentProjectModel(projectModel);
-                            DeskPageFrameActions.renderPageFrame();
-                            //
-                            this.model.isModalOpen = false;
-                            this.trigger(this.model);
+                            Server.invoke('isChildrenAcceptable',
+                                {sourceCode: options.sourceCode},
+                                function(err){
+                                    this.model.errors = [JSON.stringify(err)];
+                                    this.trigger(this.model);
+                                }.bind(this),
+                                function(response){
+                                    if(!response.isChildrenAcceptable){
+                                        searchResult.found.children = [];
+                                    }
+                                    Repository.renewCurrentProjectModel(projectModel);
+                                    DeskPageFrameActions.renderPageFrame();
+                                    //
+                                    this.model.isModalOpen = false;
+                                    this.trigger(this.model);
+                                }.bind(this)
+                            );
                         }.bind(this)
                     );
                     //
@@ -182,7 +175,7 @@ var ModalPropsEditorTriggerStore = Reflux.createStore({
                         {
                             componentGroup: this.model.componentGroup,
                             componentName: this.model.componentName,
-                            sourceCode: options.sourceCodeOptions.sourceCode,
+                            sourceCode: options.sourceCode,
                             actionsSourceCode: options.actionsSourceCode,
                             storeSourceCode: options.storeSourceCode
                         },
@@ -191,17 +184,25 @@ var ModalPropsEditorTriggerStore = Reflux.createStore({
                             this.trigger(this.model);
                         }.bind(this),
                         function(response){
-                            searchResult.found.type = this.model.componentName;
-                            if(options.sourceCodeOptions.includeChildren){
-                                searchResult.found.children = [];
-                            }
-                            searchResult.found.text = null;
-                            Repository.renewCurrentProjectModel(projectModel);
-                            DeskPageFrameActions.renderPageFrame();
-                            //
-                            this.model.isModalOpen = false;
-                            this.trigger(this.model);
-                            //
+                            Server.invoke('isChildrenAcceptable',
+                                {sourceCode: options.sourceCode},
+                                function(err){
+                                    this.model.errors = [JSON.stringify(err)];
+                                    this.trigger(this.model);
+                                }.bind(this),
+                                function(response){
+                                    searchResult.found.type = this.model.componentName;
+                                    if(!response.isChildrenAcceptable){
+                                        searchResult.found.children = [];
+                                    }
+                                    searchResult.found.text = null;
+                                    Repository.renewCurrentProjectModel(projectModel);
+                                    DeskPageFrameActions.renderPageFrame();
+                                    //
+                                    this.model.isModalOpen = false;
+                                    this.trigger(this.model);
+                                }.bind(this)
+                            );
                         }.bind(this)
                     );
                     //
@@ -271,135 +272,39 @@ var ModalPropsEditorTriggerStore = Reflux.createStore({
         }
     },
 
-    onGenerateComponentCode: function(options){
-        //
-        this.model.isModalOpen = true;
-        //
-        this.model.isProjectComponent = false;
-        this.model.isSourceCodeChanged = false;
-        this.model.sourceCode = null;
-        this.model.errors = [];
 
-        var componentGroup = options.componentGroup;
-        if(!componentGroup || componentGroup.length <= 0 || !validator.isAlphanumeric(componentGroup)){
-            this.model.errors.push('Please enter alphanumeric value for group name');
-        }
-        var componentName = options.componentName;
-        if(!componentName || componentName.length <= 0 || !validator.isAlphanumeric(componentName)){
-            this.model.errors.push('Please enter alphanumeric value for component name');
-        }
+    onCancelWizard: function(){
 
-        if(this.model.errors.length <= 0){
-            var _componentName = options.componentName;
-            if(_componentName && _componentName.length > 0){
-                var firstChar = _componentName.charAt(0).toUpperCase();
-                _componentName = firstChar + _componentName.substr(1);
-            }
-            this.model.componentName = _componentName;
-            this.model.componentGroup = options.componentGroup;
-            //
-            var testComponent = Repository.getComponentFromTree(this.model.componentName);
-            if(testComponent.value){
-                this.model.errors.push(
-                    'There is already a component with name: ' + this.model.componentName + '. Please specify another component name.'
-                );
-                this.trigger(this.model);
-            } else {
-                var projectModel = Repository.getCurrentProjectModel();
-                var searchResult = null;
-                for(var i = 0; i < projectModel.pages.length; i++){
-                    if(!searchResult){
-                        searchResult = Common.findByUmyId(projectModel.pages[i], this.model.selectedUmyId);
-                    }
-                }
-                //
-                Server.invoke('generateComponentCode',
-                    {
-                        componentGroup: this.model.componentGroup,
-                        componentName: this.model.componentName,
-                        componentModel: searchResult.found,
-                        includeChildren: options.includeChildren,
-                        includeFlux: options.includeFlux
-                    },
-                    function(errors){
-                        this.model.errors = errors;
-                        this.trigger(this.model);
-                    }.bind(this),
-                    function(data){
-                        this.model.isSourceCodeChanged = true;
-                        this.model.isProjectComponent = true;
-                        this.model.sourceCode = data;
-                        //
-                        if(options.includeFlux){
-                            Server.invoke('generateFluxCode',
-                                {
-                                    componentGroup: this.model.componentGroup,
-                                    componentName: this.model.componentName
-                                },
-                                function(errors){
-                                    this.model.errors = errors;
-                                    this.trigger(this.model);
-                                }.bind(this),
-                                function(response){
-                                    this.model.actionsSourceCode = response.actionsSourceCode;
-                                    this.model.storeSourceCode = response.storeSourceCode;
-                                    this.trigger(this.model);
-                                }.bind(this)
-                            );
-                        } else {
-                            this.trigger(this.model);
-                        }
-                        //
-                    }.bind(this)
-                );
-            }
-        } else {
-            this.trigger(this.model);
-        }
+        this.model.wizard = 'None';
+        this.trigger(this.model);
+
     },
 
-    onGenerateComponentChildrenCode: function(options){
-        //
-        this.model.isModalOpen = true;
-        //
-        this.model.sourceCode = null;
-        this.model.errors = [];
-        this.model.isProjectComponent = true;
-        this.model.isSourceCodeChanged = false;
-        this.model.isChildrenRewritten = false;
-        //
-        var testComponent = Repository.getComponentFromTree(this.model.componentName);
-        if(testComponent.value){
-            //
-            var projectModel = Repository.getCurrentProjectModel();
-            var searchResult = null;
-            for(var i = 0; i < projectModel.pages.length; i++){
-                if(!searchResult){
-                    searchResult = Common.findByUmyId(projectModel.pages[i], this.model.selectedUmyId);
-                }
-            }
-            //
-            Server.invoke('generateComponentChildrenCode',
-                {
-                    componentGroup: testComponent.group,
-                    componentName: this.model.componentName,
-                    componentModel: searchResult.found,
-                    sourceCode: options.sourceCode
-                },
-                function(errors){
-                    this.model.errors = errors;
-                    this.trigger(this.model);
-                }.bind(this),
-                function(data){
-                    this.model.isSourceCodeChanged = true;
-                    this.model.isChildrenRewritten = true;
-                    this.model.sourceCode = data;
-                    this.trigger(this.model);
-                }.bind(this)
-            );
-        }
-    }
+    onStartWizardGenerateComponent: function(){
 
+        this.model.wizard = 'GenerateComponent';
+        this.trigger(this.model);
+
+    },
+
+    onSubmitWizardGenerateComponent: function(options){
+
+        this.model.wizard = 'None';
+
+        this.model.isModalOpen = true;
+
+        this.model.componentGroup = options.componentGroup;
+        this.model.componentName = options.componentName;
+        this.model.actionsSourceCode = options.actionsSourceCode;
+        this.model.storeSourceCode = options.storeSourceCode;
+        this.model.sourceCode = options.sourceCode;
+        this.model.errors = [];
+        this.model.propsScript = JSON.stringify({});
+
+        this.model.isSourceCodeGenerated = true;
+
+        this.trigger(this.model);
+    }
 
 });
 

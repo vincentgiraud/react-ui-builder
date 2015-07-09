@@ -8,8 +8,11 @@ var ModalPropsEditorTriggerActions = Reflux.createActions([
     'toggleModal',
     'saveProperties',
     'saveOptionsVariant',
-    'generateComponentCode',
-    'generateComponentChildrenCode'
+    'generateComponentChildrenCode',
+    'cancelWizard',
+    'startWizardGenerateComponent',
+    'submitWizardGenerateComponent'
+
 ]);
 
 module.exports = ModalPropsEditorTriggerActions;

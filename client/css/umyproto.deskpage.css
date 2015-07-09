@@ -13,6 +13,13 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
+.umy-logo {
+    width: 45px;
+    height: 45px;
+    background: url(img/umylogo-final.svg);
+    background-size: 45px 45px;
+}
+
 .umy-grid-basic-element {
     position: relative;
 }
@@ -116,10 +123,13 @@ body {
 
 .umy-grid-text-editable {
     position: absolute;
+    top: -2px;
+    left: -2px;
+    padding: 2px;
     /*white-space: nowrap;*/
     background-color: #ffffff;
     color: #000000;
-    outline: 1px solid #35b3ee;
+    outline: 1px solid #f0ad4e;
 }
 
 .umy-grid-text-edited {

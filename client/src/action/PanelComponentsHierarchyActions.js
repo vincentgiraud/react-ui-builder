@@ -10,7 +10,8 @@ var PanelComponentsHierarchyActions = Reflux.createActions([
     'setCopyMark',
     'removeCopyMark',
     'setCutMark',
-    'removeCutMark'
+    'removeCutMark',
+    'inlineTextSubmit'
 ]);
 
 module.exports = PanelComponentsHierarchyActions;

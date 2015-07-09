@@ -122,7 +122,7 @@ var ModalVariants = React.createClass({
                     </div>
                 </div>
                 <div className="modal-footer">
-                    <Button onClick={this._handleClose}>Close</Button>
+                    <Button onClick={this._handleClose}>Select and Close</Button>
                 </div>
             </Modal>
         );

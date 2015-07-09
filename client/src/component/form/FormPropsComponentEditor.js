@@ -8,28 +8,10 @@ var Button = ReactBootstrap.Button;
 var Panel = ReactBootstrap.Panel;
 var Input = ReactBootstrap.Input;
 
-var DeskPageFrameActions = require('../action/DeskPageFrameActions.js');
+var DeskPageFrameActions = require('../../action/DeskPageFrameActions.js');
+var AceEditor = require('../element/AceEditor.js');
 
 var FormPropsComponentEditor = React.createClass({
-
-    componentDidMount: function(){
-        //
-        if(!this.editor){
-            this.editor = ace.edit(React.findDOMNode(this.refs.editorArea));
-            this.editor.getSession().setMode("ace/mode/javascript");
-            this.editor.$blockScrolling = Infinity;
-        }
-        this.editor.getSession().setValue(this.props.propsScript);
-        this.editor.focus();
-        //
-    },
-
-    componentWillUnmount: function(){
-        if(this.editor){
-            this.editor.destroy();
-            this.editor = null;
-        }
-    },
 
     render: function(){
         var containerStyle={
@@ -59,7 +41,9 @@ var FormPropsComponentEditor = React.createClass({
                 </div>
                 <div className='row'>
                     <div className='col-xs-12'>
-                        <div ref='editorArea' style={{height: '400px', width: '100%'}}></div>
+                        <AceEditor ref='editor'
+                                   style={{height: '400px', width: '100%'}}
+                                   sourceCode={this.props.propsScript}/>
                     </div>
                 </div>
             </div>
@@ -67,7 +51,7 @@ var FormPropsComponentEditor = React.createClass({
     },
 
     getPropsScript: function(){
-        return this.editor.getSession().getValue();
+        return this.refs.editor.getSourceCode();
     }
 
 });

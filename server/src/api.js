@@ -478,6 +478,14 @@ module.exports = {
         )
     },
 
+    isChildrenAcceptable: function(options, callback){
+        if(options.sourceCode && options.sourceCode.indexOf('{this.props.children}') >= 0){
+            callback({data: {isChildrenAcceptable: true}});
+        } else {
+            callback({data: {isChildrenAcceptable: false}});
+        }
+    },
+
     generateComponentChildrenCode: function(options, callback){
         FacadeProjectLocal.generateComponentChildrenCode(
             {
@@ -497,29 +505,39 @@ module.exports = {
     },
 
     rewriteComponentSourceCode: function(options, callback){
-        FacadeProjectLocal.rewriteComponentSourceCode(options,
-            function(err){
-                if(err){
-                    //console.error(err);
-                    callback({error: true, errors: [err]});
-                } else {
-                    callback({data: 'OK'});
+        var result = FacadeProjectLocal.checkSourceCode(options);
+        if(!result){
+            FacadeProjectLocal.rewriteComponentSourceCode(options,
+                function(err){
+                    if(err){
+                        //console.error(err);
+                        callback({error: true, errors: [err]});
+                    } else {
+                        callback({data: 'OK'});
+                    }
                 }
-            }
-        );
+            );
+        } else {
+            callback({error: true, errors: [result]});
+        }
     },
 
     writeNewComponentSourceCode: function(options, callback){
-        FacadeProjectLocal.writeNewComponentSourceCode(options,
-            function(err){
-                if(err){
-                    //console.error(err);
-                    callback({error: true, errors: [err]});
-                } else {
-                    callback({data: 'OK'});
+        var result = FacadeProjectLocal.checkSourceCode(options);
+        if(!result){
+            FacadeProjectLocal.writeNewComponentSourceCode(options,
+                function(err){
+                    if(err){
+                        //console.error(err);
+                        callback({error: true, errors: [err]});
+                    } else {
+                        callback({data: 'OK'});
+                    }
                 }
-            }
-        );
+            );
+        } else {
+            callback({error: true, errors: [result]});
+        }
     },
 
     /**

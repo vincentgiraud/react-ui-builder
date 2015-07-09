@@ -11,10 +11,10 @@ var Alert = ReactBootstrap.Alert;
 var Grid = ReactBootstrap.Grid;
 var Row = ReactBootstrap.Row;
 var Col = ReactBootstrap.Col;
-var InputValue = require('./elements/InputValue.js');
-var ProjectNameInput = require('./elements/ProjectNameInput.js');
-var ProjectDescriptionInput = require('./elements/ProjectDescriptionInput.js');
-var CollapsibleHorizontalDivider = require('./elements/CollapsibleHorizontalDivider.js');
+var InputValue = require('./element/InputValue.js');
+var ProjectNameInput = require('./element/ProjectNameInput.js');
+var ProjectDescriptionInput = require('./element/ProjectDescriptionInput.js');
+var CollapsibleHorizontalDivider = require('./element/CollapsibleHorizontalDivider.js');
 
 var ModalFileListUploadTriggerActions = require('../action/ModalFileListUploadTriggerActions.js');
 var ApplicationActions = require('../action/ApplicationActions.js');

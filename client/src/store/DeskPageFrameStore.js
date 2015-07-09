@@ -73,9 +73,11 @@ var DeskPageFrameStore = Reflux.createStore({
         this.model.selectedUmyId = domNodeId || this.model.selectedUmyId;
 
         if(this.model.selectedUmyId){
+            console.time('finding component in tree');
             var searchResult = Repository.findInCurrentPageModelByUmyId(this.model.selectedUmyId);
             var frameWindow = Repository.getCurrentPageWindow();
             var domNode = Repository.getCurrentPageDomNode(this.model.selectedUmyId);
+            console.timeEnd('finding component in tree');
             if(frameWindow && domNode && searchResult){
                 if(this.model.clipboardActiveMode){
                     componentOverlay = Overlays.createCopyPasteOverlay(frameWindow, this.model.selectedUmyId, searchResult);

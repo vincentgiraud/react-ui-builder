@@ -194,6 +194,16 @@ var ComponentCodeRewriter = {
             callback(e.message);
         }
 
+    },
+
+    checkCode: function(options){
+        var result = null;
+        try{
+            esprima.parse(options.sourceCode);
+        } catch(e){
+            result = e.message;
+        }
+        return result;
     }
 
 

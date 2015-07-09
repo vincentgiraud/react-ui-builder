@@ -61,6 +61,37 @@ var Common = {
         }
         return !invisibleParent;
     },
+    getCSSClasses: function(doc){
+        var resultList = [{ value: "undefined", label: "undefined" }];
+        var sSheetList = doc.styleSheets;
+        for (var sSheet = 0; sSheet < sSheetList.length; sSheet++)
+        {
+            //console.log(doc.styleSheets[sSheet].ownerNode);
+            var href = doc.styleSheets[sSheet].ownerNode.attributes['href'];
+            //if(href.indexOf('uikit.min.css') < 0
+            //    || href.indexOf('tooltip.min.css') < 0
+            //    || href.indexOf('umyproto.deskpage.css') < 0){
+            if(!href){
+                var ruleList = doc.styleSheets[sSheet].cssRules;
+                for (var rule = 0; rule < ruleList.length; rule ++)
+                {
+                    if(ruleList[rule].selectorText && ruleList[rule].selectorText.charAt(0) === '.'){
+                        var val = ruleList[rule].selectorText.substr(1);
+                        if(val !== "undefined"
+                            //&& val.indexOf(" ") < 0
+                            //&& val.match(/^[0-9a-zA-Z_-]+$/g)
+                        ){
+                            resultList.push({
+                                value: val,
+                                label: val
+                            });
+                        }
+                    }
+                }
+            }
+        }
+        return resultList;
+    },
 
     setupPropsUmyId: function(modelItem, force){
         modelItem.props = modelItem.props || {};

@@ -74,8 +74,10 @@ var FormStart = React.createClass({
                                 onChange={this._handleChangeDirPath}
                                 placeholder={ 'Enter path value'}
                                 />
-                            <Button bsStyle='primary' onClick={this._handleCreateProject}>Submit</Button>
-                            <Button bsStyle='default' onClick={this._handleCancel}>Cancel</Button>
+                            <div style={{display: 'table', textAlign: 'right', width: '100%'}}>
+                                <Button bsStyle='default' onClick={this._handleCancel}>Cancel</Button>
+                                <Button bsStyle='primary' onClick={this._handleCreateProject}>Submit</Button>
+                            </div>
                         </Panel>
                     </Col>
                 </Row>

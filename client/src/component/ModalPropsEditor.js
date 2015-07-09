@@ -16,13 +16,65 @@ var TabPane = ReactBootstrap.TabPane;
 var DropdownButton = ReactBootstrap.DropdownButton;
 var MenuItem = ReactBootstrap.MenuItem;
 var DeskPageFrameActions = require('../action/DeskPageFrameActions.js');
-var FormCodeComponentEditor = require('./FormCodeComponentEditor.js');
-var FormPropsComponentEditor = require('./FormPropsComponentEditor.js');
-var FormActionsComponentEditor = require('./FormActionsComponentEditor.js');
-var FormStoreComponentEditor = require('./FormStoreComponentEditor.js');
+var FormCodeComponentEditor = require('./form/FormCodeComponentEditor.js');
+var FormPropsComponentEditor = require('./form/FormPropsComponentEditor.js');
+var FormActionsComponentEditor = require('./form/FormActionsComponentEditor.js');
+var FormStoreComponentEditor = require('./form/FormStoreComponentEditor.js');
 var ModalPropsEditorTriggerActions = require('../action/ModalPropsEditorTriggerActions.js');
 
+var WizardGenerateComponent = require('./wizard/WizardGenerateComponent.js');
+
 var ModalPropsEditor = React.createClass({
+
+    _handleClose: function(e){
+        e.stopPropagation();
+        e.preventDefault();
+        ModalPropsEditorTriggerActions.hideModal();
+    },
+
+    _handleSave: function(e){
+        e.stopPropagation();
+        e.preventDefault();
+        ModalPropsEditorTriggerActions.saveProperties(
+            {
+                propsScript: this.refs.componentPropsEditor ? this.refs.componentPropsEditor.getPropsScript() : null,
+                componentText: this.refs.componentTextInput ? this.refs.componentTextInput.getValue() : null,
+                sourceCode: this.refs.componentSourceCodeEditor ? this.refs.componentSourceCodeEditor.getComponentScript() : null,
+                actionsSourceCode: this.refs.actionsSourceCodeEditor ? this.refs.actionsSourceCodeEditor.getActionsScript() : null,
+                storeSourceCode: this.refs.storeSourceCodeEditor ? this.refs.storeSourceCodeEditor.getStoreScript() : null
+            }
+        );
+    },
+
+    _handleSaveOptionsVariant: function(e){
+        e.stopPropagation();
+        e.preventDefault();
+        var options = {
+            propsScript: this.refs.componentPropsEditor.getPropsScript(),
+            componentText: this.refs.componentTextInput ? this.refs.componentTextInput.getValue() : null
+        };
+        ModalPropsEditorTriggerActions.saveOptionsVariant(options);
+    },
+
+    _validationStateComponentText: function(){
+        if(this.state.componentText && this.state.componentText.length > 0){
+            return 'success';
+        } else {
+            return 'error';
+        }
+    },
+
+    _handleChangeState: function(){
+        this.setState({
+            componentText: this.refs.componentTextInput ? this.refs.componentTextInput.getValue() : null
+        });
+    },
+
+    _handleCreateComponent: function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        ModalPropsEditorTriggerActions.startWizardGenerateComponent();
+    },
 
     getDefaultProps: function () {
         return {
@@ -103,20 +155,53 @@ var ModalPropsEditor = React.createClass({
             </TabPane>
         );
 
-        tabPanes.push(
-            <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Component'>
-                <FormCodeComponentEditor
-                    sourceCode={this.props.sourceCode}
-                    isSourceCodeChanged={this.props.isSourceCodeChanged}
-                    isProjectComponent={this.props.isProjectComponent}
-                    ref='componentSourceCodeEditor'
-                    style={containerStyle}
-                    editorStyle={{height: '400px', width: '100%'}}
-                    handleCreateComponent={this._handleCreateComponent}
-                    handleCreateComponentChildren={this._handleCreateComponentChildren}
-                    />
-            </TabPane>
-        );
+        if(this.props.wizard === 'GenerateComponent'){
+            tabPanes.push(
+                <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Component'>
+                    <WizardGenerateComponent
+                        style={{height: '400px', width: '100%'}}
+                        selectedUmyId={this.props.selectedUmyId}
+                        />
+                </TabPane>
+            );
+        } else if(this.props.sourceCode){
+            tabPanes.push(
+                <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Component'>
+                    <FormCodeComponentEditor
+                        isSourceCodeGenerated={this.props.isSourceCodeGenerated}
+                        componentName={this.props.componentName}
+                        selectedUmyId={this.props.selectedUmyId}
+                        sourceCode={this.props.sourceCode}
+                        ref='componentSourceCodeEditor'
+                        style={containerStyle}
+                        sourceFilePath={this.props.sourceFilePath}
+                        editorStyle={{height: '400px', width: '100%'}}
+                        />
+                </TabPane>
+            );
+        } else {
+            tabPanes.push(
+                <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Component'>
+                    <div style={{height: '400px', width: '100%'}}>
+                        <div style={{height: '100%', width: '100%', marginTop: '1em'}}>
+                            <table style={{ width: '100%'}}>
+                                <tr>
+                                    <td style={{width: '20%'}}></td>
+                                    <td style={{height: '100%', textAlign: 'center', verticalAlign: 'middle'}}>
+                                        <Button block={false}
+                                                onClick={this._handleCreateComponent}>
+                                            <span>Generate Component's source code</span>
+                                        </Button>
+                                    </td>
+                                    <td style={{width: '20%'}}></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </TabPane>
+            );
+        }
+
         if(this.props.storeSourceCode){
             tabPanes.push(
                 <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Store'>
@@ -127,6 +212,7 @@ var ModalPropsEditor = React.createClass({
                 </TabPane>
             );
         }
+
         if(this.props.actionsSourceCode){
             tabPanes.push(
                 <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Actions'>
@@ -147,73 +233,11 @@ var ModalPropsEditor = React.createClass({
                     </TabbedArea>
                 </div>
                 <div className="modal-footer">
-                    <Button onClick={this._handleSave} bsStyle="primary">Save changes</Button>
                     <Button onClick={this._handleClose}>Cancel</Button>
+                    <Button onClick={this._handleSave} bsStyle="primary">Save changes</Button>
                 </div>
             </Modal>
         );
-    },
-
-    _handleClose: function(e){
-        e.stopPropagation();
-        e.preventDefault();
-        ModalPropsEditorTriggerActions.hideModal();
-    },
-
-    _handleSave: function(e){
-        e.stopPropagation();
-        e.preventDefault();
-        var options = {
-            propsScript: this.refs.componentPropsEditor ? this.refs.componentPropsEditor.getPropsScript() : null,
-            componentText: this.refs.componentTextInput ? this.refs.componentTextInput.getValue() : null,
-            sourceCodeOptions: this.refs.componentSourceCodeEditor ? this.refs.componentSourceCodeEditor.getComponentSourceCodeOptions() : null,
-            actionsSourceCode: this.refs.actionsSourceCodeEditor ? this.refs.actionsSourceCodeEditor.getActionsScript() : null,
-            storeSourceCode: this.refs.storeSourceCodeEditor ? this.refs.storeSourceCodeEditor.getStoreScript() : null
-        };
-        ModalPropsEditorTriggerActions.saveProperties(options);
-    },
-
-    _handleSaveOptionsVariant: function(e){
-        e.stopPropagation();
-        e.preventDefault();
-        var options = {
-            propsScript: this.refs.componentPropsEditor.getPropsScript(),
-            componentText: this.refs.componentTextInput ? this.refs.componentTextInput.getValue() : null
-        };
-        ModalPropsEditorTriggerActions.saveOptionsVariant(options);
-    },
-
-    _validationStateComponentText: function(){
-        if(this.state.componentText && this.state.componentText.length > 0){
-            return 'success';
-        } else {
-            return 'error';
-        }
-    },
-
-    _handleChangeState: function(){
-        this.setState({
-            componentText: this.refs.componentTextInput ? this.refs.componentTextInput.getValue() : null
-        });
-    },
-
-    _handleCreateComponentChildren: function(e){
-        e.stopPropagation();
-        e.preventDefault();
-
-        ModalPropsEditorTriggerActions.generateComponentChildrenCode(
-            this.refs.componentSourceCodeEditor.getComponentSourceCodeOptions()
-        );
-
-    },
-
-    _handleCreateComponent: function(e){
-        e.stopPropagation();
-        e.preventDefault();
-        ModalPropsEditorTriggerActions.generateComponentCode(
-            this.refs.componentSourceCodeEditor.getComponentSourceCodeOptions()
-        );
-
     }
 
 });
