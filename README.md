@@ -1,6 +1,8 @@
 Description
 -----------
 
+[![Join the chat at https://gitter.im/ipselon/react-ui-builder](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ipselon/react-ui-builder?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This tool is a visual builder of React JS components for your web application. 
 In builder you can easily combine available components with each other, and see how they look and feel right on a web page.
 Then you can generate a source code of new component from the combination, and builder will include all children and dependencies.
