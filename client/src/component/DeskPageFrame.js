@@ -76,12 +76,11 @@ var DeskPageFrame = React.createClass({
             //var cssList = Common.getCSSClasses(doc);
             //console.log(JSON.stringify(cssList, null, 4));
 
-            var self = this;
             this.frameEndpoint = win.endpoint;
-            self.frameEndpoint.onComponentDidUpdate = function(){
-                self._mapDomNodes();
-            };
-            self.frameEndpoint.onComponentWillUpdate = function(){
+            this.frameEndpoint.onComponentDidUpdate = function(){
+                this._mapDomNodes();
+            }.bind(this);
+            this.frameEndpoint.onComponentWillUpdate = function(){
                 DeskPageFrameActions.deselectComponent();
             };
             this._changeFrameContent();

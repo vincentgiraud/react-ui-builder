@@ -29,7 +29,7 @@ var DeskPageFramePreview = React.createClass({
         var win = React.findDOMNode(this).contentWindow;
         if(doc.readyState === 'complete' && win.endpoint && win.endpoint.Page) {
             win.endpoint.replaceState(Repository.getCurrentPageModel());
-
+            this._hideModalProgress();
         }
     }
 

@@ -13,6 +13,7 @@ var DeskPageFrame = require('./DeskPageFrame.js');
 var DeskPageFramePreview = require('./DeskPageFramePreview.js');
 var Repository = require('../api/Repository.js');
 var ToolbarTopActions = require('../action/ToolbarTopActions.js');
+var PanelQuickOptions = require('../component/panel/PanelQuickOptions.js');
 
 var Desk = React.createClass({
 
@@ -52,8 +53,8 @@ var Desk = React.createClass({
         var rightPanelWidth = 0;
         var rightPanelInner = null;
         if(this.state.isStyleOptionsButtonActive){
-            rightPanelWidth = 300;
-            rightPanelInner = (<div>Right Panel</div>);
+            rightPanelWidth = 250;
+            rightPanelInner = (<PanelQuickOptions></PanelQuickOptions>);
         }
 
         var leftPanelStyle = {

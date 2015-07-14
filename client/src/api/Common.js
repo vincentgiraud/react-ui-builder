@@ -5,14 +5,14 @@ var _ = require('underscore');
 var Common = {
 
     fulfil: function (obj1, obj2) {
-        if ($.isArray(obj2)) {
+        if (_.isArray(obj2)) {
             if (!obj1 || obj1 == null) {
                 obj1 = [];
                 for (var i = 0; i < obj2.length; i++) {
                     obj1.push(this.fulfil(null, obj2[i]));
                 }
             }
-        } else if ($.isPlainObject(obj2)) {
+        } else if (_.isObject(obj2)) {
             if (!obj1) {
                 obj1 = {};
             }
@@ -29,12 +29,12 @@ var Common = {
     },
     fulex: function (obj2) {
         var obj1 = null;
-        if ($.isArray(obj2)) {
+        if (_.isArray(obj2)) {
             obj1 = [];
             for (var i = 0; i < obj2.length; i++) {
                 obj1.push(this.fulex(obj2[i]));
             }
-        } else if ($.isPlainObject(obj2)) {
+        } else if (_.isObject(obj2)) {
             obj1 = {};
             for (var item in obj2) {
                 if (obj2.hasOwnProperty(item)) {

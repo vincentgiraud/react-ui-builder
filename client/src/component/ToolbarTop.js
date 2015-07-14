@@ -77,14 +77,14 @@ var ToolbarTop = React.createClass({
         } else {
             clipboardContent.push(
                 <div key='copyPage' style={{display: 'table-cell', verticalAlign: 'middle', paddingLeft: '0.5em'}}>
-                    <button className="btn btn-xs" onClick={this._handleCopyPage}>
+                    <button className="btn btn-default btn-xs" onClick={this._handleCopyPage}>
                         <span>Copy Page</span>
                     </button>
                 </div>
             );
             clipboardContent.push(
                 <div key='addPage' style={{display: 'table-cell', verticalAlign: 'middle', paddingLeft: '0.5em'}}>
-                    <button className="btn btn-xs" onClick={this._handleAddNewPage}>
+                    <button className="btn btn-default btn-xs" onClick={this._handleAddNewPage}>
                         <span>Add Page</span>
                     </button>
                 </div>
@@ -98,7 +98,7 @@ var ToolbarTop = React.createClass({
             //);
             clipboardContent.push(
                 <div key='undoButton' style={{display: 'table-cell', verticalAlign: 'middle', paddingLeft: '0.5em'}}>
-                    <button className="btn btn-xs" onClick={this._handleUndo}>
+                    <button className="btn btn-default btn-xs" onClick={this._handleUndo}>
                         <span className="fa fa-rotate-left" />
                     </button>
                 </div>
@@ -126,7 +126,7 @@ var ToolbarTop = React.createClass({
                             <div style={{display: 'table-cell', width: '30%', verticalAlign: 'middle'}}>
                                 <div className="input-group">
                                 <span className="input-group-btn">
-                                    <button className="btn btn-xs" onClick={this._handleDeletePage}>
+                                    <button className="btn btn-default btn-xs" onClick={this._handleDeletePage}>
                                         <span className="fa fa-trash" />
                                     </button>
                                 </span>
@@ -141,7 +141,7 @@ var ToolbarTop = React.createClass({
                                 }} value={this.state.currentPageName}
                                            onChange={this._handleCurrentPageNameChange} onBlur={this._handleCurrentPageNameOnBlur} />
                                     <div className="input-group-btn">
-                                        <button className="btn btn-xs dropdown-toggle" data-toggle="dropdown">
+                                        <button className="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
                                             <span className="caret" />
                                             &nbsp;&nbsp;
                                         </button>

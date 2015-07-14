@@ -17,6 +17,7 @@ var PanelAvailableComponentsActions = require('../action/PanelAvailableComponent
 var ModalPropsEditorTriggerActions = require('../action/ModalPropsEditorTriggerActions.js');
 var ToolbarTopActions = require('../action/ToolbarTopActions.js');
 var ToolbarBreadcrumbsActions = require('../action/ToolbarBreadcrumbsActions.js');
+var PanelQuickOptionsActions = require('../action/panel/PanelQuickOptionsActions.js');
 
 var componentOverlay = null;
 var umyIdToCutPaste = null;
@@ -73,11 +74,9 @@ var DeskPageFrameStore = Reflux.createStore({
         this.model.selectedUmyId = domNodeId || this.model.selectedUmyId;
 
         if(this.model.selectedUmyId){
-            console.time('finding component in tree');
             var searchResult = Repository.findInCurrentPageModelByUmyId(this.model.selectedUmyId);
             var frameWindow = Repository.getCurrentPageWindow();
             var domNode = Repository.getCurrentPageDomNode(this.model.selectedUmyId);
-            console.timeEnd('finding component in tree');
             if(frameWindow && domNode && searchResult){
                 if(this.model.clipboardActiveMode){
                     componentOverlay = Overlays.createCopyPasteOverlay(frameWindow, this.model.selectedUmyId, searchResult);
@@ -86,9 +85,8 @@ var DeskPageFrameStore = Reflux.createStore({
                 }
                 componentOverlay.append(domNode);
                 ToolbarBreadcrumbsActions.selectItem(searchResult);
-                setTimeout(function(){
-                    PanelComponentsHierarchyActions.selectTreeviewItem(this.model.selectedUmyId, this.model.clipboardActiveMode);
-                }.bind(this), 0);
+                PanelQuickOptionsActions.selectItem(searchResult, this.model.selectedUmyId);
+                PanelComponentsHierarchyActions.selectTreeviewItem(this.model.selectedUmyId, this.model.clipboardActiveMode);
             }
         }
     },
@@ -109,6 +107,7 @@ var DeskPageFrameStore = Reflux.createStore({
         }
         PanelComponentsHierarchyActions.deselectTreeviewItem();
         ToolbarBreadcrumbsActions.deselectItem();
+        PanelQuickOptionsActions.deselectItem();
     },
 
     onStartClipboardForOptions: function(options){

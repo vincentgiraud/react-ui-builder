@@ -14,12 +14,23 @@ var InputValue = React.createClass({
         }
     },
 
-    _handleValueChange: function(){
+    _handleChange: function(){
         var value = this.refs.input.getValue();
         var newState = {
             value: value
         };
         this.setState(newState);
+    },
+
+    _handleOnBlur: function(){
+        if(this.props.onChangeValue){
+            this.props.onChangeValue({
+                target: {
+                    name: this.props.label,
+                    value: this.state.value
+                }
+            });
+        }
     },
 
     getValue: function(){
@@ -30,7 +41,7 @@ var InputValue = React.createClass({
         return (
             <Input ref='input' {...this.props}
                 value={this.state.value}
-                onChange={this._handleValueChange}/>
+                onChange={this._handleChange} onBlur={this._handleOnBlur}/>
         );
     }
 

@@ -4,6 +4,11 @@
 require('../lib/bootstrap/css/yeti/bootstrap.min.css');
 require('../lib/bootstrap/js/bootstrap.min.js');
 require('../lib/font-awesome/css/font-awesome.min.css');
+require('../lib/slider/css/bootstrap-slider.min.css');
+require('../lib/slider/js/bootstrap-slider.min.js');
+require('../lib/select/css/default.css');
+require('../lib/colorpicker/css/bootstrap-colorpicker.min.css');
+require('../lib/colorpicker/js/bootstrap-colorpicker.min.js');
 // umyproto libs
 require('../css/umyproto.deskpage.css');
 //

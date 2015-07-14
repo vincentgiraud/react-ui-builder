@@ -86,6 +86,7 @@ var PanelAvailableComponents = React.createClass({
 
     render: function(){
         var style = {
+            paddingTop: '5px',
             //display: this.props.displayStyle,
             width: '100%',
             overflowY: 'auto',

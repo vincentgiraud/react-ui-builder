@@ -195,6 +195,7 @@ var ApplicationStore = Reflux.createStore({
     },
 
     onPreviewProject: function(projectId){
+        ModalProgressTriggerActions.showModalProgress('Preparing preview. Please wait...', 300);
         Server.invoke('preparePreview', {projectId: projectId},
             function (errors) {
                 this.onGoToErrors(errors);

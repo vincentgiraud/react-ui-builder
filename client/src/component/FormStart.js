@@ -67,7 +67,7 @@ var FormStart = React.createClass({
             }
             recentProjectsPanel = (
                 <Panel header={ <h4><span>Recent local projects</span></h4> }>
-                    <ListGroup fill={true} style={{ height: '100px', overflow: 'auto' }}>
+                    <ListGroup fill={true} style={{ height: '9em', overflow: 'auto' }}>
                         {dirPathLinks}
                     </ListGroup>
                 </Panel>
