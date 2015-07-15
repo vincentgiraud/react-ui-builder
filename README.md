@@ -58,18 +58,17 @@ Builder runs as a webserver.
 Usage
 -----
 
-Go to **http://localhost:2222/builder** in browser. 
+  1. Go to **http://localhost:2222/builder** in browser. 
 
-Browse gallery of published projects. There are a limited amount of completed projects so far, 
+  2. Browse gallery of published projects. There are a limited amount of completed projects so far, 
 but we intensely working on a feature where any user will be available to publish project.
 
-Clone project you liked by specifying local folder where you want to see the source code of the project. 
-This folder should exist and be empty.
+  3. Clone project you liked by specifying __absolute__ path to local folder where you want to see the source code of the project. This folder should __exist__ and be __empty__.
 
-Cloning and preparing of the project will take some time. 
+  4. Cloning and preparing of the project will take some time. 
 Most time will be spent by npm installer, builder starts the installation of dependent npm modules automatically after project is downloaded.
 
-Now you can compose components on page, consider page as a desk where you combine components with each other. 
+  5. Now you can compose components on page, consider page as a desk where you combine components with each other. 
 
 ### First look at builder's interface
 
