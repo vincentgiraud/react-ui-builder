@@ -3,7 +3,7 @@
 var _ = require('underscore');
 var Reflux = require('reflux');
 var PanelQuickOptionsActions = require('../../action/panel/PanelQuickOptionsActions.js');
-var DeskPageFrameActions = require('../../action/DeskPageFrameActions.js');
+var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
 var Common = require('../../api/Common.js');
 var Repository = require('../../api/Repository.js');
 

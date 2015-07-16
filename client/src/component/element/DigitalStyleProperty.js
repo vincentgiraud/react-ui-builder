@@ -4,7 +4,7 @@ var React = require('react');
 
 var ReactBootstrap = require('react-bootstrap');
 var Input = ReactBootstrap.Input;
-var DigitalStyleSlider = require('../element/DigitalStyleSlider.js');
+var DigitalStyleSlider = require('./DigitalStyleSlider.js');
 
 var unitsList = ['px', 'em', '%'];
 

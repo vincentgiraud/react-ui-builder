@@ -244,7 +244,7 @@ var ComponentOverlay = {
                                 "top": (pos.top) + "px",
                                 "left": pos.left + "px"
                             });
-                            if ((pos.left + 300) < clientWidth) {
+                            if ((pos.left + 500) < clientWidth) {
                                 this._buttonGroup.css({
                                     "bottom": "auto",
                                     "top": (pos.top + 4 - firstElementMargin) + "px",

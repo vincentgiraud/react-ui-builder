@@ -17,8 +17,8 @@ var plugins = require('./plugin/plugins.js');
 var docCookie = require('./api/cookies.js');
 
 var Server = require('./api/Server.js');
-var Application = require('./component/Application.js');
-var ApplicationActions = require('./action/ApplicationActions.js');
+var Application = require('./component/application/Application.js');
+var ApplicationActions = require('./action/application/ApplicationActions.js');
 
 $(document).ready(function(){
 

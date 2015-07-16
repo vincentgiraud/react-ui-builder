@@ -9,7 +9,7 @@ var Repository = require('../../api/Repository.js');
 var Common = require('../../api/Common.js');
 
 var WizardGenerateComponentActions = require('../../action/wizard/WizardGenerateComponentActions.js');
-var ModalPropsEditorTriggerActions = require('../../action/ModalPropsEditorTriggerActions.js');
+var ModalPropsEditorTriggerActions = require('../../action/modal/ModalPropsEditorTriggerActions.js');
 
 var defaultModel = {
     step: 0,

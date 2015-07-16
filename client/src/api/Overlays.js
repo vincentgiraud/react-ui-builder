@@ -3,7 +3,7 @@
 var _ = require('underscore');
 var Repository = require('./Repository.js');
 var Common = require('./Common.js');
-var DeskPageFrameActions = require('../action/DeskPageFrameActions.js');
+var DeskPageFrameActions = require('../action/desk/DeskPageFrameActions.js');
 
 var Overlays = {
 

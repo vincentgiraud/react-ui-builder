@@ -8,7 +8,7 @@ var Button = ReactBootstrap.Button;
 var Panel = ReactBootstrap.Panel;
 var Input = ReactBootstrap.Input;
 
-var DeskPageFrameActions = require('../../action/DeskPageFrameActions.js');
+var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
 var AceEditor = require('../element/AceEditor.js');
 
 var FormPropsComponentEditor = React.createClass({

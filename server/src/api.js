@@ -479,7 +479,8 @@ module.exports = {
     },
 
     isChildrenAcceptable: function(options, callback){
-        if(options.sourceCode && options.sourceCode.indexOf('{this.props.children}') >= 0){
+        if(options.sourceCode
+            && options.sourceCode.indexOf('this.props.children') >= 0){
             callback({data: {isChildrenAcceptable: true}});
         } else {
             callback({data: {isChildrenAcceptable: false}});

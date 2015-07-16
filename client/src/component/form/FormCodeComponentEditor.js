@@ -20,7 +20,7 @@ var AceEditor = require('../element/AceEditor.js');
 
 var FormCodeComponentEditorActions = require('../../action/form/FormCodeComponentEditorActions.js');
 var FormCodeComponentEditorStore = require('../../store/form/FormCodeComponentEditorStore.js');
-var ModalPropsEditorTriggerActions = require('../../action/ModalPropsEditorTriggerActions.js');
+var ModalPropsEditorTriggerActions = require('../../action/modal/ModalPropsEditorTriggerActions.js');
 
 var FormCodeComponentEditor = React.createClass({
 
