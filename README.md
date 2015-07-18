@@ -183,7 +183,7 @@ A project's source code which can be loaded into builder should have the followi
 
 **stores/** - folder where all new generated source code of Reflux stores will be written
 
-There is no any restrictions to structure of any folder, except **.builder** folder. 
+There aren't any restrictions to the structure of any folder, except **.builder** folder. 
 Also **components-index.js** file has to be somewhere in project's folder. 
  
 **components-index.js** file can be placed almost anywhere in project’s root folder. But we recommend place it into subfolder of root folder.
