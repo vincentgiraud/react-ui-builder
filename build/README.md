@@ -6,7 +6,7 @@ In builder you can easily combine available components with each other, and see 
 Then you can generate a source code of new component from the combination, and builder will include all children and dependencies.
 Moreover you can generate Reflux actions/store for your component.
 
-The source code of newly created component can be edited right in the builder or in your favorite IDE - it doesn't matter for builder, 
+The source code of newly created component can be edited right in the builder or in your favorite IDE it doesn't matter for builder, 
 the source code will be automatically compiled and reloaded in builder's pages.
 
 You can include the source code of other third-party components manually ( **'Builder's projects source code structure'** section ).
@@ -17,10 +17,12 @@ Project's source code is located in local folder on your computer. But you are n
 builder can download bootstrap project from a gallery of published projects. These projects already have components or 
 libraries of components, and other helpful things like css/less/fonts files or webpack predefined configurations, etc.
 
-To access projects gallery you can from the builder, also you can preview pages with components in selected project, 
-and download source code of the project into specified local folder.
+You can access the projects gallery right from the builder, also you can preview pages with components in selected project, 
+and download source code of the project into specified local folder. 
 
 And finally, you can publish your own project into the gallery.
+
+Before you continue reading, please, watch this [Tutorial](https://www.youtube.com/watch?v=5nqOFSjXKPI) 
 
 Feel free to ask questions in [React UI Builder group](https://groups.google.com/forum/#!forum/react-ui-builder)
 
@@ -42,7 +44,6 @@ Installation
 For upgrading of version it is better to uninstall and then install:
  
     npm uninstall react-ui-builder -g
-    npm install react-ui-builder -g
 
 
 Running
@@ -55,15 +56,17 @@ Builder runs as a webserver.
 Usage
 -----
 
-Go to **http://localhost:2222/builder** in browser. 
+  1. Go to **http://localhost:2222/builder** in browser. 
 
-1. Browse gallery of published projects. There are a limited amount of completed projects so far, please don't hesitate to publish projects into gallery.
+  2. Browse gallery of published projects. There are a limited amount of completed projects so far, 
+but we intensely working on a feature where any user will be available to publish project.
 
-2. Clone project you liked by specifying __absolute path__ to local folder where you want to see the source code of the project. This folder should exist and be empty.
+  3. Clone project you liked by specifying __absolute__ path to local folder where you want to see the source code of the project. This folder should __exist__ and be __empty__.
 
-3. Cloning and preparing of the project will take some time. Most time will be spent by npm installer, builder starts the installation of dependent npm modules automatically after project is downloaded.
+  4. Cloning and preparing of the project will take some time. 
+Most time will be spent by npm installer, builder starts the installation of dependent npm modules automatically after project is downloaded.
 
-4. Now you can compose components on page. Consider page as a desk where you combine components with each other. 
+  5. Now you can compose components on page, consider page as a desk where you combine components with each other. 
 
 ### First look at builder's interface
 
@@ -178,7 +181,7 @@ A project's source code which can be loaded into builder should have the followi
 
 **stores/** - folder where all new generated source code of Reflux stores will be written
 
-There is no any restrictions to structure of any folder, except **.builder** folder. 
+There aren't any restrictions to the structure of any folder, except **.builder** folder. 
 Also **components-index.js** file has to be somewhere in project's folder. 
  
 **components-index.js** file can be placed almost anywhere in project’s root folder. But we recommend place it into subfolder of root folder.
@@ -208,13 +211,13 @@ Structure of **components-index.js** file:
 	    }
     };
 
-    module.expotrs = Components;
+    module.exports = Components;
 
 **LibraryComponents** - library of components, for example: ReactBootstrap
 
 **Group1, Group2** - groups of components, which will be displayed on left-side panel of builder.
 
-**Component1, Component2, …** - React classes, names has to be unique whithin Components space
+**Component1, Component2, …** - React classes, names has to be unique within Components space
 	
 	Note: builder displays the source code of a component  
 	      if it finds the following expression for component variable:
@@ -224,11 +227,13 @@ Structure of **components-index.js** file:
 There is one more restrictions for Reflux files: if you want to see source code of Actions and Store classes of component, 
 please give them the same name as component has plus suffix Action and Store. For example see the source code which was created by the builder. 
 
-
 ### Publishing your project into Builder's Gallery
 
 To publish project into the Gallery you have to create an account. Find in navigation bar 'Login' link, enter login and password and email of your account on Sign Up form.
 Now you are eligible to publish projects into gallery. To do this, please open your project, go to main menu (left side bar) and select 'Publish project' option.
+
+
+
 
     
 > About bugs or if you have any ideas please write to [umyproto.com](http://umyproto.com) or [React UI Builder group](https://groups.google.com/forum/#!forum/react-ui-builder)

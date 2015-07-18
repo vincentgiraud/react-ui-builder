@@ -47,7 +47,7 @@ var Server = {
 
     onSocketEmit: function(eventTypeName, callback){
         if(!socket){
-            socket = io.connect('http://localhost:2222');
+            socket = io.connect('http://' + serverHost + ':2222');
         }
         socket.on(eventTypeName, callback);
     }
