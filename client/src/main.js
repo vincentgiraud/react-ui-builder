@@ -31,7 +31,7 @@ $(document).ready(function(){
         ApplicationActions.refreshServerInfo({user: user, pass: pass});
     });
 
-    Server.init({io: window.io});
+    Server.init({io: window.io, serverHost: window.location.hostname});
 
     window.onbeforeunload = function(e) {
         ApplicationActions.stopAutosaveProjectModel();
