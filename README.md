@@ -28,6 +28,27 @@ Before you continue reading, please, watch this [Tutorial](https://www.youtube.c
 
 Feel free to ask questions in [React UI Builder group](https://groups.google.com/forum/#!forum/react-ui-builder)
 
+Table of Contents
+-----------------
+
+1. [Features](#features)
+2. [Installation](#installation)
+3. [Running](#running)
+4. [Usage](#usage)
+  1. [First look at builder's interface](#first-look-at-builders-interface)
+  2. [Click to select a component on the page](#click-to-select-a-component-on-the-page)
+  3. [Add available components into page](#add-available-components-into-page)
+  4. [Select different variants of available components](#select-different-variants-of-available-components)
+  5. [Paste component into place](#paste-component-into-place)
+  6. [Change component's options (properties)](#change-components-options-properties)
+  7. [View the structure of the page on treeview panel](#view-the-structure-of-the-page-on-treeview-panel)
+  8. [Create source code from combination of components on the page](#create-source-code-from-combination-of-components-on-the-page)
+  9. [Merge source code of children components into existing source code of parent component](#merge-source-code-of-children-components-into-existing-source-code-of-parent-component)
+  10. [Proxying HTTP requests](#proxying-http-requests)
+  11. [Saving project](#saving-project)
+  12. [Builder's project source code structure](#builders-project-source-code-structure)
+  13. [Publishing your project into Builder's Gallery](#publishing-your-project-into-builders-gallery)
+
 Features
 --------
 
@@ -146,11 +167,11 @@ All children components will be included into source code, and builder will incl
 ### Proxying HTTP requests 
 
 If your components has to request other HTTP servers you can define a proxy for any HTTP server (except HTTPS).
-For example, if a component has to retrieve a JSON from some REST service which is located by address: http://localhost:3000/someService 
-and you place this component on page in builder, it will not connect to localhost:3000 due to CORS restriction.
+For example, if a component has to retrieve a JSON from some REST service which is located by address: `http://localhost:3000/someService` 
+and you place this component on page in builder, it will not connect to `localhost:3000` due to CORS restriction.
 To avoid that you can define proxy for current project, open main menu (bars in top-left corner) and choose **'Project settings'** option.
-Specify URL of the server: 'http://localhost:3000'. 
-After that your component will be available to connect to /someService (you should use not relative address) right from the builder's page. 
+Specify URL of the server: `'http://localhost:3000'`. 
+After that your component will be available to connect to `/someService` (you should use not relative address) right from the builder's page. 
 
  
 ### Saving project
@@ -200,20 +221,22 @@ you have to include these resources into this file according to webpack recommen
  
 Structure of **components-index.js** file:
 
-    require(‘./assets/css/css.file’);
-    var LibraryComponents = require(‘library’);
+```js
+require(‘./assets/css/css.file’);
+var LibraryComponents = require(‘library’);
 
-    var Components = {
-	    Group1: {
-		    Component1: LibraryComponents.Component1,
-		    Component2: require(‘./Group1/Component2.js’);
-	    },
-	    Group2: {
-		    Component3: require(‘./Group2/Component3.js’);
-	    }
-    };
+var Components = {
+    Group1: {
+	    Component1: LibraryComponents.Component1,
+	    Component2: require(‘./Group1/Component2.js’);
+    },
+    Group2: {
+	    Component3: require(‘./Group2/Component3.js’);
+    }
+};
 
-    module.exports = Components;
+module.exports = Components;
+```
 
 **LibraryComponents** - library of components, for example: ReactBootstrap
 
@@ -224,7 +247,9 @@ Structure of **components-index.js** file:
 	Note: builder displays the source code of a component  
 	      if it finds the following expression for component variable:
 	 
-	      require('path_to_component_source_code_file.js')
+```js
+require('path_to_component_source_code_file.js')
+```
 
 There is one more restrictions for Reflux files: if you want to see source code of Actions and Store classes of component, 
 please give them the same name as component has plus suffix Action and Store. For example see the source code which was created by the builder. 
