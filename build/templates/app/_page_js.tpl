@@ -29,13 +29,13 @@ var PageForDesk = React.createClass({
         }
     },
 
-    componentWillUpdate(nextProps, nextState){
+    componentWillUpdate: function(nextProps, nextState){
         if(window.endpoint.onComponentWillUpdate){
             window.endpoint.onComponentWillUpdate();
         }
     },
 
-    shouldComponentUpdate(nextProps, nextState){
+    shouldComponentUpdate: function(nextProps, nextState){
         return true;
     },
 

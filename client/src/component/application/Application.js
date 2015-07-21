@@ -86,8 +86,7 @@ var Application = React.createClass({
                 brand={
                     <div style={{position: 'relative'}}>
                         <div className='umy-logo' style={{position: 'absolute', left: '-40px', top: '0'}}></div>
-                        <a href='http://umyproto.com'>UMyProto</a>
-                        <span style={{marginLeft: '1em'}}>React UI Builder</span>
+                        <span>React UI Builder</span>
                         <span className='text-muted' ref='brandTitle' style={{marginLeft: '1em'}}>{'(' + this.state.packageVersion + ')'}</span>
                     </div>
                 }
@@ -97,10 +96,10 @@ var Application = React.createClass({
                     <Nav navbar right={true}>
                         {linkToHome}
                         <NavItem href="https://groups.google.com/forum/#!forum/react-ui-builder" target="_blank">
-                            <span className="fa fa-comments-o fa-fw"></span>Forum / Help
+                            <span className="fa fa-comments-o fa-fw"></span>&nbsp;Forum
                         </NavItem>
-                        <NavItem href="mailto:umyprotoservice@gmail.com?subject=React UI Builder question">
-                            <span className='fa fa-envelope-o fa-fw'></span>Write to us
+                        <NavItem href="https://www.facebook.com/groups/1668757740011916/">
+                            <span className='fa fa-facebook-square fa-fw'></span>&nbsp;Group
                         </NavItem>
                         {logOut}
                     </Nav>
