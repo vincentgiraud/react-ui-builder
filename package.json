@@ -1,6 +1,6 @@
 {
   "name": "umyproto-react-builder",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "Visual tool for creating React components",
   "scripts": {
     "build": "webpack --config webpack.config.js -optimize-minimize --optimize-occurence-order --progress --colors",

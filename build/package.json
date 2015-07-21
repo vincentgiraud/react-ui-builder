@@ -1,6 +1,6 @@
 {
   "name": "react-ui-builder",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "The visual building and generating code for React components",
   "main": "react-ui-builder.js",
   "scripts": {
