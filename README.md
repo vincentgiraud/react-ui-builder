@@ -27,6 +27,7 @@ And finally, you can publish your own project into the gallery.
 Before you continue reading, please, watch this [Tutorial](https://www.youtube.com/watch?v=5nqOFSjXKPI) 
 
 Feel free to ask questions in [React UI Builder group](https://groups.google.com/forum/#!forum/react-ui-builder)
+or [Facebook React UI Builder group](https://www.facebook.com/groups/1668757740011916/)
 
 Table of Contents
 -----------------
@@ -263,6 +264,6 @@ Now you are eligible to publish projects into gallery. To do this, please open y
 
 
     
-> About bugs or if you have any ideas please write to [umyproto.com](http://umyproto.com) or [React UI Builder group](https://groups.google.com/forum/#!forum/react-ui-builder)
+> About bugs or if you have any ideas please write to [Facebook React UI Builder group](https://www.facebook.com/groups/1668757740011916/) or [React UI Builder group](https://groups.google.com/forum/#!forum/react-ui-builder)
 
 
