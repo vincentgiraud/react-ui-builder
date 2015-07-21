@@ -98,7 +98,7 @@ var Application = React.createClass({
                         <NavItem href="https://groups.google.com/forum/#!forum/react-ui-builder" target="_blank">
                             <span className="fa fa-comments-o fa-fw"></span>&nbsp;Forum
                         </NavItem>
-                        <NavItem href="https://www.facebook.com/groups/1668757740011916/">
+                        <NavItem href="https://www.facebook.com/groups/1668757740011916/" target="_blank">
                             <span className='fa fa-facebook-square fa-fw'></span>&nbsp;Group
                         </NavItem>
                         {logOut}
