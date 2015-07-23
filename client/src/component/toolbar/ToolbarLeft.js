@@ -47,10 +47,10 @@ var ToolbarLeft = React.createClass({
                             <span className="fa fa-bars" style={{fontSize: 32}} />
                         </a>
                         <ul className="dropdown-menu" role="menu">
-                            <li><a href="#" onClick={this._handleProjectSettings}>
+                            <li><a href="" onClick={this._handleProjectSettings}>
                                 <span className="fa fa-gears fa-fw" />&nbsp;Project settings</a>
                             </li>
-                            <li><a href="#" onClick={this._handlePublishProject}>
+                            <li><a href="" onClick={this._handlePublishProject}>
                                 <span className="fa fa-cloud-upload fa-fw" />&nbsp;Publish project</a>
                             </li>
                             <li className="divider" />
@@ -58,7 +58,7 @@ var ToolbarLeft = React.createClass({
                                 <span className="fa fa-comments-o fa-fw"></span>&nbsp;Forum / Help</a>
                             </li>
                             <li className="divider" />
-                            <li><a href="#" onClick={ApplicationActions.goToStartPage}>
+                            <li><a href="" onClick={ApplicationActions.goToStartPage}>
                                 <span className="fa fa-sign-out fa-fw" />&nbsp;Close project</a>
                             </li>
                         </ul>
