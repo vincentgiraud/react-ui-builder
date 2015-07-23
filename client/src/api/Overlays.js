@@ -19,14 +19,12 @@ var Overlays = {
         };
         overlayModel.buttons.push(
             {
-                label: '&lt;' + shortLabel + '&gt;',
+                label: '&lt;' + shortLabel + '&gt;&nbsp;&nbsp;',
+                icon: 'umyproto-icon-caret-down',
                 btnClass: labelClass,
-                onClick: (function (_nodeId) {
-                    return function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                    }
-                })(domNodeId)
+                menu: [
+                    {label: 'Test Dropdown', onClick: function(){alert('Clicked on test dropdown!!!');}}
+                ]
             });
         overlayModel.buttons.push(
             {

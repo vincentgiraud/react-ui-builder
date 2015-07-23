@@ -42,8 +42,33 @@ var ComponentOverlay = {
         }(this._options.onClose)));
 
         for (var i = 0; i < this._options.buttons.length; i++) {
-            var item = $("<button type='button' class='umyproto-button umyproto-button-small umyproto-button-primary'></button>")
-                .appendTo(this._buttonGroup);
+            var item = $("<button type='button' class='umyproto-button umyproto-button-small umyproto-button-primary'></button>");
+            if(this._options.buttons[i].menu && this._options.buttons[i].menu.length > 0){
+                var itemGroup = $("<div class='umyproto-button-dropdown' data-umyproto-dropdown='{mode:\"click\"}'></div>");
+                var menu = $("<div class='umyproto-dropdown umyproto-dropdown-small' style='box-shadow: -1px 1px 3px 1px #CCC, 1px 1px 3px 1px #CCC;'></div>");
+                var menuList = $("<ul class='umyproto-nav umyproto-nav-dropdown'></ul>");
+                for(var x = 0; x < this._options.buttons[i].menu.length; x++){
+                    var menuItemWrapper = $("<li></li>");
+                    var menuItem = $("<a class='umyproto-text-bold' href='#'>" + this._options.buttons[i].menu[x].label + "</a>");
+                    menuItem.on("click.umyOverlayMenuItem", (function (callback, _this) {
+                        return function (e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (callback) {
+                                callback(e, _this);
+                            }
+                        }
+                    }(this._options.buttons[i].menu[x].onClick, this)));
+                    menuItem.appendTo(menuItemWrapper);
+                    menuItemWrapper.appendTo(menuList);
+                }
+                menuList.appendTo(menu);
+                item.appendTo(itemGroup);
+                menu.appendTo(itemGroup);
+                itemGroup.appendTo(this._buttonGroup);
+            } else {
+                item.appendTo(this._buttonGroup);
+            }
             if (this._options.buttons[i].btnClass) {
                 item.addClass(this._options.buttons[i].btnClass);
             }
@@ -53,21 +78,25 @@ var ComponentOverlay = {
                     'title': this._options.buttons[i].tooltip
                 });
             }
-            item.on("click.umyOverlay", (function (callback, _this) {
-                return function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (callback) {
-                        callback(e, _this);
+            if(this._options.buttons[i].onClick){
+                item.on("click.umyOverlay", (function (callback, _this) {
+                    return function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (callback) {
+                            callback(e, _this);
+                        }
                     }
-                }
-            }(this._options.buttons[i].onClick, this)));
-            if (this._options.buttons[i].icon) {
-                item.append("<span class='" + this._options.buttons[i].icon + "'></span>");
+                }(this._options.buttons[i].onClick, this)));
             }
             if (this._options.buttons[i].label) {
                 item.append("<span>" + this._options.buttons[i].label + "</span>");
             }
+            if (this._options.buttons[i].icon) {
+                item.append("<span class='" + this._options.buttons[i].icon + "'></span>");
+            }
+            //
+
             // clearing
             item = null;
         }
