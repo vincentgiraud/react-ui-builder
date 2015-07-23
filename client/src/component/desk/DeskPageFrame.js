@@ -31,27 +31,6 @@ var DeskPageFrame = React.createClass({
             this._renderFrameContent();
         }).bind(this);
         //
-        Server.onSocketEmit('compilerWatcher.errors', function(data){
-            var messages = [];
-            _.each(data, function(item){
-                _.each(item, function(message){
-                    messages.push(message);
-                });
-            });
-            this._showModalMessageArray(messages);
-            //console.error(JSON.stringify(data, null, 4));
-        }.bind(this));
-        Server.onSocketEmit('compilerWatcher.success', function(data){
-            //this._hideModalProgress();
-            //this._showModalProgress('Please wait. Loading page...', 0);
-            if(data.compiledProcessCount >= 1){
-                if(domNode.contentDocument && domNode.contentDocument.documentElement){
-                    this.contentScrollTop = domNode.contentDocument.documentElement.scrollTop;
-                }
-                domNode.src = Repository.getHtmlForDesk();
-            }
-        }.bind(this));
-        //
     },
 
     componentWillUnmount: function(){

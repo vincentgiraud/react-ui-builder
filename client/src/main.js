@@ -22,21 +22,14 @@ var ApplicationActions = require('./action/application/ApplicationActions.js');
 
 $(document).ready(function(){
 
-    var user = docCookie.getItem("umyproto-react-builder-user");
-    var pass = docCookie.getItem("umyproto-react-builder-pass");
 
     plugins.init();
 
-    React.render(<Application/>, document.body, function(){
-        ApplicationActions.refreshServerInfo({user: user, pass: pass});
-    });
+    React.render(<Application/>, document.body);
 
-    Server.init({io: window.io, serverHost: window.location.hostname});
+    console.log(JSON.stringify(window.location, null, 4));
 
-    window.onbeforeunload = function(e) {
-        ApplicationActions.stopAutosaveProjectModel();
-
-    };
+    Server.init({location: window.location});
 
 });
 

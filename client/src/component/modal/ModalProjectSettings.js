@@ -21,11 +21,10 @@ var ModalProjectSettings = React.createClass({
         return (
             <Modal {...this.props} title='Project Settings' animation={true} backdrop={false}>
                 <div className="modal-body">
-                    <ProxyInput ref='urlInputElement' label='Setup proxy:' urlValue={this.props.urlValue}/>
+                    <h3>This is demo version. For full version install react-ui-builder locally.</h3>
                 </div>
                 <div className="modal-footer">
-                    <Button onClick={this._handleSave} bsStyle="primary">Save changes</Button>
-                    <Button onClick={this._handleClose}>Cancel</Button>
+                    <Button onClick={this._handleClose}>Close</Button>
                 </div>
             </Modal>
         );

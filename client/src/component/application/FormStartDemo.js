@@ -9,6 +9,7 @@ var Col = ReactBootstrap.Col;
 var Panel = ReactBootstrap.Panel;
 var Alert = ReactBootstrap.Alert;
 var Button = ReactBootstrap.Button;
+var Badge = ReactBootstrap.Badge;
 var Input = ReactBootstrap.Input;
 var ListGroup = ReactBootstrap.ListGroup;
 var ListGroupItem = ReactBootstrap.ListGroupItem;
@@ -26,12 +27,6 @@ var FormStart = React.createClass({
         this._hideModalProgress();
     },
 
-    getInitialState: function(){
-        return {
-            dirPath: this.props.dirPath
-        }
-    },
-
     getDefaultProps: function () {
         return {
             errors: null
@@ -45,15 +40,15 @@ var FormStart = React.createClass({
 
     render: function(){
         var panelTitle = (
-            <h3>Create project in local directory</h3>
+            <h3>Choose what you want to do</h3>
         );
+        var alerts = [];
         var alert = null;
         if(this.props.errors && this.props.errors.length > 0){
-            var alerts = [];
             for(var i = 0; i < this.props.errors.length; i++){
                 var stringError = JSON.stringify(this.props.errors[i]);
                 alerts.push(
-                    <p key={'error' + i}><strong>{stringError}</strong></p>
+                    <p key={'serror' + i}><strong>{stringError}</strong></p>
                 );
             }
             alert = (
@@ -66,18 +61,12 @@ var FormStart = React.createClass({
                     <Col xs={10} md={8} sm={10} lg={6} xsOffset={1} mdOffset={2} smOffset={1} lgOffset={3}>
                         {alert}
                         <Panel header={panelTitle} bsStyle="primary">
-                            <Input
-                                label='Local directory path'
-                                ref='dirPathInput'
-                                type={ 'text'}
-                                value={this.state.dirPath}
-                                onChange={this._handleChangeDirPath}
-                                placeholder={ 'Enter path value'}
-                                />
-                            <div style={{display: 'table', textAlign: 'right', width: '100%'}}>
-                                <Button bsStyle='default' onClick={this._handleCancel}>Cancel</Button>
-                                <Button bsStyle='primary' onClick={this._handleCreateProject}>Submit</Button>
-                            </div>
+                            <Button bsStyle={ 'default'} block={true} onClick={this._handleOpenProjectOne}>
+                                <span>Open project with react-bootstrap components</span>
+                            </Button>
+                            <Button bsStyle={ 'default'} block={true} onClick={this._handleOpenProjectTwo}>
+                                <span>Open project with material-ui components</span>
+                            </Button>
                         </Panel>
                     </Col>
                 </Row>
@@ -85,25 +74,16 @@ var FormStart = React.createClass({
         );
     },
 
-    _handleCreateProject: function(e){
+    _handleOpenProjectOne: function(e){
         e.preventDefault();
         e.stopPropagation();
-        var options = {};
-        options.dirPath = this.refs.dirPathInput.getValue();
-        ApplicationActions.downloadProject(options);
+        ApplicationActions.openLocalProject({dirPathIndex: 0});
     },
 
-    _handleCancel: function(e){
+    _handleOpenProjectTwo: function(e){
         e.preventDefault();
         e.stopPropagation();
-        ApplicationActions.goToGallery();
-
-    },
-
-    _handleChangeDirPath: function(e){
-        this.setState({
-            dirPath: this.refs.dirPathInput.getValue()
-        });
+        ApplicationActions.openLocalProject({dirPathIndex: 1});
     }
 
 });

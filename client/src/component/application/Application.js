@@ -6,12 +6,8 @@ var ModalProgressTrigger = require('../modal/ModalProgressTrigger.js');
 var ModalVariantsTrigger = require('../modal/ModalVariantsTrigger.js');
 var ModalProjectSettingsTrigger = require('../modal/ModalProjectSettingsTrigger.js');
 var ModalFileListUploadTrigger = require('../modal/ModalFileListUploadTrigger.js');
-var FormSignIn = require('./FormSignIn.js');
-var FormSignUp = require('./FormSignUp.js');
-var FormStart = require('./FormStart.js');
-var FormBrowseGallery = require('./FormBrowseGallery.js');
-var FormDownloadProject = require('./FormDownloadProject.js');
-var DeskGallery = require('../desk/DeskGallery.js');
+
+var FormStartDemo = require('./FormStartDemo.js');
 
 var PageErrors = require('./PageErrors.js');
 var Desk = require('../desk/Desk.js');
@@ -69,25 +65,13 @@ var Application = React.createClass({
                 </NavItem>
             );
         }
-        var logOut = null;
-        if(this.state.userName){
-            logOut = (
-                <DropdownButton className='bg-primary' title={this.state.userName}>
-                    <MenuItem onClick={this._handleLogout} eventKey={'1'}><span>Log Out</span></MenuItem>
-                </DropdownButton>
-            );
-        } else {
-            logOut = (
-                <NavItem href="#" onSelect={this._handleLogin}>{'Log In'}</NavItem>
-            );
-        }
         var navBar = (
             <Navbar
                 brand={
                     <div style={{position: 'relative'}}>
                         <div className='umy-logo' style={{position: 'absolute', left: '-40px', top: '0'}}></div>
                         <span>React UI Builder</span>
-                        <span className='text-muted' ref='brandTitle' style={{marginLeft: '1em'}}>{'(' + this.state.packageVersion + ')'}</span>
+                        <span className='text-muted' ref='brandTitle' style={{marginLeft: '1em'}}>{'(demo)'}</span>
                     </div>
                 }
                 staticTop={true}
@@ -95,13 +79,12 @@ var Application = React.createClass({
                 <CollapsibleNav eventKey={0}>
                     <Nav navbar right={true}>
                         {linkToHome}
-                        <NavItem href="https://groups.google.com/forum/#!forum/react-ui-builder" target="_blank">
-                            <span className="fa fa-comments-o fa-fw"></span>&nbsp;Forum
+                        <NavItem href="https://github.com/ipselon/react-ui-builder" target="_blank">
+                            <span className="fa fa-github fa-fw"></span>&nbsp;GitHub
                         </NavItem>
                         <NavItem href="https://www.facebook.com/groups/1668757740011916/" target="_blank">
                             <span className='fa fa-facebook-square fa-fw'></span>&nbsp;Group
                         </NavItem>
-                        {logOut}
                     </Nav>
                 </CollapsibleNav>
             </Navbar>
@@ -110,42 +93,13 @@ var Application = React.createClass({
         var content = null;
         if(this.state.stage === 'start'){
             content = (
-                <FormStart
-                    errors={this.state.errors}
-                    recentProjectDirs={this.state.builderConfig.recentProjectDirs}/>
-            );
-        } else if(this.state.stage === 'gallery'){
-            content = (
-                <FormBrowseGallery
-                    errors={this.state.errors}
-                    projects={this.state.projects}/>
-            );
-        } else if(this.state.stage === 'previewProject'){
-            navBar = null;
-            content = (
-                <DeskGallery
-                    projectId={this.state.previewProjectId}
-                    src={this.state.previewHtml}
-                    projectModel={this.state.previewProjectModel}/>
-            );
-        } else if(this.state.stage === 'downloadProjectForm'){
-            content = (
-                <FormDownloadProject
-                    dirPath={this.state.downloadProjectDirPath}
-                    errors={this.state.errors} />
+                <FormStartDemo
+                    errors={this.state.errors}/>
             );
         } else if(this.state.stage === 'deskPage'){
             navBar = null;
             content = (
                 <Desk/>
-            );
-        } else if(this.state.stage === 'signInForm'){
-            content = (
-                <FormSignIn errors={this.state.errors}/>
-            );
-        } else if(this.state.stage === 'signUpForm'){
-            content = (
-                <FormSignUp errors={this.state.errors}/>
             );
         } else if(this.state.stage === 'errors'){
             content = (
@@ -171,14 +125,6 @@ var Application = React.createClass({
         e.preventDefault();
         e.stopPropagation();
         ApplicationActions.goToStartPage();
-    },
-
-    _handleLogout: function(){
-        ApplicationActions.removeUserCredentials();
-    },
-
-    _handleLogin: function(){
-        ApplicationActions.goToSignInForm();
     }
 
 });

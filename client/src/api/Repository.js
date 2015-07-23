@@ -2,6 +2,7 @@
 
 var _ = require('underscore');
 var Common = require('./Common.js');
+var Server = require('./Server.js');
 var HtmlComponents = require('./HtmlComponents.js');
 //var userProfile = null;
 //var currentProject = null;
@@ -308,7 +309,7 @@ var Repository = {
     },
 
     getHtmlForDesk: function(){
-        return htmlForDesk;
+        return Server.href + htmlForDesk;
     }
 
 

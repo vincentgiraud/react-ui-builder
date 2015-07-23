@@ -228,6 +228,7 @@ var ModalPropsEditor = React.createClass({
             <Modal onRequestHide={this.props.onRequestHide} title={false} animation={true} backdrop={false} keyboard={true}>
                 <div className='modal-body'>
                     {alerts}
+                    <h5>This is demo version. Generated source code will not be saved and compiled.</h5>
                     <TabbedArea defaultActiveKey={1}>
                         {tabPanes}
                     </TabbedArea>

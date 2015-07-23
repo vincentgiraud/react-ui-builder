@@ -80,19 +80,6 @@ var ModalVariantsTriggerStore = Reflux.createStore({
 
         PanelAvailableComponentsActions.selectComponentItemDefaultsIndex(componentTypeId, this.model.defaultsIndex);
 
-        Server.invoke('saveAllComponentDefaults',
-            {
-                defaults: currentDefaults,
-                componentName: componentTypeId
-            },
-            function(err){
-                console.error(JSON.stringify(err));
-            },
-            function(response){
-                // do nothing
-            }
-        );
-
         this.trigger(this.model);
     },
 

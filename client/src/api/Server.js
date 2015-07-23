@@ -3,16 +3,15 @@
 var socket = null;
 var io = null;
 var serverHost = 'localhost';
+var pathName = '/';
+var port = '2222';
+var serverURL = '';
 
 var Server = {
 
     init: function(options){
-        if(options.io){
-            io = options.io;
-        }
-        if(options.serverHost){
-            serverHost = options.serverHost;
-        }
+        this.origin = options.location.origin;
+        this.href = options.location.href;
     },
 
     invoke:function(methodName, options, onError, onSuccess){
@@ -24,7 +23,7 @@ var Server = {
                 data: options
             }),
             dataType: "json",
-            url: "http://" + serverHost + ":2222/invoke"
+            url: this.href + "/invoke/"
         }).always(function(response, textStatus){
             //console.log("%o, %o, %o", response, textStatus, response.result);
             if(textStatus === 'success'){
@@ -43,13 +42,6 @@ var Server = {
                 }
             }
         });
-    },
-
-    onSocketEmit: function(eventTypeName, callback){
-        if(!socket){
-            socket = io.connect('http://' + serverHost + ':2222');
-        }
-        socket.on(eventTypeName, callback);
     }
 
 };
