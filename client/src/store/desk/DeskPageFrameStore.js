@@ -14,7 +14,7 @@ var Repository = require('../../api/Repository.js');
 var DeskStore = require('./DeskStore.js');
 var PanelAvailableComponentsStore = require('../panel/PanelAvailableComponentsStore.js');
 var PanelAvailableComponentsActions = require('../../action/panel/PanelAvailableComponentsActions.js');
-var ModalPropsEditorTriggerActions = require('../../action/modal/ModalPropsEditorTriggerActions.js');
+var ModalComponentEditorTriggerActions = require('../../action/modal/ModalComponentEditorTriggerActions.js');
 var ToolbarTopActions = require('../../action/toolbar/ToolbarTopActions.js');
 var ToolbarBreadcrumbsActions = require('../../action/toolbar/ToolbarBreadcrumbsActions.js');
 var PanelQuickOptionsActions = require('../../action/panel/PanelQuickOptionsActions.js');
@@ -464,7 +464,7 @@ var DeskPageFrameStore = Reflux.createStore({
     },
 
     onShowPropertyEditor: function(){
-        ModalPropsEditorTriggerActions.showModal({
+        ModalComponentEditorTriggerActions.showModal({
             selectedUmyId: this.model.selectedUmyId
         });
     }

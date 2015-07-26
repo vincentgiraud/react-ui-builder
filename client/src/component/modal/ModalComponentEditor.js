@@ -20,22 +20,22 @@ var FormCodeComponentEditor = require('../form/FormCodeComponentEditor.js');
 var FormPropsComponentEditor = require('../form/FormPropsComponentEditor.js');
 var FormActionsComponentEditor = require('../form/FormActionsComponentEditor.js');
 var FormStoreComponentEditor = require('../form/FormStoreComponentEditor.js');
-var ModalPropsEditorTriggerActions = require('../../action/modal/ModalPropsEditorTriggerActions.js');
+var ModalComponentEditorTriggerActions = require('../../action/modal/ModalComponentEditorTriggerActions.js');
 
 var WizardGenerateComponent = require('../wizard/WizardGenerateComponent.js');
 
-var ModalPropsEditor = React.createClass({
+var ModalComponentEditor = React.createClass({
 
     _handleClose: function(e){
         e.stopPropagation();
         e.preventDefault();
-        ModalPropsEditorTriggerActions.hideModal();
+        ModalComponentEditorTriggerActions.hideModal();
     },
 
     _handleSave: function(e){
         e.stopPropagation();
         e.preventDefault();
-        ModalPropsEditorTriggerActions.saveProperties(
+        ModalComponentEditorTriggerActions.saveProperties(
             {
                 propsScript: this.refs.componentPropsEditor ? this.refs.componentPropsEditor.getPropsScript() : null,
                 componentText: this.refs.componentTextInput ? this.refs.componentTextInput.getValue() : null,
@@ -53,7 +53,7 @@ var ModalPropsEditor = React.createClass({
             propsScript: this.refs.componentPropsEditor.getPropsScript(),
             componentText: this.refs.componentTextInput ? this.refs.componentTextInput.getValue() : null
         };
-        ModalPropsEditorTriggerActions.saveOptionsVariant(options);
+        ModalComponentEditorTriggerActions.saveOptionsVariant(options);
     },
 
     _validationStateComponentText: function(){
@@ -73,7 +73,7 @@ var ModalPropsEditor = React.createClass({
     _handleCreateComponent: function (e) {
         e.stopPropagation();
         e.preventDefault();
-        ModalPropsEditorTriggerActions.startWizardGenerateComponent();
+        ModalComponentEditorTriggerActions.startWizardGenerateComponent();
     },
 
     getDefaultProps: function () {
@@ -150,8 +150,11 @@ var ModalPropsEditor = React.createClass({
             <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Properties'>
                 <FormPropsComponentEditor
                     ref='componentPropsEditor'
+                    style={containerStyle}
+                    componentName={this.props.componentName}
+                    selectedUmyId={this.props.selectedUmyId}
                     propsScript={this.props.propsScript}
-                    handleSaveOptionsVariant={this._handleSaveOptionsVariant} />
+                    editorStyle={{height: '400px', width: '100%'}}/>
             </TabPane>
         );
 
@@ -242,4 +245,4 @@ var ModalPropsEditor = React.createClass({
 
 });
 
-module.exports = ModalPropsEditor;
+module.exports = ModalComponentEditor;

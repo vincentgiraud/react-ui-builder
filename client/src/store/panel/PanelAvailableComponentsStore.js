@@ -34,6 +34,7 @@ var PanelAvailableComponentsStore = Reflux.createStore({
                 var htmlDefaults = HtmlComponents[componentId];
                 if(htmlDefaults){
                     this.model.componentDefaults.push({
+                        variantName: 'Default',
                         type: componentId,
                         props: htmlDefaults.props,
                         children: htmlDefaults.children,
@@ -80,7 +81,9 @@ var PanelAvailableComponentsStore = Reflux.createStore({
 
     onSelectComponentItemDefaultsIndex: function(componentId, index){
         defaultsIndexMap[componentId] = index;
+        this.model.defaultsIndex = index;
         this.copyToClipboard(this.model.componentDefaults[index]);
+        this.trigger(this.model);
     },
 
     onDeselectComponentItem: function(){

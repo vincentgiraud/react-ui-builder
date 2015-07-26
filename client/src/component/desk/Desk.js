@@ -5,7 +5,7 @@ var DeskStore = require('../../store/desk/DeskStore.js');
 var ToolbarLeft = require('../toolbar/ToolbarLeft.js');
 var PanelAvailableComponents = require('../panel/PanelAvailableComponents.js');
 var PanelComponentsHierarchy = require('../panel/PanelComponentsHierarchy.js');
-var ModalPropsEditorTrigger = require('../modal/ModalPropsEditorTrigger.js');
+var ModalComponentEditorTrigger = require('../modal/ModalComponentEditorTrigger.js');
 var ModalCodeGeneratorTrigger = require('../modal/ModalCodeGeneratorTrigger.js');
 var ToolbarTop = require('../toolbar/ToolbarTop.js');
 var ToolbarBreadcrumbs = require('../toolbar/ToolbarBreadcrumbs.js');
@@ -164,7 +164,7 @@ var Desk = React.createClass({
                 <div style={bottomPanelStyle}>
                     {bottomPanelInner}
                 </div>
-                <ModalPropsEditorTrigger/>
+                <ModalComponentEditorTrigger/>
                 <ModalCodeGeneratorTrigger/>
             </div>
         )

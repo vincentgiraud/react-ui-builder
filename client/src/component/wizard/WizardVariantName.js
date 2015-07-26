@@ -6,15 +6,15 @@ var ReactBootstrap = require('react-bootstrap');
 var Modal = ReactBootstrap.Modal;
 var Alert = ReactBootstrap.Alert;
 
-var WizardIncludeChildrenStore = require('../../store/wizard/WizardIncludeChildrenStore.js');
-var WizardIncludeChildrenActions = require('../../action/wizard/WizardIncludeChildrenActions.js');
+var WizardVariantNameStore = require('../../store/wizard/WizardVariantNameStore.js');
+var WizardVariantNameActions = require('../../action/wizard/WizardVariantNameActions.js');
 
-var FormCommitAction = require('./FormCommitAction.js');
+var FormVariantName = require('./FormVariantName.js');
 
-var WizardIncludeChildren = React.createClass({
+var WizardVariantName = React.createClass({
 
     getInitialState: function(){
-        return WizardIncludeChildrenStore.getInitialModel();
+        return WizardVariantNameStore.getInitialModel();
     },
 
     onModelChange: function(model) {
@@ -22,14 +22,12 @@ var WizardIncludeChildren = React.createClass({
     },
 
     componentDidMount: function() {
-        this.unsubscribe = WizardIncludeChildrenStore.listen(this.onModelChange);
-        WizardIncludeChildrenActions.setInitialOptions(
-            {
-                sourceCode: this.props.sourceCode,
-                selectedUmyId: this.props.selectedUmyId,
-                componentName: this.props.componentName
-            }
-        );
+        this.unsubscribe = WizardVariantNameStore.listen(this.onModelChange);
+        WizardVariantNameActions.setInitialOptions({
+            propsScript: this.props.propsScript,
+            componentName: this.props.componentName,
+            selectedUmyId: this.props.selectedUmyId
+        });
     },
 
     componentWillUnmount: function() {
@@ -59,10 +57,10 @@ var WizardIncludeChildren = React.createClass({
         switch(this.state.step) {
             case 0:
                 stepComponent = (
-                    <FormCommitAction {...this.state}
-                        formStyle={formStyle}
-                        onBackStep={WizardIncludeChildrenActions.cancelWizard}
-                        onSubmitStep={WizardIncludeChildrenActions.submitStep0} />
+                    <FormVariantName {...this.state}
+                                     formStyle={formStyle}
+                                     onBackStep={WizardVariantNameActions.cancelWizard}
+                                     onSubmitStep={WizardVariantNameActions.submitStep0}/>
                 );
                 break;
             default:
@@ -78,4 +76,4 @@ var WizardIncludeChildren = React.createClass({
 
 });
 
-module.exports = WizardIncludeChildren;
+module.exports = WizardVariantName;

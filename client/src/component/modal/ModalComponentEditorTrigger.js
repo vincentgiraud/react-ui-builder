@@ -2,22 +2,22 @@
 
 var React = require('react');
 var OverlayMixin = require('react-bootstrap').OverlayMixin;
-var ModalPropsEditor = require('./ModalPropsEditor.js');
-var ModalPropsEditorTriggerStore = require('../../store/modal/ModalPropsEditorTriggerStore.js');
-var ModalPropsEditorTriggerActions = require('../../action/modal/ModalPropsEditorTriggerActions.js');
+var ModalComponentEditor = require('./ModalComponentEditor.js');
+var ModalComponentEditorTriggerStore = require('../../store/modal/ModalComponentEditorTriggerStore.js');
+var ModalComponentEditorTriggerActions = require('../../action/modal/ModalComponentEditorTriggerActions.js');
 
-var ModalPropsEditorTrigger = React.createClass({
+var ModalComponentEditorTrigger = React.createClass({
     mixins:[OverlayMixin],
 
     getInitialState: function () {
-        return ModalPropsEditorTriggerStore.model;
+        return ModalComponentEditorTriggerStore.model;
     },
 
     onModelChange: function(model) {
         this.setState(model);
     },
     componentDidMount: function() {
-        this.unsubscribe = ModalPropsEditorTriggerStore.listen(this.onModelChange);
+        this.unsubscribe = ModalComponentEditorTriggerStore.listen(this.onModelChange);
     },
     componentWillUnmount: function() {
         this.unsubscribe();
@@ -35,15 +35,15 @@ var ModalPropsEditorTrigger = React.createClass({
         }
 
         return (
-            <ModalPropsEditor {...this.state}
+            <ModalComponentEditor {...this.state}
                 onRequestHide={this._handleClose}/>
         );
     },
 
     _handleClose: function(){
-        ModalPropsEditorTriggerActions.toggleModal();
+        ModalComponentEditorTriggerActions.toggleModal();
     }
 
 });
 
-module.exports = ModalPropsEditorTrigger;
+module.exports = ModalComponentEditorTrigger;

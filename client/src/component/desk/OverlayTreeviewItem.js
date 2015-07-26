@@ -5,7 +5,7 @@ var OverlayButtons = require('./OverlayButtons.js');
 var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
 var Repository = require('../../api/Repository.js');
 var Common = require('../../api/Common.js');
-var ModalPropsEditorTriggerActions = require('../../action/modal/ModalPropsEditorTriggerActions.js');
+var ModalComponentEditorTriggerActions = require('../../action/modal/ModalComponentEditorTriggerActions.js');
 
 var OverlayTreeviewItem = React.createClass({
 

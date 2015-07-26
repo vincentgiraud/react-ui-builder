@@ -8,15 +8,15 @@ var Server = require('../../api/Server.js');
 var Repository = require('../../api/Repository.js');
 var Common = require('../../api/Common.js');
 var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
-var ModalPropsEditorTriggerActions = require('../../action/modal/ModalPropsEditorTriggerActions.js');
+var ModalComponentEditorTriggerActions = require('../../action/modal/ModalComponentEditorTriggerActions.js');
 
 var defaultModel = {
     isModalOpen: false
 };
 
-var ModalPropsEditorTriggerStore = Reflux.createStore({
+var ModalComponentEditorTriggerStore = Reflux.createStore({
     model: defaultModel,
-    listenables: ModalPropsEditorTriggerActions,
+    listenables: ModalComponentEditorTriggerActions,
 
     onShowModal: function(options){
         if(!this.model.isModalOpen){
@@ -221,58 +221,6 @@ var ModalPropsEditorTriggerStore = Reflux.createStore({
         }
     },
 
-    onSaveOptionsVariant: function(options){
-        try{
-            //
-            this.model.isModalOpen = true;
-            this.model.isSourceCodeChanged = false;
-            //
-            var changedProps = JSON.parse(options.propsScript);
-            var projectModel = Repository.getCurrentProjectModel();
-            var searchResult = null;
-            for(var i = 0; i < projectModel.pages.length; i++){
-                if(!searchResult){
-                    searchResult = Common.findByUmyId(projectModel.pages[i], this.model.selectedUmyId);
-                }
-            }
-            //
-            var changedText = null;
-            if(searchResult && searchResult.found.text){
-                if(options.componentText){
-                    changedText = options.componentText;
-                } else {
-                    throw new Error('Text value is empty. Please enter text.');
-                }
-            }
-            //
-            var defaults = {
-                type: searchResult.found.type,
-                props: changedProps,
-                children: searchResult.found.children,
-                text: changedText
-            };
-            //
-            Server.invoke('saveComponentDefaults',
-                {
-                    componentName: searchResult.found.type,
-                    componentOptions: defaults
-                },
-                function(err){
-                    this.model.errors = [JSON.stringify(err)];
-                    this.trigger(this.model);
-                }.bind(this),
-                function(response){
-                    this.trigger(this.model);
-                }.bind(this)
-            );
-            //
-        } catch(e) {
-            this.model.errors = [e.message];
-            this.trigger(this.model);
-        }
-    },
-
-
     onCancelWizard: function(){
 
         this.model.wizard = 'None';
@@ -308,4 +256,4 @@ var ModalPropsEditorTriggerStore = Reflux.createStore({
 
 });
 
-module.exports = ModalPropsEditorTriggerStore;
+module.exports = ModalComponentEditorTriggerStore;

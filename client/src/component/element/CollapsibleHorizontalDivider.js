@@ -19,7 +19,7 @@ var CollapsibleHorizontalDivider = React.createClass({
         return React.findDOMNode(this.refs.panel).scrollHeight;
     },
 
-    onHandleToggle(e){
+    _onHandleToggle(e){
         e.preventDefault();
         this.setState({expanded:!this.state.expanded});
     },
@@ -41,7 +41,7 @@ var CollapsibleHorizontalDivider = React.createClass({
                     </span>
                     <span
                         style={{position: 'absolute', top: '-0.7em', left: '1.3em', padding: '0 .5em 0 0', backgroundColor: '#ffffff', cursor: 'pointer'}}
-                        className='text-muted' onClick={this.onHandleToggle}>
+                        className='text-muted' onClick={this._onHandleToggle}>
                         {this.props.title}
                     </span>
                 </div>

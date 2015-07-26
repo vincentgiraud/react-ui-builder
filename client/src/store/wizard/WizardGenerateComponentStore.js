@@ -9,7 +9,7 @@ var Repository = require('../../api/Repository.js');
 var Common = require('../../api/Common.js');
 
 var WizardGenerateComponentActions = require('../../action/wizard/WizardGenerateComponentActions.js');
-var ModalPropsEditorTriggerActions = require('../../action/modal/ModalPropsEditorTriggerActions.js');
+var ModalComponentEditorTriggerActions = require('../../action/modal/ModalComponentEditorTriggerActions.js');
 
 var defaultModel = {
     step: 0,
@@ -141,7 +141,7 @@ var WizardGenerateComponentStore = Reflux.createStore({
                     );
                 } else {
 
-                    ModalPropsEditorTriggerActions.submitWizardGenerateComponent(
+                    ModalComponentEditorTriggerActions.submitWizardGenerateComponent(
                         {
                             componentGroup: this.model.componentGroup,
                             componentName: this.model.componentName,

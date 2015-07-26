@@ -15,51 +15,7 @@ var PanelAvailableComponentsActions = require('../../action/panel/PanelAvailable
 var PanelAvailableComponentsStore = require('../../store/panel/PanelAvailableComponentsStore.js');
 var ModalVariantsTriggerActions = require('../../action/modal/ModalVariantsTriggerActions.js');
 var Repository = require('../../api/Repository.js');
-
-var PanelComponentItem = React.createClass({
-
-    render: function(){
-
-        if(this.props.selected){
-            var variantSelectorElement = null;
-            if(this.props.defaults && this.props.defaults.length > 1){
-                variantSelectorElement = (
-                    <a key={1} href='#' onClick={this._handlePreview}>Select variant</a>
-                );
-            }
-            var titleComponentName = this.props.componentName;
-            if(titleComponentName.length > 13){
-                titleComponentName = titleComponentName.substr(0, 13) + '...';
-            }
-            return (
-                <ListGroupItem header={titleComponentName}>
-                    {variantSelectorElement}
-                </ListGroupItem>
-            );
-        } else {
-            var componentName = this.props.componentName;
-            if(componentName.length > 20){
-                componentName = componentName.substr(0, 20) + '...';
-            }
-            return (
-                <ListGroupItem style={{cursor: 'pointer'}} onClick={this._handleClick}>
-                    <span>{componentName}</span>
-                </ListGroupItem>
-            );
-        }
-    },
-
-    _handleClick: function(){
-        PanelAvailableComponentsActions.selectComponentItem(this.props.componentId);
-    },
-
-    _handlePreview: function(e){
-        e.preventDefault();
-        e.stopPropagation();
-        ModalVariantsTriggerActions.showModal(this.props.componentId, this.props.defaults, this.props.defaultsIndex);
-    }
-
-});
+var PanelAvailableComponentItem = require('./PanelAvailableComponentItem.js');
 
 var PanelAvailableComponents = React.createClass({
 
@@ -104,7 +60,7 @@ var PanelAvailableComponents = React.createClass({
                 var components = [];
                 _.mapObject(group, function(componentTypeValue, componentId){
                     components.push(
-                        <PanelComponentItem key={'item' + componentId + counter}
+                        <PanelAvailableComponentItem key={'item' + componentId + counter}
                             defaultsIndex={self.state.defaultsIndex}
                             defaults={self.state.componentDefaults}
                             componentId={componentId}
@@ -123,7 +79,7 @@ var PanelAvailableComponents = React.createClass({
                 );
             } else {
                 componentsWithNoGroup.push(
-                    <PanelComponentItem key={'item' + groupName + counter}
+                    <PanelAvailableComponentItem key={'item' + groupName + counter}
                         defaultsIndex={self.state.defaultsIndex}
                         defaults={self.state.componentDefaults}
                         componentId={groupName}

@@ -14,9 +14,9 @@ module.exports = [
             loaders: [
                 //{ test: /\.js$/, exclude: /node_modules/, loader: 'jsx-loader?harmony' },
                 { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' },
-                { test: /\.css$/, loader: "style-loader!css-loader" },
+                { test: /\.css$/, exclude: /node_modules/, loader: "style-loader!css-loader" },
                 //{ test: /\.(eot|woff|ttf|svg|png|jpg)([\?]?.*)$/, loader: 'url-loader?limit=8000&name=[name]-[hash].[ext]' }
-                { test: /\.(eot|woff|ttf|svg|png|jpg)([\?]?.*)$/, loader: 'url-loader' }
+                { test: /\.(eot|woff|ttf|svg|png|jpg)([\?]?.*)$/, exclude: /node_modules/, loader: 'url-loader' }
                 //{ test: /\.(eot|woff|ttf)([\?]?.*)$/, loader: "file-loader" }
             ]
         },

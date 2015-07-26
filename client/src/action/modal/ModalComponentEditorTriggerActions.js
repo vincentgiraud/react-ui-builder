@@ -2,12 +2,11 @@
 
 var Reflux = require('reflux');
 
-var ModalPropsEditorTriggerActions = Reflux.createActions([
+var ModalComponentEditorTriggerActions = Reflux.createActions([
     'showModal',
     'hideModal',
     'toggleModal',
     'saveProperties',
-    'saveOptionsVariant',
     'generateComponentChildrenCode',
     'cancelWizard',
     'startWizardGenerateComponent',
@@ -15,4 +14,4 @@ var ModalPropsEditorTriggerActions = Reflux.createActions([
 
 ]);
 
-module.exports = ModalPropsEditorTriggerActions;
+module.exports = ModalComponentEditorTriggerActions;
