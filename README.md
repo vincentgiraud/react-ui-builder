@@ -24,7 +24,10 @@ and download source code of the project into specified local folder.
 
 And finally, you can publish your own project into the gallery.
 
-Before you continue reading, please, watch this [Tutorial](https://www.youtube.com/watch?v=5nqOFSjXKPI) 
+Before you continue reading, please, watch this [Short Tutorial](https://www.youtube.com/watch?v=yycaq9qv7us&feature=youtu.be) about how to create components in the builder.
+
+Or whatch this more advanced
+[Long Tutorial](https://www.youtube.com/watch?v=5nqOFSjXKPI) 
 
 Feel free to ask questions in [React UI Builder group](https://groups.google.com/forum/#!forum/react-ui-builder)
 or [Facebook React UI Builder group](https://www.facebook.com/groups/1668757740011916/)
