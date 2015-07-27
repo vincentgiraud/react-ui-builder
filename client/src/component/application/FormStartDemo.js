@@ -74,6 +74,9 @@ var FormStart = React.createClass({
                             React components for your web app.
                         </p>
                         <p>
+                            Before you continue please watch <a href="https://www.youtube.com/watch?v=yycaq9qv7us&feature=youtu.be" target="_blank">Short Tutorial</a>
+                        </p>
+                        <p>
                             To obtain full version and description how to use the tool please go to <a
                             href="https://github.com/ipselon/react-ui-builder">GitHub</a>.
                         </p>
