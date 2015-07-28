@@ -26,7 +26,7 @@ And finally, you can publish your own project into the gallery.
 
 Before you continue reading, please, watch this [Short Tutorial](https://www.youtube.com/watch?v=yycaq9qv7us&feature=youtu.be) about how to create components in the builder.
 
-Or whatch this more advanced
+Or watch this more advanced
 [Long Tutorial](https://www.youtube.com/watch?v=5nqOFSjXKPI) 
 
 Feel free to ask questions in [React UI Builder group](https://groups.google.com/forum/#!forum/react-ui-builder)
