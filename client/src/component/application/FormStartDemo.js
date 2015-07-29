@@ -105,8 +105,8 @@ var FormStart = React.createClass({
                                     </Col>
                                     <Col xs={12} md={6} sm={6} lg={6}>
                                         <div style={{position: 'relative', width: '25em', height: '2em', padding: '0.3em'}}>
-                                            <div style={{position: 'absolute', top: '0.3em', right: '8.1em'}}>If you like it:</div>
-                                            <div style={{position: 'absolute', right: '0px', 'top': '0.1em'}}>
+                                            <div style={{position: 'absolute', top: '0.3em', right: '9.1em'}}>If you like it:</div>
+                                            <div style={{position: 'absolute', right: '1em', 'top': '0.1em'}}>
                                                 <a className="github-button" href="https://github.com/ipselon/react-ui-builder"
                                                    data-icon="octicon-star" data-count-href="/ipselon/react-ui-builder/stargazers"
                                                    data-count-api="/repos/ipselon/react-ui-builder#stargazers_count"
@@ -114,6 +114,13 @@ var FormStart = React.createClass({
                                                    aria-label="Star ipselon/react-ui-builder on GitHub">Star</a>
                                             </div>
                                         </div>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col xs={12}>
+                                        <hr/>
+                                        <h4 className='text-center'><strong>If you find it's reasonable to support us</strong></h4>
+                                        <h4 className='text-center'>please, be our patron on&nbsp;<a href='https://www.patreon.com/ipselon?ty=h'>Patreon</a></h4>
                                     </Col>
                                 </Row>
                             </Grid>
