@@ -9,6 +9,8 @@ var ListGroup = ReactBootstrap.ListGroup;
 var ListGroupItem = ReactBootstrap.ListGroupItem;
 var Badge = ReactBootstrap.Badge;
 var PanelGroup = ReactBootstrap.PanelGroup;
+var Popover = ReactBootstrap.Popover;
+var OverlayTrigger = ReactBootstrap.OverlayTrigger;
 
 var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
 var PanelAvailableComponentsActions = require('../../action/panel/PanelAvailableComponentsActions.js');
@@ -59,6 +61,7 @@ var PanelAvailableComponentItem = React.createClass({
 
                     }
                     var label = variant.variantName ? variant.variantName : ('Variant #' + index);
+                    var iFrame = <iframe src="http://umyproto.com" frameborder="0" style={{width: '100px', height: '100px'}}></iframe>
                     variantListItems.push(
                         <li style={style}>
                             <div style={{width: '10em'}}>
@@ -66,7 +69,9 @@ var PanelAvailableComponentItem = React.createClass({
                                     {label}
                                 </a>
                             </div>
-                            <small style={{position: 'absolute', right: '0.3em', top: '0.3em'}} className='fa fa-gears text-muted'></small>
+                            <OverlayTrigger trigger='click' placement='right' overlay={<Popover title='Popover bottom'>{iFrame}</Popover>}>
+                                <small style={{position: 'absolute', right: '0.3em', top: '0.3em'}} className='fa fa-gears text-muted'></small>
+                            </OverlayTrigger>
                         </li>
                     );
                 }.bind(this));
