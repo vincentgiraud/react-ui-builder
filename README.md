@@ -2,6 +2,7 @@ Description
 -----------
 
 [![Join the chat at https://gitter.im/ipselon/react-ui-builder](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ipselon/react-ui-builder?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+&nbsp;&nbsp;&nbsp;&nbsp;We need support, be our patron: [React UI Builder on Patreon](https://www.patreon.com/ipselon?ty=h)
 
 This tool is a visual builder of React JS components for your web application. 
 In builder you can easily combine available components with each other, and see how they look and feel right on a web page.
@@ -28,11 +29,6 @@ Demo
 ----
 
 [On-line demo for builder](http://umyproto.com/react-ui-builder/)
-
-Project needs support
----------------------
-
-Be our patron: [React UI Builder on Patreon](https://www.patreon.com/ipselon?ty=h)
 
 
 Table of Contents
