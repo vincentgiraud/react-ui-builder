@@ -2,7 +2,6 @@ Description
 -----------
 
 [![Join the chat at https://gitter.im/ipselon/react-ui-builder](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ipselon/react-ui-builder?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-&nbsp;&nbsp;&nbsp;&nbsp;We need support, be our patron: [React UI Builder on Patreon](https://www.patreon.com/ipselon?ty=h)
 
 This tool is a visual builder of React JS components for your web application. 
 In builder you can easily combine available components with each other, and see how they look and feel right on a web page.
@@ -24,6 +23,10 @@ and download source code of the project into specified local folder. And finally
 
 Before you continue reading, please, watch this [Short Tutorial](https://www.youtube.com/watch?v=yycaq9qv7us&feature=youtu.be),
 or watch this more advanced [Long Tutorial](https://www.youtube.com/watch?v=5nqOFSjXKPI) 
+
+We need support
+---------------
+**Be our patron: [React UI Builder on Patreon](https://www.patreon.com/ipselon?ty=h)**
 
 Demo
 ----
