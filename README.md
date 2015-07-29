@@ -5,8 +5,7 @@ Description
 
 This tool is a visual builder of React JS components for your web application. 
 In builder you can easily combine available components with each other, and see how they look and feel right on a web page.
-Then you can generate a source code of new component from the combination, and builder will include all children and dependencies.
-Moreover you can generate Reflux actions/store for your component.
+Then you can generate a source code of new component from the combination. Moreover, you can generate Reflux actions/store for your component.
 
 The source code of newly created component can be edited right in the builder or in your favorite IDE it doesn't matter for builder, 
 the source code will be automatically compiled and reloaded in builder's pages.
@@ -20,22 +19,21 @@ builder can download bootstrap project from a gallery of published projects. The
 libraries of components, and other helpful things like css/less/fonts files or webpack predefined configurations, etc.
 
 You can access the projects gallery right from the builder, also you can preview pages with components in selected project, 
-and download source code of the project into specified local folder. 
+and download source code of the project into specified local folder. And finally, you can publish your own project into the gallery.
 
-And finally, you can publish your own project into the gallery.
-
-Before you continue reading, please, watch this [Short Tutorial](https://www.youtube.com/watch?v=yycaq9qv7us&feature=youtu.be) about how to create components in the builder.
-
-Or watch this more advanced
-[Long Tutorial](https://www.youtube.com/watch?v=5nqOFSjXKPI) 
-
-Feel free to ask questions in [React UI Builder group](https://groups.google.com/forum/#!forum/react-ui-builder)
-or [Facebook React UI Builder group](https://www.facebook.com/groups/1668757740011916/)
+Before you continue reading, please, watch this [Short Tutorial](https://www.youtube.com/watch?v=yycaq9qv7us&feature=youtu.be),
+or watch this more advanced [Long Tutorial](https://www.youtube.com/watch?v=5nqOFSjXKPI) 
 
 Demo
 ----
 
 [On-line demo for builder](http://umyproto.com/react-ui-builder/)
+
+Project needs support
+---------------------
+
+Be our patron: [React UI Builder on Patreon](https://www.patreon.com/ipselon?ty=h)
+
 
 Table of Contents
 -----------------
@@ -269,9 +267,7 @@ To publish project into the Gallery you have to create an account. Find in navig
 Now you are eligible to publish projects into gallery. To do this, please open your project, go to main menu (left side bar) and select 'Publish project' option.
 
 
-
-
-    
-> About bugs or if you have any ideas please write to [Facebook React UI Builder group](https://www.facebook.com/groups/1668757740011916/) or [React UI Builder group](https://groups.google.com/forum/#!forum/react-ui-builder)
+Feel free to ask questions in [React UI Builder group](https://groups.google.com/forum/#!forum/react-ui-builder)
+or [Facebook React UI Builder group](https://www.facebook.com/groups/1668757740011916/)
 
 
