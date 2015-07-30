@@ -65,11 +65,11 @@ var PanelAvailableComponentItem = React.createClass({
                     variantListItems.push(
                         <li style={style}>
                             <div style={{width: '10em'}}>
-                                <a href="#" onClick={this._handleDefaultIndexSelect} data-index={index}>
+                                <p onClick={this._handleDefaultIndexSelect} style={{cursor: 'pointer'}} data-index={index}>
                                     {label}
-                                </a>
+                                </p>
                             </div>
-                            <OverlayTrigger trigger='click' placement='right' overlay={<Popover title='Popover bottom'>{iFrame}</Popover>}>
+                            <OverlayTrigger trigger='focus' placement='right' overlay={<Popover title='Popover bottom'>{iFrame}</Popover>}>
                                 <small style={{position: 'absolute', right: '0.3em', top: '0.3em'}} className='fa fa-gears text-muted'></small>
                             </OverlayTrigger>
                         </li>

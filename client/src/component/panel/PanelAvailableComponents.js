@@ -70,7 +70,7 @@ var PanelAvailableComponents = React.createClass({
                 });
                 var key = '' + ++groupHeaderKey;
                 libGroups.push(
-                    <Panel collapsable header={groupName} eventKey={key} key={'group' + groupName + counter}>
+                    <Panel collapsible header={groupName} eventKey={key} key={'group' + groupName + counter}>
                         <ListGroup fill>
                             {components}
                         </ListGroup>
