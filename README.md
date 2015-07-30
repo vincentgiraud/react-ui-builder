@@ -67,7 +67,7 @@ Roadmap
 * Gallery will provide comfortable viewing of the notes for components (see previous item).
 * Developer should be able to add Readme to the project boilerplate in the gallery.
 * Developer should be able to create projects in the builder from existing source code, and not only from gallery.
-* Enchancing code generation:
+* Enhancing code generation:
   * the source code in ES6 format
   * generate event handler functions for component
   * copy component's source code
