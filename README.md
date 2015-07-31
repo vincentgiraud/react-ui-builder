@@ -18,7 +18,7 @@ React UI Builder on Patreon
 ---------------------------
 If you think that the builder is worth to be developed further become our patron: [Page on Patreon](https://www.patreon.com/ipselon?ty=h)
 
-Find our patrons [here](https://github.com/ipselon/react-ui-builder/blob/master/PATRONS.md)
+Find our patrons [here](https://github.com/ipselon/react-ui-builder/blob/master/PATRONS.md) (2)
 
 Features
 --------
