@@ -177,7 +177,7 @@ var ToolbarTop = React.createClass({
     _handleCurrentPageNameChange: function(e){
         e.stopPropagation();
         e.preventDefault();
-        var inputValue = this.refs.currentPageNameInput.getDOMNode().value;
+        var inputValue = React.findDOMNode(this.refs.currentPageNameInput).value;
         if(!inputValue || inputValue.length == 0){
             this._backupInputValue = this.state.currentPageName;
             ToolbarTopActions.currentPageNameChange(inputValue);
