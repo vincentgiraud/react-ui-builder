@@ -3,7 +3,7 @@
 var _ = require('underscore');
 var Reflux = require('reflux');
 var Server = require('../../api/Server.js');
-var ModalFileListUploadTriggerActions = require('../../action/modal/ModalFileListUploadTriggerActions.js');
+var ModalFileListUploadActions = require('../../action/modal/ModalFileListUploadActions.js');
 
 var defaultModel = {
     isModalOpen: false
@@ -14,9 +14,9 @@ var mandatoryFiles = ['.builder'];
 
 var builderConfig = {};
 
-var ModalFileListUploadTriggerStore = Reflux.createStore({
+var ModalFileListUploadStore = Reflux.createStore({
     model: defaultModel,
-    listenables: ModalFileListUploadTriggerActions,
+    listenables: ModalFileListUploadActions,
 
     onShowModal: function(){
         if(!this.model.isModalOpen){
@@ -138,4 +138,4 @@ var ModalFileListUploadTriggerStore = Reflux.createStore({
     }
 });
 
-module.exports = ModalFileListUploadTriggerStore;
+module.exports = ModalFileListUploadStore;

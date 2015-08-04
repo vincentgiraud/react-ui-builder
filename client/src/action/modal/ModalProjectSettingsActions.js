@@ -2,11 +2,11 @@
 
 var Reflux = require('reflux');
 
-var ModalProjectSettingsTriggerActions = Reflux.createActions([
+var ModalProjectSettingsActions = Reflux.createActions([
     'showModal',
     'saveSettings',
     'hideModal',
     'toggleModal'
 ]);
 
-module.exports = ModalProjectSettingsTriggerActions;
+module.exports = ModalProjectSettingsActions;

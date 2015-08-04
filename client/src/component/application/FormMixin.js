@@ -1,19 +1,19 @@
 'use strict';
 
-var ModalProgressTriggerActions = require('../../action/modal/ModalProgressTriggerActions.js');
+var ModalProgressActions = require('../../action/modal/ModalProgressActions.js');
 
 var FormMixin = {
 
     _showModalProgress: function(message, delay){
-        ModalProgressTriggerActions.showModalProgress(message, delay);
+        ModalProgressActions.showModalProgress(message, delay);
     },
 
     _showModalMessageArray: function(message){
-        ModalProgressTriggerActions.showModalMessageArray(message);
+        ModalProgressActions.showModalMessageArray(message);
     },
 
     _hideModalProgress: function(){
-        ModalProgressTriggerActions.hideModalProgress();
+        ModalProgressActions.hideModalProgress();
     }
 };
 

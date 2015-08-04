@@ -3,7 +3,7 @@
 var _ = require('underscore');
 var Reflux = require('reflux');
 var ApplicationActions = require('../../action/application/ApplicationActions.js');
-var ModalProgressTriggerActions = require('../../action/modal/ModalProgressTriggerActions.js');
+var ModalProgressActions = require('../../action/modal/ModalProgressActions.js');
 var PanelAvailableComponentsActions = require('../../action/panel/PanelAvailableComponentsActions.js');
 var Server = require('../../api/Server.js');
 var docCookie = require('../../api/cookies.js');
@@ -133,7 +133,7 @@ var ApplicationStore = Reflux.createStore({
         }
         if(dirPath) {
             //
-            ModalProgressTriggerActions.showModalProgress('Project is being compiled and loaded. Please wait...', 400);
+            ModalProgressActions.showModalProgress('Project is being compiled and loaded. Please wait...', 400);
             //
             Server.invoke('prepareLocalProject', {dirPath: dirPath},
                 function(errors){
@@ -195,7 +195,7 @@ var ApplicationStore = Reflux.createStore({
     },
 
     onPreviewProject: function(projectId){
-        ModalProgressTriggerActions.showModalProgress('Preparing preview. Please wait...', 300);
+        ModalProgressActions.showModalProgress('Preparing preview. Please wait...', 300);
         Server.invoke('preparePreview', {projectId: projectId},
             function (errors) {
                 this.onGoToErrors(errors);
@@ -225,7 +225,7 @@ var ApplicationStore = Reflux.createStore({
         }
         if(dirPath){
             this.model.downloadProjectDirPath = options.dirPath;
-            ModalProgressTriggerActions.showModalProgress('npm modules are being installed. Please wait, it will take some time...', 400);
+            ModalProgressActions.showModalProgress('npm modules are being installed. Please wait, it will take some time...', 400);
             Server.invoke('downloadProject',
                 {
                     dirPath: options.dirPath,

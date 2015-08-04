@@ -7,6 +7,7 @@ var Server = require('../../api/Server.js');
 var PanelAvailableComponentsActions = require('../../action/panel/PanelAvailableComponentsActions.js');
 var Repository = require('../../api/Repository.js');
 var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
+var PopoverComponentVariantActions = require('../../action/element/PopoverComponentVariantActions.js');
 
 var defaultsIndexMap = {};
 
@@ -21,6 +22,7 @@ var PanelAvailableComponentsStore = Reflux.createStore({
     },
 
     onRefreshComponentList: function(){
+        //PopoverComponentVariantActions.hide();
         this.trigger(this.getModel());
     },
 
@@ -28,6 +30,7 @@ var PanelAvailableComponentsStore = Reflux.createStore({
         this.model.selectedComponentId = componentId;
 
         this.model.componentDefaults = [];
+        //PopoverComponentVariantActions.hide();
 
         Server.invoke('loadComponentDefaults', {componentName: componentId},
             function(err){
@@ -46,20 +49,21 @@ var PanelAvailableComponentsStore = Reflux.createStore({
                     });
                 }
                 this.model.defaultsIndex = 0;
-                this.copyToClipboard(this.model.componentDefaults[this.model.defaultsIndex]);
                 Server.invoke('saveComponentDefaults',
                     {
                         componentName: componentId,
                         componentOptions: this.model.componentDefaults[0]
                     },
                     function(err){
-                        console.error(JSON.stringify(err));
+                        //console.error(JSON.stringify(err));
                     },
                     function(response){
                         // do nothing
                     }
                 );
-                //
+
+                this.copyToClipboard(this.model.componentDefaults[this.model.defaultsIndex]);
+
             }.bind(this),
             function(response){
                 this.model.componentDefaults = response.model;
@@ -68,26 +72,35 @@ var PanelAvailableComponentsStore = Reflux.createStore({
                     defaultsIndex = 0;
                     defaultsIndexMap[componentId] = defaultsIndex;
                 }
-                //
+
                 this.model.defaultsIndex = defaultsIndex;
                 // some defaults don't have type value
                 this.model.componentDefaults[defaultsIndex].type = componentId;
-                //
+
                 this.copyToClipboard(this.model.componentDefaults[defaultsIndex]);
-                //
+
             }.bind(this)
         );
     },
 
-    onSelectComponentItemDefaultsIndex: function(componentId, index){
-        defaultsIndexMap[componentId] = index;
-        this.model.defaultsIndex = index;
-        this.copyToClipboard(this.model.componentDefaults[index]);
-        this.trigger(this.model);
+    onSelectComponentItemDefaultsIndex: function(componentId, index, previewOptions){
+        if(previewOptions.showPreview === true){
+            PopoverComponentVariantActions.show({
+                top: previewOptions.top,
+                left: previewOptions.left,
+                outerWidth: previewOptions.outerWidth
+            });
+        } else {
+            defaultsIndexMap[componentId] = index;
+            this.model.defaultsIndex = index;
+            this.copyToClipboard(this.model.componentDefaults[index]);
+            //PopoverComponentVariantActions.hide();
+        }
     },
 
     onDeselectComponentItem: function(){
         this.model.selectedComponentId = null;
+        //PopoverComponentVariantActions.hide();
         this.trigger(this.model);
     },
 

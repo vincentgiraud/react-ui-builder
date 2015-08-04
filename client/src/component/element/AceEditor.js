@@ -16,7 +16,7 @@ var AceEditor = React.createClass({
             this.editor.getSession().setTabSize(4);
             this.editor.$blockScrolling = Infinity;
 
-            //this.editor.setTheme("ace/theme/chrome");
+            //this.editor.setTheme("ace/theme/tomorrow_night");
         }
         if (sourceCode) {
             this.editor.getSession().setValue(sourceCode);

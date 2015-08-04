@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="x-ua-compatible" content="IE=10">
 
-        <link rel="stylesheet" href="assets/styles/uikit.min.css"/>
+        <link rel="stylesheet" href="assets/styles/uikit.gradient.min.css"/>
         <link rel="stylesheet" href="assets/styles/tooltip.min.css"/>
         <link rel="stylesheet" href="assets/styles/umyproto.deskpage.css"/>
         <script src="assets/js/jquery-2.1.3.min.js"></script>

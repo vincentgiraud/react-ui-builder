@@ -5,11 +5,14 @@ var React = require('react');
 var ReactBootstrap = require('react-bootstrap');
 var Collapse = ReactBootstrap.Collapse;
 
-var CollapsibleHorizontalDivider = React.createClass({
+var CollapsibleLabel = React.createClass({
 
     _handleToggle(e){
         e.preventDefault();
         e.stopPropagation();
+        if(this.props.onToggle){
+            this.props.onToggle();
+        }
         this.setState({open: !this.state.open});
     },
 
@@ -17,26 +20,29 @@ var CollapsibleHorizontalDivider = React.createClass({
         return {};
     },
 
+    getDefaultProps: function(){
+        return {
+            onToggle: null
+        }
+    },
+
     render(){
-        var caretClassName = 'fa fa-fw text-muted';
+        var caretClassName = 'fa text-muted';
         if(this.state.open === true){
             caretClassName += ' fa-caret-down';
         } else {
             caretClassName += ' fa-caret-right';
         }
         return (
-            <div {...this.props}>
-                <div style={{position: 'relative', width: '100%', height: '0', borderBottom: '1px solid #dddddd', margin: '1em 0 1em 0'}}>
-                    <span
-                        style={{position: 'absolute', top: '-0.5em', left: '0'}}
-                        className={caretClassName}>
-                    </span>
-                    <span
-                        style={{position: 'absolute', top: '-0.7em', left: '1.3em', padding: '0 .5em 0 0', cursor: 'pointer'}}
-                        className='text-muted' onClick={this._handleToggle}>
+            <div style={{position: 'relative'}}>
+                <div className={caretClassName}
+                     style={{position: "absolute", padding: "2px", top: "0", left: "-1em", cursor: 'pointer', width: '1.5em', height: '1.5em'}}>
+                </div>
+                <p style={{cursor: 'pointer'}} className='text-muted' onClick={this._handleToggle}>
+                    <span>
                         {this.props.title}
                     </span>
-                </div>
+                </p>
                 <Collapse in={this.state.open}>
                     <div ref='panel' style={{padding: '0', marginTop: '0'}}>
                         {this.props.children}
@@ -48,5 +54,5 @@ var CollapsibleHorizontalDivider = React.createClass({
 
 });
 
-module.exports = CollapsibleHorizontalDivider;
+module.exports = CollapsibleLabel;
 

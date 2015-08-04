@@ -14,43 +14,18 @@ var Col = ReactBootstrap.Col;
 var InputValue = require('../element/InputValue.js');
 var ProjectNameInput = require('../element/ProjectNameInput.js');
 var ProjectDescriptionInput = require('../element/ProjectDescriptionInput.js');
-var CollapsibleHorizontalDivider = require('../element/CollapsibleHorizontalDivider.js');
+var CollapsibleLabel = require('../element/CollapsibleLabel.js');
 
-var ModalFileListUploadTriggerActions = require('../../action/modal/ModalFileListUploadTriggerActions.js');
+var ModalFileListUploadStore = require('../../store/modal/ModalFileListUploadStore.js');
+var ModalFileListUploadActions = require('../../action/modal/ModalFileListUploadActions.js');
 var ApplicationActions = require('../../action/application/ApplicationActions.js');
 
 var ModalFileListUpload = React.createClass({
 
-    getInitialState: function(){
-        return {
-            dataList: this.props.dataList,
-            projectName: this.props.projectName,
-            projectDescription: this.props.projectDescription,
-            projectLicense: this.props.projectLicense
-        }
-    },
-
-    getDefaultProps: function () {
-        return {
-            onRequestHide: null
-        };
-    },
-
-    componentDidMount: function(){
-        var $domNode = $(React.findDOMNode(this));
-        $domNode.css({
-            'z-index': 1060
-        });
-        $domNode.find('.modal-dialog').addClass('modal-lg');
-    },
-
-    componentWillUnmount: function(){
-    },
-
     _handleUploadFiles: function(e){
         e.stopPropagation();
         e.preventDefault();
-        ModalFileListUploadTriggerActions.uploadFiles(
+        ModalFileListUploadActions.uploadFiles(
             {
                 files: this.state.dataList,
                 projectName: this.refs.projectNameInput.getValue(),
@@ -63,7 +38,7 @@ var ModalFileListUpload = React.createClass({
     _handleClose: function(e){
         e.stopPropagation();
         e.preventDefault();
-        ModalFileListUploadTriggerActions.hideModal();
+        ModalFileListUploadActions.hideModal();
     },
 
     _handleItemChange: function(e){
@@ -77,15 +52,35 @@ var ModalFileListUpload = React.createClass({
     _handleLoginForm: function(e){
         e.stopPropagation();
         e.preventDefault();
-        ModalFileListUploadTriggerActions.hideModal();
+        ModalFileListUploadActions.hideModal();
         ApplicationActions.goToSignInForm();
+    },
+
+    getInitialState: function () {
+        return ModalFileListUploadStore.model;
+    },
+
+    onModelChange: function(model) {
+        this.setState(model);
+    },
+    componentDidMount: function() {
+        this.unsubscribe = ModalFileListUploadStore.listen(this.onModelChange);
+    },
+    componentWillUnmount: function() {
+        this.unsubscribe();
+    },
+
+    getDefaultProps: function () {
+        return {
+            onHide: function(){/* do nothing */}
+        };
     },
 
     render: function(){
 
         var alerts = [];
-        if(this.props.errors && this.props.errors){
-            this.props.errors.map(function(error, index){
+        if(this.state.errors && this.state.errors){
+            this.state.errors.map(function(error, index){
                 alerts.push(
                     <p className='text-danger' key={'error' + index}><strong>{JSON.stringify(error)}</strong></p>
                 );
@@ -94,7 +89,7 @@ var ModalFileListUpload = React.createClass({
         }
         var modalContent = null;
         var modalFooter = null;
-        if(this.props.stage === 'chooseFiles'){
+        if(this.state.stage === 'chooseFiles'){
             modalContent = (
             <Grid fluid={true}>
                 <Row>
@@ -106,14 +101,14 @@ var ModalFileListUpload = React.createClass({
                             type='text'
                             value={this.state.projectLicense}
                             label='License:' placeholder='MIT'/>
-                        <CollapsibleHorizontalDivider title='Legal stuff'>
+                        <CollapsibleLabel title='Legal stuff'>
                             <div style={{padding: '0.5em'}}>
                                 <p>Data published to the React UI Builder gallery is not part of React UI Builder itself,
                                     and is the sole property of the publisher.</p>
                                 <p>Any data published to the React UI Builder gallery (including user account information)
                                     may be removed or modified at the sole discretion of the UMyProto Team administration.</p>
                             </div>
-                        </CollapsibleHorizontalDivider>
+                        </CollapsibleLabel>
                     </Col>
                     <Col xs={5} md={5} sm={5} lg={5}>
                         <p style={{borderBottom: '1px solid #cdcdcd', width: '100%'}}><strong>Files:</strong></p>
@@ -142,44 +137,55 @@ var ModalFileListUpload = React.createClass({
             </Grid>
             );
             modalFooter = (
-                <div className="modal-footer">
+                <div>
                     {alerts.length > 0 ? null : <Button onClick={this._handleUploadFiles} bsStyle="primary">Upload files</Button>}
                     <Button onClick={this._handleClose}>Cancel</Button>
                 </div>
             );
-        } else if(this.props.stage === 'uploadingFiles') {
+        } else if(this.state.stage === 'uploadingFiles') {
             modalContent = (
                 <h5>Uploading files please wait ...</h5>
             );
-        } else if(this.props.stage === 'uploadingEnd'){
+        } else if(this.state.stage === 'uploadingEnd'){
             modalContent = (
                 <h5>Project is uploaded successfully. Please go to gallery to check.</h5>
             );
             modalFooter = (
-                <div className="modal-footer">
+                <div>
                     <Button onClick={this._handleClose}>Close</Button>
                 </div>
             );
-        } else if(this.props.stage === 'serverConnectionError'){
+        } else if(this.state.stage === 'serverConnectionError'){
             modalContent = (
                 <h5>Error connection with server. If you are not authenticated, please sign in on &nbsp;
                     <a href='#' onClick={this._handleLoginForm}>this form</a>
                 </h5>
             );
             modalFooter = (
-                <div className="modal-footer">
+                <div>
                     <Button onClick={this._handleClose}>Close</Button>
                 </div>
             );
         }
 
         return (
-            <Modal {...this.props} title='Uploading project files to gallery' animation={true} backdrop={false}>
-                <div className="modal-body">
+            <Modal show={this.state.isModalOpen}
+                   onHide={this.props.onHide}
+                   dialogClassName='umy-modal-overlay'
+                   backdrop={true}
+                   keyboard={true}
+                   bsSize='large'
+                   animation={true}>
+                <Modal.Header closeButton={false}>
+                    <Modal.Title>Uploading project files to gallery</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
                     {alerts}
                     {modalContent}
-                </div>
-                {modalFooter}
+                </Modal.Body>
+                <Modal.Footer>
+                    {modalFooter}
+                </Modal.Footer>
             </Modal>
         );
     }

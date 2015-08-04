@@ -2,15 +2,15 @@
 
 var Reflux = require('reflux');
 var Server = require('../../api/Server.js');
-var ModalProjectSettingsTriggerActions = require('../../action/modal/ModalProjectSettingsTriggerActions.js');
+var ModalProjectSettingsActions = require('../../action/modal/ModalProjectSettingsActions.js');
 
 var defaultModel = {
     isModalOpen: false
 };
 
-var ModalProjectSettingsTriggerStore = Reflux.createStore({
+var ModalProjectSettingsStore = Reflux.createStore({
     model: defaultModel,
-    listenables: ModalProjectSettingsTriggerActions,
+    listenables: ModalProjectSettingsActions,
 
     onShowModal: function(){
         if(!this.model.isModalOpen){
@@ -62,4 +62,4 @@ var ModalProjectSettingsTriggerStore = Reflux.createStore({
     }
 });
 
-module.exports = ModalProjectSettingsTriggerStore;
+module.exports = ModalProjectSettingsStore;

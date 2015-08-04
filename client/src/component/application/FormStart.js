@@ -14,7 +14,6 @@ var Input = ReactBootstrap.Input;
 var ListGroup = ReactBootstrap.ListGroup;
 var ListGroupItem = ReactBootstrap.ListGroupItem;
 
-var ModalProgressTrigger = require('../modal/ModalProgressTrigger.js');
 var FormMixin = require('./FormMixin.js');
 
 var ApplicationActions = require('../../action/application/ApplicationActions.js');
@@ -66,7 +65,7 @@ var FormStart = React.createClass({
                 );
             }
             recentProjectsPanel = (
-                <Panel header={ <h4><span>Recent local projects</span></h4> }>
+                <Panel header='Recent local projects'>
                     <ListGroup fill={true} style={{ height: '9em', overflow: 'auto' }}>
                         {dirPathLinks}
                     </ListGroup>

@@ -1,7 +1,9 @@
 'use strict';
 
 // third-party libs
-require('../lib/bootstrap/css/yeti/bootstrap.min.css');
+//require('../lib/bootstrap/css/yeti/bootstrap.min.css');
+//require('../lib/bootstrap/css/slate/bootstrap.min.css');
+require('../lib/bootstrap/css/custom/bootstrap.css');
 require('../lib/bootstrap/js/bootstrap.min.js');
 require('../lib/font-awesome/css/font-awesome.min.css');
 require('../lib/slider/css/bootstrap-slider.min.css');
@@ -20,23 +22,20 @@ var Server = require('./api/Server.js');
 var Application = require('./component/application/Application.js');
 var ApplicationActions = require('./action/application/ApplicationActions.js');
 
-$(document).ready(function(){
+var user = docCookie.getItem("umyproto-react-builder-user");
+var pass = docCookie.getItem("umyproto-react-builder-pass");
 
-    var user = docCookie.getItem("umyproto-react-builder-user");
-    var pass = docCookie.getItem("umyproto-react-builder-pass");
+plugins.init();
 
-    plugins.init();
-
-    React.render(<Application/>, document.body, function(){
-        ApplicationActions.refreshServerInfo({user: user, pass: pass});
-    });
-
-    Server.init({io: window.io, serverHost: window.location.hostname});
-
-    window.onbeforeunload = function(e) {
-        ApplicationActions.stopAutosaveProjectModel();
-
-    };
-
+React.render(<Application/>, document.getElementById('content'), function(){
+    ApplicationActions.refreshServerInfo({user: user, pass: pass});
 });
+
+Server.init({io: window.io, serverHost: window.location.hostname});
+
+window.onbeforeunload = function(e) {
+    ApplicationActions.stopAutosaveProjectModel();
+
+};
+
 

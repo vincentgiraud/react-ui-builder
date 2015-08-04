@@ -8,15 +8,15 @@ var Server = require('../../api/Server.js');
 var Repository = require('../../api/Repository.js');
 var Common = require('../../api/Common.js');
 var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
-var ModalComponentEditorTriggerActions = require('../../action/modal/ModalComponentEditorTriggerActions.js');
+var ModalComponentEditorActions = require('../../action/modal/ModalComponentEditorActions.js');
 
 var defaultModel = {
     isModalOpen: false
 };
 
-var ModalComponentEditorTriggerStore = Reflux.createStore({
+var ModalComponentEditorStore = Reflux.createStore({
     model: defaultModel,
-    listenables: ModalComponentEditorTriggerActions,
+    listenables: ModalComponentEditorActions,
 
     onShowModal: function(options){
         if(!this.model.isModalOpen){
@@ -47,6 +47,7 @@ var ModalComponentEditorTriggerStore = Reflux.createStore({
                 this.model.componentGroup = componentTypeValue.group;
                 //
                 this.model.isModalOpen = true;
+                this.model.showTextEditor = !!this.model.componentText;
                 //
                 if(!componentTypeValue.value || componentTypeValue.value.type === 'Reference'){
                     //
@@ -256,4 +257,4 @@ var ModalComponentEditorTriggerStore = Reflux.createStore({
 
 });
 
-module.exports = ModalComponentEditorTriggerStore;
+module.exports = ModalComponentEditorStore;

@@ -4,6 +4,7 @@ var _ = require('underscore');
 var Repository = require('./Repository.js');
 var Common = require('./Common.js');
 var DeskPageFrameActions = require('../action/desk/DeskPageFrameActions.js');
+var ModalQuickActionComponent = require('../action/modal/ModalQuickActionComponentActions.js');
 
 var Overlays = {
 
@@ -23,7 +24,9 @@ var Overlays = {
                 icon: 'umyproto-icon-caret-down',
                 btnClass: labelClass,
                 menu: [
-                    {label: 'Test Dropdown', onClick: function(){alert('Clicked on test dropdown!!!');}}
+                    {label: 'Show Modal', onClick: function(){
+                        ModalQuickActionComponent.show({selectedUmyId: domNodeId});
+                    }}
                 ]
             });
         overlayModel.buttons.push(
@@ -159,7 +162,7 @@ var Overlays = {
                 },
                 {
                     label: 'Before',
-                    tooltip: 'Add component in clipboard before selected one',
+                    tooltip: 'Add component from clipboard before selected one',
                     onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
@@ -170,7 +173,7 @@ var Overlays = {
                 },
                 {
                     label: 'First',
-                    tooltip: 'Insert component in clipboard into selected one as the first child component',
+                    tooltip: 'Insert component from clipboard into selected one as the first child component',
                     onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
@@ -181,7 +184,7 @@ var Overlays = {
                 },
                 {
                     label: 'Wrap',
-                    tooltip: 'Wrap selected component with component in clipboard',
+                    tooltip: 'Wrap selected component with component from clipboard',
                     onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
@@ -192,7 +195,7 @@ var Overlays = {
                 },
                 {
                     label: 'Replace',
-                    tooltip: 'Replace selected component with component in clipboard',
+                    tooltip: 'Replace selected component with component from clipboard',
                     onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
@@ -203,7 +206,7 @@ var Overlays = {
                 },
                 {
                     label: 'Last',
-                    tooltip: 'Insert component in clipboard into selected one as the last child component',
+                    tooltip: 'Insert component from clipboard into selected one as the last child component',
                     onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
@@ -214,7 +217,7 @@ var Overlays = {
                 },
                 {
                     label: 'After',
-                    tooltip: 'Add component in clipboard after selected one',
+                    tooltip: 'Add component from clipboard after selected one',
                     onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();

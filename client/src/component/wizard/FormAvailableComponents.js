@@ -5,22 +5,25 @@ var React = require('react');
 var ReactBootstrap = require('react-bootstrap');
 var Button = ReactBootstrap.Button;
 var Panel = ReactBootstrap.Panel;
+var Input = ReactBootstrap.Input;
 var ListGroup = ReactBootstrap.ListGroup;
 var ListGroupItem = ReactBootstrap.ListGroupItem;
 var Badge = ReactBootstrap.Badge;
 var PanelGroup = ReactBootstrap.PanelGroup;
-var Input = ReactBootstrap.Input;
 
 var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
 var PanelAvailableComponentsActions = require('../../action/panel/PanelAvailableComponentsActions.js');
 var PanelAvailableComponentsStore = require('../../store/panel/PanelAvailableComponentsStore.js');
 var ModalVariantsTriggerActions = require('../../action/modal/ModalVariantsTriggerActions.js');
 var Repository = require('../../api/Repository.js');
-var PanelAvailableComponentItem = require('./PanelAvailableComponentItem.js');
-var PopoverComponentVariantActions = require('../../action/element/PopoverComponentVariantActions.js');
 
-var PanelAvailableComponents = React.createClass({
+var FormAvailableComponents = React.createClass({
 
+    _handleClick: function(e){
+        e.preventDefault();
+        e.stopPropagation();
+
+    },
 
     _handleChangeFind: function(e){
         var value = this.refs.inputElement.getValue();
@@ -36,27 +39,28 @@ var PanelAvailableComponents = React.createClass({
         this.setState({ filter: '' });
     },
 
-    _getGroupItem: function(options){
+    _createListItem: function(componentId, counter){
+        var componentName = componentId;
+        if(componentName.length > 20){
+            componentName = componentName.substr(0, 20) + '...';
+        }
         return (
-            <PanelAvailableComponentItem key={'item' + options.componentId + options.counter}
-                                         defaultsIndex={this.state.defaultsIndex}
-                                         defaults={this.state.componentDefaults}
-                                         componentId={options.componentId}
-                                         selected={this.state.selectedComponentId === options.componentId}
-                                         componentName={options.componentId}/>
+            <ListGroupItem key={'item' + componentId + counter} style={{position: 'relative', cursor: 'pointer'}} onClick={this._handleClick}>
+                <span>{componentName}</span>
+                <Button bsSize='xsmall' bsStyle='default' style={{position: 'absolute', right: '1em', top: '0.5em'}}>
+                    Variants...
+                </Button>
+            </ListGroupItem>
         );
+
     },
 
-    getInitialState: function () {
-        return PanelAvailableComponentsStore.getModel();
-    },
-
-    onModelChange: function (model) {
-        this.setState(model);
+    getInitialState: function(){
+        return {
+        }
     },
 
     componentDidMount: function () {
-        this.unsubscribe = PanelAvailableComponentsStore.listen(this.onModelChange);
         $(React.findDOMNode(this)).find('.panel-body').remove();
     },
 
@@ -64,21 +68,14 @@ var PanelAvailableComponents = React.createClass({
         $(React.findDOMNode(this)).find('.panel-body').remove();
     },
 
-    componentWillUpdate: function(nextProps, nextState){
-        PopoverComponentVariantActions.hide();
-    },
-
-    componentWillUnmount: function () {
-        this.unsubscribe();
-    },
-
     render: function(){
-        var style = {
+        var panelStyle = {
             position: 'relative',
-            width: '100%'
+            height: '30em',
+            overflow: 'auto'
         };
 
-        var componentTreeModel = this.state.itemsTree;
+        var componentTreeModel = this.props.itemsTree;
         var libGroups = [];
         var groupHeaderKey = 0;
         var componentsWithNoGroup = [];
@@ -91,30 +88,19 @@ var PanelAvailableComponents = React.createClass({
                     if(_filter){
                         if(componentId.toUpperCase().indexOf(_filter) >= 0){
                             components.push(
-                                this._getGroupItem({
-                                    counter: counter,
-                                    componentId: componentId
-                                })
+                                this._createListItem(componentId, counter)
                             );
                         }
                     } else {
                         components.push(
-                            this._getGroupItem({
-                                counter: counter,
-                                componentId: componentId
-                            })
+                            this._createListItem(componentId, counter)
                         );
                     }
-
                 }.bind(this));
                 var key = '' + ++groupHeaderKey;
                 if(components.length > 0){
-                    var keySuffix = _filter ? '12' : '0';
                     libGroups.push(
-                        <Panel collapsible={!_filter}
-                               header={groupName}
-                               eventKey={key}
-                               key={'group' + groupName + counter + keySuffix}>
+                        <Panel collapsible={false} header={groupName} eventKey={key} key={'group' + groupName + counter}>
                             <ListGroup fill>
                                 {components}
                             </ListGroup>
@@ -123,22 +109,15 @@ var PanelAvailableComponents = React.createClass({
                     );
                 }
             } else {
-                //console.log("This filter state: " + this.state.filter);
                 if(_filter){
-                    if(groupName.toUpperCase().indexOf(_filter) >= 0){
+                    if(groupName.toUpperCase().indexOf(_filter) >= 0) {
                         componentsWithNoGroup.push(
-                            this._getGroupItem({
-                                counter: counter,
-                                componentId: groupName
-                            })
+                            this._createListItem(groupName, counter)
                         );
                     }
                 } else {
                     componentsWithNoGroup.push(
-                        this._getGroupItem({
-                            counter: counter,
-                            componentId: groupName
-                        })
+                        this._createListItem(groupName, counter)
                     );
                 }
             }
@@ -154,21 +133,21 @@ var PanelAvailableComponents = React.createClass({
             );
         }
 
-
         return (
-            <div style={{overflow: 'hidden', paddingTop: '5px'}}>
+            <div style={{overflow: 'hidden', padding: '0.5em'}}>
                 <Input
                     ref='inputElement'
                     type={ 'text'}
-                    placeholder={ 'Find...'}
                     value={this.state.filter}
+                    placeholder={ 'Find...'}
                     onChange={this._handleChangeFind}
                     buttonAfter={ <Button onClick={this._handleClearFind}
                                           bsStyle={ 'default'}>
                                     <span className={ 'fa fa-times'}></span>
                                   </Button>
                                 }/>
-                <div ref='container' style={style}>
+
+                <div ref='container' style={panelStyle}>
                     <PanelGroup ref='panelGroup'>
                         {libGroups}
                     </PanelGroup>
@@ -179,4 +158,4 @@ var PanelAvailableComponents = React.createClass({
 
 });
 
-module.exports = PanelAvailableComponents;
+module.exports = FormAvailableComponents;

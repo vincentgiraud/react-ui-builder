@@ -97,7 +97,7 @@ var PanelComponentsHierarchy = React.createClass({
             <div style={style}>
                 <Button bsSize='xsmall'
                         style={
-                            {padding: '0.2em', position: 'absolute', top: '-1.5em', left: '1em', width: '2em', height: '2em', zIndex: '1050'}
+                            {padding: '0.2em', position: 'absolute', top: '-1.5em', left: '1em', width: '2em', height: '2em', zIndex: '1030'}
                         } onClick={DeskAction.toggleComponentsHierarchy}>
                     <span className='fa fa-times fa-fw'></span>
                 </Button>

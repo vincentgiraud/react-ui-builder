@@ -9,7 +9,6 @@ var Alert = ReactBootstrap.Alert;
 var Button = ReactBootstrap.Button;
 var Input = ReactBootstrap.Input;
 
-var ModalProgressTrigger = require('../modal/ModalProgressTrigger.js');
 var FormMixin = require('./FormMixin.js');
 
 var ApplicationActions = require('../../action/application/ApplicationActions.js');

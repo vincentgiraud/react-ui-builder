@@ -14,7 +14,7 @@ var Repository = require('../../api/Repository.js');
 var DeskStore = require('./DeskStore.js');
 var PanelAvailableComponentsStore = require('../panel/PanelAvailableComponentsStore.js');
 var PanelAvailableComponentsActions = require('../../action/panel/PanelAvailableComponentsActions.js');
-var ModalComponentEditorTriggerActions = require('../../action/modal/ModalComponentEditorTriggerActions.js');
+var ModalComponentEditorActions = require('../../action/modal/ModalComponentEditorActions.js');
 var ToolbarTopActions = require('../../action/toolbar/ToolbarTopActions.js');
 var ToolbarBreadcrumbsActions = require('../../action/toolbar/ToolbarBreadcrumbsActions.js');
 var PanelQuickOptionsActions = require('../../action/panel/PanelQuickOptionsActions.js');
@@ -52,15 +52,15 @@ var DeskPageFrameStore = Reflux.createStore({
         //
         if(umyIdToCopy){
             var domNodeInCopyClipboard = Repository.getCurrentPageDomNode(umyIdToCopy);
-            if(domNodeInCopyClipboard){
-                $(domNodeInCopyClipboard).addClass('umy-grid-basic-border-copy');
+            if(domNodeInCopyClipboard && domNodeInCopyClipboard.domElement){
+                $(domNodeInCopyClipboard.domElement).addClass('umy-grid-basic-border-copy');
                 domNodeInCopyClipboard = null;
             }
         }
         if(umyIdToCutPaste){
             var domNodeInCutClipboard = Repository.getCurrentPageDomNode(umyIdToCutPaste);
-            if(domNodeInCutClipboard){
-                $(domNodeInCutClipboard).addClass('umy-grid-basic-border-cut');
+            if(domNodeInCutClipboard && domNodeInCutClipboard.domElement){
+                $(domNodeInCutClipboard.domElement).addClass('umy-grid-basic-border-cut');
                 domNodeInCutClipboard = null;
             }
         }
@@ -78,12 +78,14 @@ var DeskPageFrameStore = Reflux.createStore({
             var frameWindow = Repository.getCurrentPageWindow();
             var domNode = Repository.getCurrentPageDomNode(this.model.selectedUmyId);
             if(frameWindow && domNode && searchResult){
-                if(this.model.clipboardActiveMode){
-                    componentOverlay = Overlays.createCopyPasteOverlay(frameWindow, this.model.selectedUmyId, searchResult);
-                } else {
-                    componentOverlay = Overlays.createComponentOverlay(frameWindow, this.model.selectedUmyId, searchResult);
+                if(domNode.domElement){
+                    if(this.model.clipboardActiveMode){
+                        componentOverlay = Overlays.createCopyPasteOverlay(frameWindow, this.model.selectedUmyId, searchResult);
+                    } else {
+                        componentOverlay = Overlays.createComponentOverlay(frameWindow, this.model.selectedUmyId, searchResult);
+                    }
+                    componentOverlay.append(domNode.domElement);
                 }
-                componentOverlay.append(domNode);
                 ToolbarBreadcrumbsActions.selectItem(searchResult);
                 PanelQuickOptionsActions.selectItem(searchResult, this.model.selectedUmyId);
                 PanelComponentsHierarchyActions.selectTreeviewItem(this.model.selectedUmyId, this.model.clipboardActiveMode);
@@ -118,15 +120,15 @@ var DeskPageFrameStore = Reflux.createStore({
         //
         if(umyIdToCopy){
             var domNodeInCopyClipboard = Repository.getCurrentPageDomNode(umyIdToCopy);
-            if(domNodeInCopyClipboard){
-                $(domNodeInCopyClipboard).removeClass('umy-grid-basic-border-copy');
+            if(domNodeInCopyClipboard && domNodeInCopyClipboard.domElement){
+                $(domNodeInCopyClipboard.domElement).removeClass('umy-grid-basic-border-copy');
                 domNodeInCopyClipboard = null;
             }
         }
         if(umyIdToCutPaste){
             var domNodeInCutClipboard = Repository.getCurrentPageDomNode(umyIdToCutPaste);
-            if(domNodeInCutClipboard){
-                $(domNodeInCutClipboard).removeClass('umy-grid-basic-border-cut');
+            if(domNodeInCutClipboard && domNodeInCutClipboard.domElement){
+                $(domNodeInCutClipboard.domElement).removeClass('umy-grid-basic-border-cut');
                 domNodeInCutClipboard = null;
             }
         }
@@ -166,16 +168,16 @@ var DeskPageFrameStore = Reflux.createStore({
         //
         if(umyIdToCopy){
             var domNodeInCopyClipboard = Repository.getCurrentPageDomNode(umyIdToCopy);
-            if(domNodeInCopyClipboard){
-                $(domNodeInCopyClipboard).removeClass('umy-grid-basic-border-copy');
+            if(domNodeInCopyClipboard && domNodeInCopyClipboard.domElement){
+                $(domNodeInCopyClipboard.domElement).removeClass('umy-grid-basic-border-copy');
                 domNodeInCopyClipboard = null;
             }
         }
         umyIdToCopy = null;
         if(umyIdToCutPaste){
             var domNodeInCutClipboard = Repository.getCurrentPageDomNode(umyIdToCutPaste);
-            if(domNodeInCutClipboard){
-                $(domNodeInCutClipboard).removeClass('umy-grid-basic-border-cut');
+            if(domNodeInCutClipboard && domNodeInCutClipboard.domElement){
+                $(domNodeInCutClipboard.domElement).removeClass('umy-grid-basic-border-cut');
                 domNodeInCutClipboard = null;
             }
         }
@@ -227,8 +229,8 @@ var DeskPageFrameStore = Reflux.createStore({
 
     onStartCopyComponent: function(domNodeId){
         var domNode = Repository.getCurrentPageDomNode(domNodeId);
-        if(domNode){
-            $(domNode).addClass('umy-grid-basic-border-copy');
+        if(domNode && domNode.domElement){
+            $(domNode.domElement).addClass('umy-grid-basic-border-copy');
         }
         this.onStartClipboardForOptions({
             umyIdToCopy: domNodeId
@@ -238,8 +240,8 @@ var DeskPageFrameStore = Reflux.createStore({
 
     onStartCutPasteComponent: function(domNodeId){
         var domNode = Repository.getCurrentPageDomNode(domNodeId);
-        if(domNode){
-            $(domNode).addClass('umy-grid-basic-border-cut');
+        if(domNode && domNode.domElement){
+            $(domNode.domElement).addClass('umy-grid-basic-border-cut');
         }
         this.onStartClipboardForOptions({
             umyIdToCutPaste: domNodeId
@@ -464,7 +466,7 @@ var DeskPageFrameStore = Reflux.createStore({
     },
 
     onShowPropertyEditor: function(){
-        ModalComponentEditorTriggerActions.showModal({
+        ModalComponentEditorActions.showModal({
             selectedUmyId: this.model.selectedUmyId
         });
     }

@@ -187,6 +187,35 @@ var Common = {
     /**
      *
      * @param {object} model
+     * @param {function} visitorCallback
+     */
+    _traverseModel: function(model, visitorCallback){
+        if(model.props){
+            _.mapObject(model.props,
+                function(propValue, prop){
+                    if(_.isObject(propValue) && propValue.type){
+                        visitorCallback({
+                            found: propValue,
+                            foundProp: prop
+                        });
+                        this._traverseModel(propValue, visitorCallback);
+                    }
+                }, this);
+        }
+        if(model.children && model.children.length > 0){
+            for(var i = 0; i < model.children.length; i++){
+                visitorCallback({
+                    found: model.children[i],
+                    foundProp: '/!#child'
+                });
+                this._traverseModel(model.children[i], visitorCallback);
+            }
+        }
+    },
+
+    /**
+     *
+     * @param {object} model
      * @param {string} umyId
      * @returns {object}
      */
@@ -208,105 +237,19 @@ var Common = {
 
     /**
      *
-     * @param modelItem
-     * @param resultArray
-     * @returns {*|Array}
+     * @param model
+     * @returns {{}}
      */
-    findAllWithComponentName: function(modelItem, resultArray){
-        var result = resultArray || [];
-        if(modelItem.componentName && modelItem.componentName.length > 0){
-            result.push(modelItem);
-        }
-        if(modelItem.props){
-            _.mapObject(modelItem.props,
-                function(propValue, prop){
-                    if(_.isObject(propValue) && propValue.type){
-                        this.findAllWithComponentName(propValue, result);
-                    }
-                }, this);
-        }
-        if(modelItem.children && modelItem.children.length > 0){
-            for(var i = 0; i < modelItem.children.length; i++){
-                this.findAllWithComponentName(modelItem.children[i], result);
+    getFlatUmyIdModel: function(model){
+        var flatModel = {};
+        Common._traverseModel(model, function(item){
+            if(item.found.props && item.found.props['data-umyid']){
+                flatModel[item.found.props['data-umyid']] = {};
             }
-        }
-        return result;
+        });
+        return flatModel;
     },
 
-    findByComponentName: function(modelItem, componentName, resultArray){
-        var result = resultArray || [];
-        if(modelItem.componentName
-            && modelItem.componentName.length > 0
-            && modelItem.componentName === componentName){
-            result.push(modelItem);
-        }
-        if(modelItem.props){
-            _.mapObject(modelItem.props,
-                function(propValue, prop){
-                    if(_.isObject(propValue) && propValue.type){
-                        this.findByComponentName(propValue, componentName, result);
-                    }
-                }, this);
-        }
-        if(modelItem.children && modelItem.children.length > 0){
-            for(var i = 0; i < modelItem.children.length; i++){
-                this.findByComponentName(modelItem.children[i], componentName, result);
-            }
-        }
-        return result;
-    },
-
-    setupAllWithComponentName: function(modelItem, sourceModelItem, componentName){
-        var byName = componentName || sourceModelItem.componentName;
-        var projectComponents = this.findByComponentName(modelItem, byName, null);
-        if(projectComponents && projectComponents.length > 0){
-            _.forEach(projectComponents, function(component){
-                if(component != sourceModelItem){
-                    var newItem = Common.fulex(sourceModelItem);
-                    // create new ids for children
-                    Common.setupPropsUmyId(newItem, true);
-                    // but save found component id
-                    newItem.props['data-umyid'] = component.props['data-umyid'];
-                    //
-                    component.props = newItem.props;
-                    component.children = newItem.children;
-                    component.text = newItem.text;
-                    component.componentName = newItem.componentName;
-                    newItem = null;
-                }
-            });
-        }
-
-    },
-
-    //setupAllWithComponentName: function(modelItem, sourceModelItem){
-    //    if(modelItem.componentName && modelItem.componentName.length > 0
-    //        && modelItem.componentName === sourceModelItem.componentName
-    //        && modelItem != sourceModelItem){
-    //        //
-    //        var newItem = Common.fulex(sourceModelItem);
-    //        Common.setupPropsUmyId(newItem, true);
-    //        modelItem.props = newItem.props;
-    //        modelItem.children = newItem.children;
-    //        modelItem.text = newItem.text;
-    //        newItem = null;
-    //        //
-    //    }
-    //    if(modelItem.props){
-    //        _.mapObject(modelItem.props,
-    //            function(propValue, prop){
-    //                if(_.isObject(propValue) && propValue.type){
-    //                    this.setupAllWithComponentName(propValue, sourceModelItem);
-    //                }
-    //            }, this);
-    //    }
-    //    if(modelItem.children && modelItem.children.length > 0){
-    //        for(var i = 0; i < modelItem.children.length; i++){
-    //            this.setupAllWithComponentName(modelItem.children[i], sourceModelItem);
-    //        }
-    //    }
-    //},
-    //
     /**
      *
      * @param srcUmyId

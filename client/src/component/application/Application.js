@@ -2,16 +2,17 @@
 
 var React = require('react');
 var ApplicationStore = require('../../store/application/ApplicationStore.js');
-var ModalProgressTrigger = require('../modal/ModalProgressTrigger.js');
+var ModalProgress = require('../modal/ModalProgress.js');
 var ModalVariantsTrigger = require('../modal/ModalVariantsTrigger.js');
-var ModalProjectSettingsTrigger = require('../modal/ModalProjectSettingsTrigger.js');
-var ModalFileListUploadTrigger = require('../modal/ModalFileListUploadTrigger.js');
+var ModalProjectSettings = require('../modal/ModalProjectSettings.js');
+var ModalFileListUpload = require('../modal/ModalFileListUpload.js');
 var FormSignIn = require('./FormSignIn.js');
 var FormSignUp = require('./FormSignUp.js');
 var FormStart = require('./FormStart.js');
 var FormBrowseGallery = require('./FormBrowseGallery.js');
 var FormDownloadProject = require('./FormDownloadProject.js');
 var DeskGallery = require('../desk/DeskGallery.js');
+var PopoverComponentVariant = require('../element/PopoverComponentVariant.js');
 
 var PageErrors = require('./PageErrors.js');
 var Desk = require('../desk/Desk.js');
@@ -72,7 +73,7 @@ var Application = React.createClass({
         var logOut = null;
         if(this.state.userName){
             logOut = (
-                <DropdownButton className='bg-primary' title={this.state.userName}>
+                <DropdownButton title={this.state.userName}>
                     <MenuItem onClick={this._handleLogout} eventKey={'1'}><span>Log Out</span></MenuItem>
                 </DropdownButton>
             );
@@ -156,13 +157,16 @@ var Application = React.createClass({
         }
 
         return (
-            <div>
-                {navBar}
-                {content}
-                <ModalProgressTrigger/>
+            <div style={{overflow: 'hidden'}}>
+                <div style={{position: 'absolute', top: '0', left: '0', right: '0', bottom: '0', overflow: 'auto'}}>
+                    {navBar}
+                    {content}
+                </div>
+                <ModalProgress/>
                 <ModalVariantsTrigger/>
-                <ModalProjectSettingsTrigger/>
-                <ModalFileListUploadTrigger/>
+                <ModalProjectSettings/>
+                <ModalFileListUpload/>
+                <PopoverComponentVariant/>
             </div>
         );
     },

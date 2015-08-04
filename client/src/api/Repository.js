@@ -212,11 +212,13 @@ var Repository = {
     },
 
     resetCurrentPageDomNodes: function(){
-        currentPageDomNodes = {};
+        currentPageDomNodes = Common.getFlatUmyIdModel(currentPageModel);
     },
 
     setCurrentPageDomNode: function(key, domNode){
-        currentPageDomNodes[key] = domNode;
+        if(currentPageDomNodes[key]){
+            currentPageDomNodes[key].domElement = domNode;
+        }
     },
 
     getCurrentPageDomNode: function(key){

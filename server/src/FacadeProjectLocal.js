@@ -19,6 +19,17 @@ var projectComponentsIndexFilePath = null;
 var projectComponentsArray = null;
 var projectComponentsTree = null;
 
+
+function isFirstCharacterInUpperCase(text){
+    if (text && text.length > 0) {
+        var firstChar = text.charAt(0);
+        var firstCharUpperCase = firstChar.toUpperCase();
+        return firstChar === firstCharUpperCase;
+    }
+    return false;
+}
+
+
 var FacadeProjectLocal = {
 
     /**
@@ -257,19 +268,25 @@ var FacadeProjectLocal = {
                         });
                         // Page.html for deskpage iframe src
                         var htmlForDeskFilePath = path.join(projectConfDirPath, 'build', 'PageForDesk.html');
-                        fs.stat(htmlForDeskFilePath, function(err, stats){
-                            if(err || !stats.isFile()){
-                                generateResources.push({
-                                    templateFilePath: path.join(options.templateDir, 'build', '_page_html.tpl'),
-                                    fileData: {},
-                                    outputFilePath: htmlForDeskFilePath
-                                });
-                            }
-                            var response = {
-                                htmlForDesk: 'PageForDesk.html'
-                            };
-                            StorageManager.generateFiles(generateResources, 0, function(err){ callback(err, response) });
+                        // todo - should we not rewrite html for iframe ?
+                        //fs.stat(htmlForDeskFilePath, function(err, stats){
+                        //    if(err || !stats.isFile()){
+                        //        generateResources.push({
+                        //            templateFilePath: path.join(options.templateDir, 'build', '_page_html.tpl'),
+                        //            fileData: {},
+                        //            outputFilePath: htmlForDeskFilePath
+                        //        });
+                        //    }
+                        //});
+                        generateResources.push({
+                            templateFilePath: path.join(options.templateDir, 'build', '_page_html.tpl'),
+                            fileData: {},
+                            outputFilePath: htmlForDeskFilePath
                         });
+                        var response = {
+                            htmlForDesk: 'PageForDesk.html'
+                        };
+                        StorageManager.generateFiles(generateResources, 0, function(err){ callback(err, response) });
                     }
                 }
             );
@@ -332,7 +349,11 @@ var FacadeProjectLocal = {
     },
 
     loadComponentDefaults: function(options, callback){
-        StorageManager.readObject(path.join(projectConfDirPath, 'defaults', options.componentName + '.json'), function(err, data){
+
+        var lookupComponentName =
+            isFirstCharacterInUpperCase(options.componentName) ? options.componentName : ('html-' + options.componentName);
+
+        StorageManager.readObject(path.join(projectConfDirPath, 'defaults', lookupComponentName + '.json'), function(err, data){
             if(err){
                 callback(err);
             } else {
@@ -346,6 +367,7 @@ var FacadeProjectLocal = {
     },
 
     saveComponentsDefaults: function(options, callback){
+
         this.loadComponentDefaults(options, function(err, data){
             var defaults = [];
             if(err){
@@ -354,7 +376,11 @@ var FacadeProjectLocal = {
                 defaults = data.model;
             }
             defaults.push(options.componentOptions);
-            StorageManager.writeObject(path.join(projectConfDirPath, 'defaults', options.componentName + '.json'),
+
+            var lookupComponentName =
+                isFirstCharacterInUpperCase(options.componentName) ? options.componentName : ('html-' + options.componentName);
+
+            StorageManager.writeObject(path.join(projectConfDirPath, 'defaults', lookupComponentName + '.json'),
                 defaults,
                 function(err){
                     if(err){
@@ -368,7 +394,11 @@ var FacadeProjectLocal = {
     },
 
     saveAllComponentsDefaults: function(options, callback){
-        StorageManager.writeObject(path.join(projectConfDirPath, 'defaults', options.componentName + '.json'),
+
+        var lookupComponentName =
+            isFirstCharacterInUpperCase(options.componentName) ? options.componentName : ('html-' + options.componentName);
+
+        StorageManager.writeObject(path.join(projectConfDirPath, 'defaults', lookupComponentName + '.json'),
             options.defaults,
             function(err){
                 if(err){

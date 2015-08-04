@@ -1,10 +1,8 @@
 'use strict';
 
 var React = require('react/addons');
-var ModalProgressTrigger = require('../modal/ModalProgressTrigger.js');
-var ModalProgressTriggerAction = require('../../action/modal/ModalProgressTriggerActions.js');
-var ModalProjectSettingsTriggerActions = require('../../action/modal/ModalProjectSettingsTriggerActions.js');
-var ModalFileListUploadTriggerActions = require('../../action/modal/ModalFileListUploadTriggerActions.js');
+var ModalProjectSettingsActions = require('../../action/modal/ModalProjectSettingsActions.js');
+var ModalFileListUploadActions = require('../../action/modal/ModalFileListUploadActions.js');
 var Button = require('react-bootstrap').Button;
 var DeskAction = require('../../action/desk/DeskActions.js');
 var ApplicationActions = require('../../action/application/ApplicationActions.js');
@@ -117,13 +115,13 @@ var ToolbarLeft = React.createClass({
     _handlePublishProject: function(e){
         e.stopPropagation();
         e.preventDefault();
-        ModalFileListUploadTriggerActions.showModal();
+        ModalFileListUploadActions.showModal();
     },
 
     _handleProjectSettings: function(e){
         e.stopPropagation();
         e.preventDefault();
-        ModalProjectSettingsTriggerActions.showModal();
+        ModalProjectSettingsActions.showModal();
     },
 
     _handleShowProjectComponents: function(e){

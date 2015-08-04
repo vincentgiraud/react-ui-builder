@@ -5,8 +5,9 @@ var DeskStore = require('../../store/desk/DeskStore.js');
 var ToolbarLeft = require('../toolbar/ToolbarLeft.js');
 var PanelAvailableComponents = require('../panel/PanelAvailableComponents.js');
 var PanelComponentsHierarchy = require('../panel/PanelComponentsHierarchy.js');
-var ModalComponentEditorTrigger = require('../modal/ModalComponentEditorTrigger.js');
-var ModalCodeGeneratorTrigger = require('../modal/ModalCodeGeneratorTrigger.js');
+var ModalComponentEditor = require('../modal/ModalComponentEditor.js');
+var ModalQuickActionComponent = require('../modal/ModalQuickActionComponent.js');
+
 var ToolbarTop = require('../toolbar/ToolbarTop.js');
 var ToolbarBreadcrumbs = require('../toolbar/ToolbarBreadcrumbs.js');
 var DeskPageFrame = require('../desk/DeskPageFrame.js');
@@ -14,6 +15,7 @@ var DeskPageFramePreview = require('../desk/DeskPageFramePreview.js');
 var Repository = require('../../api/Repository.js');
 var ToolbarTopActions = require('../../action/toolbar/ToolbarTopActions.js');
 var PanelQuickOptions = require('../panel/PanelQuickOptions.js');
+var SidePanel = require('../element/SidePanel.js');
 
 var Desk = React.createClass({
 
@@ -150,9 +152,9 @@ var Desk = React.createClass({
         return (
             <div>
                 <ToolbarLeft {...this.state} />
-                <div style={leftPanelStyle}>
+                <SidePanel style={leftPanelStyle}>
                     {leftPanelInner}
-                </div>
+                </SidePanel>
                 {topComponent}
                 {breadcrumbsComponent}
                 <div style={bodyStyle}>
@@ -164,8 +166,8 @@ var Desk = React.createClass({
                 <div style={bottomPanelStyle}>
                     {bottomPanelInner}
                 </div>
-                <ModalComponentEditorTrigger/>
-                <ModalCodeGeneratorTrigger/>
+                <ModalComponentEditor/>
+                <ModalQuickActionComponent/>
             </div>
         )
     }

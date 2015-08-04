@@ -2,11 +2,11 @@
 
 var Reflux = require('reflux');
 
-var ModalFileListUploadTriggerActions = Reflux.createActions([
+var ModalFileListUploadActions = Reflux.createActions([
     'showModal',
     'uploadFiles',
     'hideModal',
     'toggleModal'
 ]);
 
-module.exports = ModalFileListUploadTriggerActions;
+module.exports = ModalFileListUploadActions;

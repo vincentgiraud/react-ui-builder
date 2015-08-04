@@ -1,18 +1,21 @@
 'use strict';
 
 var Reflux = require('reflux');
-var ModalProgressTriggerActions = require('../../action/modal/ModalProgressTriggerActions.js');
+var ModalProgressActions = require('../../action/modal/ModalProgressActions.js');
 
 var defaultModel = {
     isModalOpen: false,
-    message: 'Default message text'
+    message: 'Default message text',
+    seconds: 0
 };
 
-var ModalProgressTriggerStore = Reflux.createStore({
+var ModalProgressStore = Reflux.createStore({
     model: defaultModel,
-    listenables: ModalProgressTriggerActions,
+    listenables: ModalProgressActions,
+
     onShowModalProgress: function(message, delay){
         if(!this.model.isModalOpen){
+            this.model.seconds = 0;
             var f = (function(self){
                 return function(){
                     self.model.messageArray = null;
@@ -28,6 +31,12 @@ var ModalProgressTriggerStore = Reflux.createStore({
             }
         }
     },
+
+    onSecondsIncrement: function(){
+        this.model.seconds += 1;
+        this.trigger(this.model);
+    },
+
     onShowModalMessageArray: function(message){
         this.model.messageArray = message;
         this.model.message = null;
@@ -39,6 +48,7 @@ var ModalProgressTriggerStore = Reflux.createStore({
         this.model.message = message;
         this.trigger(this.model);
     },
+
     onHideModalProgress: function(){
         if(this._modalProgressTimeout){
             clearTimeout(this._modalProgressTimeout);
@@ -49,6 +59,7 @@ var ModalProgressTriggerStore = Reflux.createStore({
             this.trigger(this.model);
         }
     },
+
     onToggleModalProgress: function(){
         if(this._modalProgressTimeout){
             clearTimeout(this._modalProgressTimeout);
@@ -57,6 +68,7 @@ var ModalProgressTriggerStore = Reflux.createStore({
         this.model.isModalOpen = !this.model.isModalOpen;
         this.trigger(this.model);
     }
+
 });
 
-module.exports = ModalProgressTriggerStore;
+module.exports = ModalProgressStore;

@@ -2,12 +2,13 @@
 
 var Reflux = require('reflux');
 
-var ModalProgressTriggerActions = Reflux.createActions([
+var ModalProgressActions = Reflux.createActions([
     'showModalProgress',
     'showModalMessageArray',
     'updateMessage',
     'hideModalProgress',
-    'toggleModalProgress'
+    'toggleModalProgress',
+    'secondsIncrement'
 ]);
 
-module.exports = ModalProgressTriggerActions;
+module.exports = ModalProgressActions;

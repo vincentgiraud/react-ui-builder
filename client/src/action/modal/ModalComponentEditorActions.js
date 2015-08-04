@@ -2,7 +2,7 @@
 
 var Reflux = require('reflux');
 
-var ModalComponentEditorTriggerActions = Reflux.createActions([
+var ModalComponentEditorActions = Reflux.createActions([
     'showModal',
     'hideModal',
     'toggleModal',
@@ -14,4 +14,4 @@ var ModalComponentEditorTriggerActions = Reflux.createActions([
 
 ]);
 
-module.exports = ModalComponentEditorTriggerActions;
+module.exports = ModalComponentEditorActions;

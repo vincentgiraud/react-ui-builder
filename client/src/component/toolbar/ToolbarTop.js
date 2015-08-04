@@ -2,8 +2,6 @@
 
 var validator = require('validator');
 var React = require('react/addons');
-var ModalProgressTrigger = require('../modal/ModalProgressTrigger.js');
-var ModalProgressTriggerAction = require('../../action/modal/ModalProgressTriggerActions.js');
 var Button = require('react-bootstrap').Button;
 var DeskAction = require('../../action/desk/DeskActions.js');
 var ToolbarTopActions = require('../../action/toolbar/ToolbarTopActions.js');

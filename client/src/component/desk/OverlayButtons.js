@@ -24,7 +24,7 @@ var OverlayButtons = React.createClass({
     render: function(){
         var buttons = [];
         for (var i = 0; i < this.props.buttons.length; i++) {
-            var buttonClassName = 'btn btn-primary';
+            var buttonClassName = 'btn btn-info';
             if (this.props.buttons[i].btnClass) {
                 buttonClassName += this.props.buttons[i].btnClass;
             }
@@ -44,7 +44,7 @@ var OverlayButtons = React.createClass({
             if (this.props.buttons[i].label) {
                 inners.push(<span key={'buttonLabel' + i}>{this.props.buttons[i].label}</span>);
             }
-            var className = 'btn btn-primary' + (this.props.buttons[i].btnClass ? ' ' + this.props.buttons[i].btnClass : '');
+            var className = 'btn btn-info' + (this.props.buttons[i].btnClass ? ' ' + this.props.buttons[i].btnClass : '');
             buttons.push(
                 <button key={'button' + i} type='button' style={{display: 'table-cell'}} className={className} onClick={onClick}>
                     {inners}
@@ -52,17 +52,8 @@ var OverlayButtons = React.createClass({
             );
         }
 
-        var overlayStyle = {
-            'position': 'absolute',
-            'left': 0,
-            'top': 0,
-            'width': '10px',
-            'height': '0px',
-            'zIndex': 1035
-        };
-
         return (
-            <div style={{position: 'absolute', left: 0, top: '-2.1em', display: 'table', width: '100%', zIndex: 1051}}>
+            <div style={{position: 'absolute', left: 0, top: '-2.1em', display: 'table', width: '100%', zIndex: 1030}}>
                 <div className='btn-group btn-group-xs' style={{display: 'table-row', width: '100%', whiteSpace: 'nowrap'}}>
                     <button style={{display: 'table-cell'}} type='button' className='btn btn-warning' onClick={this._handleClose}>
                         <span className='fa fa-times fa-fw'></span>
