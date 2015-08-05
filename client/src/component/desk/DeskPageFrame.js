@@ -56,9 +56,11 @@ var DeskPageFrame = React.createClass({
 
     componentWillUnmount: function(){
         this.unsubscribe();
-        this.frameEndpoint.onComponentDidUpdate = null;
-        this.frameEndpoint.onComponentWillUpdate = null;
-        this.frameEndpoint  = null;
+        if(this.frameEndpoint) {
+            this.frameEndpoint.onComponentDidUpdate = null;
+            this.frameEndpoint.onComponentWillUpdate = null;
+            this.frameEndpoint  = null;
+        }
     },
 
     _renderFrameContent: function() {
