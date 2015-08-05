@@ -230,7 +230,8 @@ var Common = {
         } else if(items.length > 1){
             console.error('There are multiple components with the same id: ' + umyId);
         } else {
-            console.error('Component with id: ' + umyId + ' was not found');
+            // do nothing
+            //console.error('Component with id: ' + umyId + ' was not found');
         }
         return searchResult;
     },

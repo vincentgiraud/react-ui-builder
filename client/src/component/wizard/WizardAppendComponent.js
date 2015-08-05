@@ -10,6 +10,7 @@ var WizardAppendComponentStore = require('../../store/wizard/WizardAppendCompone
 var WizardAppendComponentActions = require('../../action/wizard/WizardAppendComponentActions.js');
 
 var FormAvailableComponents = require('./FormAvailableComponents.js');
+var FormAvailableComponentVariants = require('./FormAvailableComponentVariants.js');
 
 var WizardAppendComponent = React.createClass({
 
@@ -24,7 +25,8 @@ var WizardAppendComponent = React.createClass({
     componentDidMount: function() {
         this.unsubscribe = WizardAppendComponentStore.listen(this.onModelChange);
         WizardAppendComponentActions.setInitialOptions({
-            selectedUmyId: this.props.selectedUmyId
+            selectedUmyId: this.props.selectedUmyId,
+            command: this.props.command
         });
     },
 
@@ -49,11 +51,21 @@ var WizardAppendComponent = React.createClass({
         }
 
         var stepComponent = null;
+        {/*onSubmitStep={}*/}
         switch(this.state.step) {
             case 0:
                 stepComponent = (
                     <FormAvailableComponents itemsTree={this.props.itemsTree}
-                                             onSubmitStep={WizardAppendComponentActions.submitStep0}/>
+                                             onSubmitStep={WizardAppendComponentActions.submitStep0}
+                                             onCommitStep={WizardAppendComponentActions.commitStep0}/>
+                );
+                break;
+            case 1:
+                stepComponent = (
+                    <FormAvailableComponentVariants defaults={this.state.defaults}
+                                                    defaultsIndex={this.state.defaultsIndex}
+                                                    onCancelStep={WizardAppendComponentActions.cancelStep0}
+                                                    onSubmitStep={WizardAppendComponentActions.submitStep1}/>
                 );
                 break;
             default:

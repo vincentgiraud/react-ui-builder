@@ -16,7 +16,8 @@ var ModalQuickActionComponentStore = Reflux.createStore({
         if(!this.model.isModalOpen){
             this.model.itemsTree = Repository.getComponentsTree();
             this.model.selectedUmyId = options.selectedUmyId;
-            this.model.appendCommand = options.appendCommand;
+            this.model.command = options.command;
+            this.model.commandLabel = options.commandLabel;
             this.model.isModalOpen = true;
             this.trigger(this.model);
         }

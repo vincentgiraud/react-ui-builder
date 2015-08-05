@@ -11,32 +11,42 @@ var ListGroupItem = ReactBootstrap.ListGroupItem;
 var Badge = ReactBootstrap.Badge;
 var PanelGroup = ReactBootstrap.PanelGroup;
 
-var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
-var PanelAvailableComponentsActions = require('../../action/panel/PanelAvailableComponentsActions.js');
-var PanelAvailableComponentsStore = require('../../store/panel/PanelAvailableComponentsStore.js');
-var ModalVariantsTriggerActions = require('../../action/modal/ModalVariantsTriggerActions.js');
 var Repository = require('../../api/Repository.js');
+var FormAvailableComponentsActions = require('../../action/wizard/FormAvailableComponentsActions.js');
+var FormAvailableComponentsStore = require('../../store/wizard/FormAvailableComponentsStore.js');
 
 var FormAvailableComponents = React.createClass({
 
     _handleClick: function(e){
         e.preventDefault();
         e.stopPropagation();
-
+        if(this.props.onCommitStep){
+            var componentId = e.currentTarget.attributes['data-component-id'].value;
+            this.props.onCommitStep({
+                componentId: componentId
+            });
+        }
     },
 
     _handleChangeFind: function(e){
-        var value = this.refs.inputElement.getValue();
-        var newState = {
-            filter: value
-        };
-        this.setState(newState);
+        FormAvailableComponentsActions.setFilter(this.refs.inputElement.getValue());
     },
 
     _handleClearFind: function(e){
         e.preventDefault();
         e.stopPropagation();
-        this.setState({ filter: '' });
+        FormAvailableComponentsActions.setFilter('');
+    },
+
+    _handleVariantsClick: function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        if(this.props.onSubmitStep){
+            var componentId = e.currentTarget.attributes['data-component-id'].value;
+            this.props.onSubmitStep({
+                componentId: componentId
+            });
+        }
     },
 
     _createListItem: function(componentId, counter){
@@ -45,9 +55,16 @@ var FormAvailableComponents = React.createClass({
             componentName = componentName.substr(0, 20) + '...';
         }
         return (
-            <ListGroupItem key={'item' + componentId + counter} style={{position: 'relative', cursor: 'pointer'}} onClick={this._handleClick}>
+            <ListGroupItem key={'item' + componentId + counter}
+                           style={{position: 'relative', cursor: 'pointer'}}
+                           data-component-id={componentId}
+                           onClick={this._handleClick}>
                 <span>{componentName}</span>
-                <Button bsSize='xsmall' bsStyle='default' style={{position: 'absolute', right: '1em', top: '0.5em'}}>
+                <Button bsSize='xsmall'
+                        bsStyle='default'
+                        data-component-id={componentId}
+                        onClick={this._handleVariantsClick}
+                        style={{position: 'absolute', right: '1em', top: '0.5em'}}>
                     Variants...
                 </Button>
             </ListGroupItem>
@@ -55,17 +72,25 @@ var FormAvailableComponents = React.createClass({
 
     },
 
-    getInitialState: function(){
-        return {
-        }
-    },
-
     componentDidMount: function () {
+        this.unsubscribe = FormAvailableComponentsStore.listen(this.onModelChange);
         $(React.findDOMNode(this)).find('.panel-body').remove();
     },
 
     componentDidUpdate: function(){
         $(React.findDOMNode(this)).find('.panel-body').remove();
+    },
+
+    getInitialState: function(){
+        return FormAvailableComponentsStore.model;
+    },
+
+    onModelChange: function(model) {
+        this.setState(model);
+    },
+
+    componentWillUnmount: function() {
+        this.unsubscribe();
     },
 
     render: function(){

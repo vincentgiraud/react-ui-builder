@@ -42,7 +42,7 @@ var ComponentOverlay = {
         }(this._options.onClose)));
 
         for (var i = 0; i < this._options.buttons.length; i++) {
-            var item = $("<button type='button' class='umyproto-button umyproto-button-small umyproto-button-primary'></button>");
+            var item = $("<button type='button' class='umyproto-button umyproto-button-small'></button>");
             if(this._options.buttons[i].menu && this._options.buttons[i].menu.length > 0){
                 var itemGroup = $("<div class='umyproto-button-dropdown' data-umyproto-dropdown='{mode:\"click\"}'></div>");
                 //style='box-shadow: -1px 1px 3px 1px #CCC, 1px 1px 3px 1px #CCC;'

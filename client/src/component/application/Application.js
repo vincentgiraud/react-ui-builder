@@ -13,6 +13,7 @@ var FormBrowseGallery = require('./FormBrowseGallery.js');
 var FormDownloadProject = require('./FormDownloadProject.js');
 var DeskGallery = require('../desk/DeskGallery.js');
 var PopoverComponentVariant = require('../element/PopoverComponentVariant.js');
+var GlobalOverlay = require('../element/GlobalOverlay.js');
 
 var PageErrors = require('./PageErrors.js');
 var Desk = require('../desk/Desk.js');
@@ -167,6 +168,7 @@ var Application = React.createClass({
                 <ModalProjectSettings/>
                 <ModalFileListUpload/>
                 <PopoverComponentVariant/>
+                <GlobalOverlay/>
             </div>
         );
     },

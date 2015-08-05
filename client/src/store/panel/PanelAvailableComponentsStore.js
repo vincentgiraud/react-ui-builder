@@ -86,6 +86,8 @@ var PanelAvailableComponentsStore = Reflux.createStore({
     onSelectComponentItemDefaultsIndex: function(componentId, index, previewOptions){
         if(previewOptions.showPreview === true){
             PopoverComponentVariantActions.show({
+                componentId: componentId,
+                defaultsIndex: index,
                 top: previewOptions.top,
                 left: previewOptions.left,
                 outerWidth: previewOptions.outerWidth

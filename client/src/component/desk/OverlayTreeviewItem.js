@@ -6,6 +6,7 @@ var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
 var Repository = require('../../api/Repository.js');
 var Common = require('../../api/Common.js');
 var ModalComponentEditorActions = require('../../action/modal/ModalComponentEditorActions.js');
+var ModalQuickActionComponent = require('../../action/modal/ModalQuickActionComponentActions.js');
 
 var OverlayTreeviewItem = React.createClass({
 
@@ -18,7 +19,9 @@ var OverlayTreeviewItem = React.createClass({
     },
 
     render: function(){
-        var searchResult = Repository.findInCurrentPageModelByUmyId(this.props.domNodeId);
+
+        var domNodeId = this.props.domNodeId;
+        var searchResult = Repository.findInCurrentPageModelByUmyId(domNodeId);
 
         var overlayModel = {
             onClose: DeskPageFrameActions.deselectComponent,
@@ -27,93 +30,146 @@ var OverlayTreeviewItem = React.createClass({
 
         overlayModel.buttons.push(
             {
-                icon: "fa-mail-forward fa-rotate-270",
+                label: searchResult.found.type,
+                btnClass: 'btn-success',
                 onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         DeskPageFrameActions.selectParentComponent(_nodeId);
                     }
-                })(this.props.domNodeId)
+                })(domNodeId),
+                menu: [
+                    {label: 'Add before component', onClick: function(){
+                        ModalQuickActionComponent.show(
+                            {selectedUmyId: domNodeId, command: 'addBefore', commandLabel: 'Add before component'}
+                        );
+                    }},
+                    {label: 'Insert as first child', onClick: function(){
+                        ModalQuickActionComponent.show(
+                            {selectedUmyId: domNodeId, command: 'insertFirst', commandLabel: 'Insert as first child'}
+                        );
+                    }},
+                    {label: 'Wrap component', onClick: function(){
+                        ModalQuickActionComponent.show(
+                            {selectedUmyId: domNodeId, command: 'wrap', commandLabel: 'Wrap component'}
+                        );
+                    }},
+                    {label: 'Replace component', onClick: function(){
+                        ModalQuickActionComponent.show(
+                            {selectedUmyId: domNodeId, command: 'replace', commandLabel: 'Replace component'}
+                        );
+                    }},
+                    {label: 'Insert as last child', onClick: function(){
+                        ModalQuickActionComponent.show(
+                            {selectedUmyId: domNodeId, command: 'insertLast', commandLabel: 'Insert as last child'}
+                        );
+                    }},
+                    {label: 'Add after component', onClick: function(){
+                        ModalQuickActionComponent.show(
+                            {selectedUmyId: domNodeId, command: 'addAfter', commandLabel: 'Add after component'}
+                        );
+                    }}
+                ]
+            });
+
+        overlayModel.buttons.push(
+            {
+                icon: "fa-mail-forward fa-rotate-270",
+                btnClass: 'btn-info',
+                onClick: (function (_nodeId) {
+                    return function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        DeskPageFrameActions.selectParentComponent(_nodeId);
+                    }
+                })(domNodeId)
             });
         if(searchResult.foundProp === '/!#child') {
             overlayModel.buttons.push(
                 {
                     icon: 'fa-arrow-up',
+                    btnClass: 'btn-info',
                     onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
                             e.stopPropagation();
                             DeskPageFrameActions.moveUpComponent(_nodeId);
                         }
-                    })(this.props.domNodeId)
+                    })(domNodeId)
                 });
             overlayModel.buttons.push(
                 {
                     icon: 'fa-arrow-down',
+                    btnClass: 'btn-info',
                     onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
                             e.stopPropagation();
                             DeskPageFrameActions.moveDownComponent(_nodeId);
                         }
-                    })(this.props.domNodeId)
+                    })(domNodeId)
                 });
         }
         overlayModel.buttons.push(
             {
                 icon: 'fa-cut',
+                btnClass: 'btn-info',
                 onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         DeskPageFrameActions.startCutPasteComponent(_nodeId);
                     }
-                })(this.props.domNodeId)
+                })(domNodeId)
             });
         overlayModel.buttons.push(
             {
                 icon: 'fa-clipboard',
+                btnClass: 'btn-info',
                 onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         DeskPageFrameActions.startCopyComponent(_nodeId);
                     }
-                })(this.props.domNodeId)
+                })(domNodeId)
             });
         overlayModel.buttons.push(
             {
                 icon: 'fa-copy',
+                btnClass: 'btn-info',
                 onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         DeskPageFrameActions.duplicateComponent(_nodeId);
                     }
-                })(this.props.domNodeId)
+                })(domNodeId)
             });
         overlayModel.buttons.push(
             {
                 icon: 'fa-trash-o',
+                btnClass: 'btn-info',
                 onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         DeskPageFrameActions.deleteComponent(_nodeId);
                     }
-                })(this.props.domNodeId)
+                })(domNodeId)
             });
         overlayModel.buttons.push(
             {
                 icon: 'fa-gears',
+                btnClass: 'btn-info',
                 onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
                         e.stopPropagation();
                         DeskPageFrameActions.showPropertyEditor();
                     }
-                })(this.props.domNodeId)
+                })(domNodeId)
             });
         return (
             <OverlayButtons {...overlayModel} />

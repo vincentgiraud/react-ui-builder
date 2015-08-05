@@ -66,10 +66,12 @@ var ModalQuickActionComponent = React.createClass({
                    bsSize='small'
                    animation={true}>
                 <Modal.Header closeButton={true} aria-labelledby='contained-modal-title'>
-                    <Modal.Title id='contained-modal-title'>Select component</Modal.Title>
+                    <Modal.Title id='contained-modal-title'>{this.state.commandLabel}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <WizardAppendComponent itemsTree={this.state.itemsTree} selectedUmyId={this.state.selectedUmyId} />
+                    <WizardAppendComponent itemsTree={this.state.itemsTree}
+                                           selectedUmyId={this.state.selectedUmyId}
+                                           command={this.state.command} />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button onClick={this._handleClose}>Close</Button>

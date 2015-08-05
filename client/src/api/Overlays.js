@@ -11,7 +11,6 @@ var Overlays = {
     createComponentOverlay: function(frameWindow, domNodeId, modelNode){
 
         var shortLabel = modelNode.found.type || 'Unknown';
-        var labelClass = 'umyproto-button-success';
 
         var overlayModel = {
             pageFrameWindow: frameWindow,
@@ -22,10 +21,37 @@ var Overlays = {
             {
                 label: '&lt;' + shortLabel + '&gt;&nbsp;&nbsp;',
                 icon: 'umyproto-icon-caret-down',
-                btnClass: labelClass,
+                btnClass: 'umyproto-button-success',
                 menu: [
-                    {label: 'Show Modal', onClick: function(){
-                        ModalQuickActionComponent.show({selectedUmyId: domNodeId});
+                    {label: 'Add before component', onClick: function(){
+                        ModalQuickActionComponent.show(
+                            {selectedUmyId: domNodeId, command: 'addBefore', commandLabel: 'Add before component'}
+                        );
+                    }},
+                    {label: 'Insert as first child', onClick: function(){
+                        ModalQuickActionComponent.show(
+                            {selectedUmyId: domNodeId, command: 'insertFirst', commandLabel: 'Insert as first child'}
+                        );
+                    }},
+                    {label: 'Wrap component', onClick: function(){
+                        ModalQuickActionComponent.show(
+                            {selectedUmyId: domNodeId, command: 'wrap', commandLabel: 'Wrap component'}
+                        );
+                    }},
+                    {label: 'Replace component', onClick: function(){
+                        ModalQuickActionComponent.show(
+                            {selectedUmyId: domNodeId, command: 'replace', commandLabel: 'Replace component'}
+                        );
+                    }},
+                    {label: 'Insert as last child', onClick: function(){
+                        ModalQuickActionComponent.show(
+                            {selectedUmyId: domNodeId, command: 'insertLast', commandLabel: 'Insert as last child'}
+                        );
+                    }},
+                    {label: 'Add after component', onClick: function(){
+                        ModalQuickActionComponent.show(
+                            {selectedUmyId: domNodeId, command: 'addAfter', commandLabel: 'Add after component'}
+                        );
                     }}
                 ]
             });
@@ -33,6 +59,7 @@ var Overlays = {
             {
                 icon: "umyproto-icon-level-up",
                 tooltip: 'Select parent component',
+                btnClass: 'umyproto-button-primary',
                 onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
@@ -46,6 +73,7 @@ var Overlays = {
                 {
                     icon: 'umyproto-icon-arrow-up',
                     tooltip: 'Move component up',
+                    btnClass: 'umyproto-button-primary',
                     onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
@@ -58,6 +86,7 @@ var Overlays = {
                 {
                     icon: 'umyproto-icon-arrow-down',
                     tooltip: 'Move component down',
+                    btnClass: 'umyproto-button-primary',
                     onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
@@ -71,6 +100,7 @@ var Overlays = {
             {
                 icon: 'umyproto-icon-cut',
                 tooltip: 'Cut component into clipboard',
+                btnClass: 'umyproto-button-primary',
                 onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
@@ -83,6 +113,7 @@ var Overlays = {
             {
                 icon: 'umyproto-icon-clipboard',
                 tooltip: 'Copy component into clipboard',
+                btnClass: 'umyproto-button-primary',
                 onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
@@ -95,6 +126,7 @@ var Overlays = {
             {
                 icon: 'umyproto-icon-copy',
                 tooltip: 'Duplicate component',
+                btnClass: 'umyproto-button-primary',
                 onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
@@ -107,6 +139,7 @@ var Overlays = {
             {
                 icon: 'umyproto-icon-trash-o',
                 tooltip: 'Remove component from page',
+                btnClass: 'umyproto-button-primary',
                 onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
@@ -119,6 +152,7 @@ var Overlays = {
             {
                 icon: 'umyproto-icon-gears',
                 tooltip: 'Show component options',
+                btnClass: 'umyproto-button-primary',
                 onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
@@ -133,7 +167,6 @@ var Overlays = {
     createCopyPasteOverlay: function(frameWindow, domNodeId, modelNode){
 
         var shortLabel = modelNode.found.type || 'Unknown';
-        var labelClass = 'umyproto-button-success';
 
         var overlayModel = {
             pageFrameWindow: frameWindow,
@@ -141,7 +174,7 @@ var Overlays = {
             buttons: [
                 {
                     label: '&lt;' + shortLabel + '&gt;',
-                    btnClass: labelClass,
+                    btnClass: 'umyproto-button-success',
                     onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
@@ -152,6 +185,7 @@ var Overlays = {
                 {
                     icon: "umyproto-icon-level-up",
                     tooltip: 'Select parent component',
+                    btnClass: 'umyproto-button-primary',
                     onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
@@ -163,6 +197,7 @@ var Overlays = {
                 {
                     label: 'Before',
                     tooltip: 'Add component from clipboard before selected one',
+                    btnClass: 'umyproto-button-primary',
                     onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
@@ -174,6 +209,7 @@ var Overlays = {
                 {
                     label: 'First',
                     tooltip: 'Insert component from clipboard into selected one as the first child component',
+                    btnClass: 'umyproto-button-primary',
                     onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
@@ -185,6 +221,7 @@ var Overlays = {
                 {
                     label: 'Wrap',
                     tooltip: 'Wrap selected component with component from clipboard',
+                    btnClass: 'umyproto-button-primary',
                     onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
@@ -196,6 +233,7 @@ var Overlays = {
                 {
                     label: 'Replace',
                     tooltip: 'Replace selected component with component from clipboard',
+                    btnClass: 'umyproto-button-primary',
                     onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
@@ -207,6 +245,7 @@ var Overlays = {
                 {
                     label: 'Last',
                     tooltip: 'Insert component from clipboard into selected one as the last child component',
+                    btnClass: 'umyproto-button-primary',
                     onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
@@ -218,6 +257,7 @@ var Overlays = {
                 {
                     label: 'After',
                     tooltip: 'Add component from clipboard after selected one',
+                    btnClass: 'umyproto-button-primary',
                     onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
@@ -229,7 +269,7 @@ var Overlays = {
                 {
                     label: 'Cancel',
                     tooltip: 'Clear clipboard',
-                    btnClass: 'umyproto-button-success',
+                    btnClass: 'umyproto-button-danger',
                     onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
@@ -241,145 +281,8 @@ var Overlays = {
             ]
         };
         return $("<div></div>").umyComponentOverlay(overlayModel);
-    },
-
-    createTreeviewOverlay: function(domNode, domNodeId){
-        var overlayModel = {
-            onClose: DeskPageFrameActions.deselectComponent,
-            buttons: [
-                {
-                    icon: "fa-mail-forward fa-rotate-270",
-                    onClick: (function (_node, _nodeId) {
-                        return function (e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            DeskPageFrameActions.selectParentComponent(_nodeId);
-                        }
-                    })(domNode, domNodeId)
-                },
-                {
-                    icon: 'fa-arrow-up',
-                    onClick: (function (_node, _nodeId) {
-                        return function (e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            DeskPageFrameActions.moveUpComponent(_nodeId);
-                        }
-                    })(domNode, domNodeId)
-                },
-                {
-                    icon: 'fa-arrow-down',
-                    onClick: (function (_node, _nodeId) {
-                        return function (e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            DeskPageFrameActions.moveDownComponent(_nodeId);
-                        }
-                    })(domNode, domNodeId)
-                },
-                //{
-                //    icon: 'fa-clipboard',
-                //    onClick: (function (_node, _nodeId) {
-                //        return function (e) {
-                //            e.preventDefault();
-                //            e.stopPropagation();
-                //            alert('DOM Node with umyid: ' + _nodeId);
-                //        }
-                //    })(domNode, domNodeId)
-                //},
-                {
-                    icon: 'fa-cut',
-                    onClick: (function (_node, _nodeId) {
-                        return function (e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            DeskPageFrameActions.startCutPasteComponent(_nodeId);
-                        }
-                    })(domNode, domNodeId)
-                },
-                {
-                    icon: 'fa-copy',
-                    onClick: (function (_node, _nodeId) {
-                        return function (e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            DeskPageFrameActions.startCopyComponent(_nodeId);
-                        }
-                    })(domNode, domNodeId)
-                },
-                {
-                    icon: 'fa-trash-o',
-                    onClick: (function (_node, _nodeId) {
-                        return function (e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            DeskPageFrameActions.deleteComponent(_nodeId);
-                        }
-                    })(domNode, domNodeId)
-                },
-                {
-                    icon: 'fa-plus',
-                    onClick: (function (_node, _nodeId) {
-                        return function (e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            alert('DOM Node with umyid: ' + _nodeId);
-                        }
-                    })(domNode, domNodeId)
-                }
-            ]
-        };
-        return $("<div></div>").umyTreeviewOverlay(overlayModel);
-    },
-
-    createTreeviewCopyPasteOverlay: function(domNode, domNodeId){
-        var overlayModel = {
-            onClose: DeskPageFrameActions.deselectComponent,
-            buttons: [
-                {
-                    label: 'Add Before',
-                    onClick: (function (_node, _nodeId) {
-                        return function (e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            DeskPageFrameActions.addBefore();
-                        }
-                    })(domNode, domNodeId)
-                },
-                {
-                    label: 'Insert First',
-                    onClick: (function (_node, _nodeId) {
-                        return function (e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            DeskPageFrameActions.insertFirst();
-                        }
-                    })(domNode, domNodeId)
-                },
-                {
-                    label: 'Insert Last',
-                    onClick: (function (_node, _nodeId) {
-                        return function (e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            DeskPageFrameActions.insertLast();
-                        }
-                    })(domNode, domNodeId)
-                },
-                {
-                    label: 'Add After',
-                    onClick: (function (_node, _nodeId) {
-                        return function (e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            DeskPageFrameActions.addAfter();
-                        }
-                    })(domNode, domNodeId)
-                }
-            ]
-        };
-        return $("<div></div>").umyTreeviewOverlay(overlayModel);
     }
+
 };
 
 module.exports = Overlays;

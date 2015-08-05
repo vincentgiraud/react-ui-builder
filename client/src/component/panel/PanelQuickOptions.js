@@ -237,7 +237,8 @@ var PanelQuickOptions = React.createClass({
             var eventKey = 1;
             _.mapObject(StyleGroups, function(value, prop){
                 stylePanels.push(
-                    <StylePanel header={StyleGroups[prop].title}
+                    <StylePanel key={'stylePanel' + eventKey}
+                                header={StyleGroups[prop].title}
                                 styleProps={StyleGroups[prop].array}
                                 split={StyleGroups[prop].split}
                                 activeStylePane={this.state.activeStylePane}
