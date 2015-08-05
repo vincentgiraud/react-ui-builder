@@ -1,13 +1,9 @@
 'use strict';
 
 var React = require('react/addons');
-var _ = require("underscore");
-var FormMixin = require('../application/FormMixin.js');
 var Repository = require('../../api/Repository.js');
 
-
-var ModalVariantsFrame = React.createClass({
-    mixins: [FormMixin],
+var VariantFrame = React.createClass({
 
     render: function() {
         return (<iframe {...this.props} />);
@@ -35,4 +31,4 @@ var ModalVariantsFrame = React.createClass({
 
 });
 
-module.exports = ModalVariantsFrame;
+module.exports = VariantFrame;

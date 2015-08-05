@@ -14,7 +14,6 @@ var Popover = ReactBootstrap.Popover;
 var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
 var PanelAvailableComponentsActions = require('../../action/panel/PanelAvailableComponentsActions.js');
 var PanelAvailableComponentsStore = require('../../store/panel/PanelAvailableComponentsStore.js');
-var ModalVariantsTriggerActions = require('../../action/modal/ModalVariantsTriggerActions.js');
 var Repository = require('../../api/Repository.js');
 var CollapsibleLabel = require('../element/CollapsibleLabel.js');
 var PopoverComponentVariantActions = require('../../action/element/PopoverComponentVariantActions.js');

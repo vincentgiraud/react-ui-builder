@@ -16,7 +16,6 @@ var SidePanel = React.createClass({
         var domNode = React.findDOMNode(this);
         domNode.addEventListener('scroll', this._handleScroll);
         PopoverComponentVariantActions.setupScrollTop({scrollTop: domNode.scrollTop});
-
     },
 
     componentDidUpdate: function(){

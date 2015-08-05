@@ -57,6 +57,15 @@ var FormAvailableComponentVariants = React.createClass({
         var $variantListItemElement = $(React.findDOMNode(this.refs['variantListItem' + index]));
         var offset = $variantListItemElement.offset();
         var outerWidth = $variantListItemElement.outerWidth();
+        PopoverComponentVariantActions.show({
+            componentId: this.props.componentId,
+            defaults: this.props.defaults[index],
+            defaultsIndex: index,
+            top: offset.top,
+            left: offset.left,
+            outerWidth: outerWidth,
+            canDelete: false
+        });
         //ModalVariantsTriggerActions.showModal(this.props.componentId, this.props.defaults, this.props.defaultsIndex);
         //PanelAvailableComponentsActions.selectComponentItemDefaultsIndex(
         //    this.props.componentId,

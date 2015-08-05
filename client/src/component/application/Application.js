@@ -3,7 +3,6 @@
 var React = require('react');
 var ApplicationStore = require('../../store/application/ApplicationStore.js');
 var ModalProgress = require('../modal/ModalProgress.js');
-var ModalVariantsTrigger = require('../modal/ModalVariantsTrigger.js');
 var ModalProjectSettings = require('../modal/ModalProjectSettings.js');
 var ModalFileListUpload = require('../modal/ModalFileListUpload.js');
 var FormSignIn = require('./FormSignIn.js');
@@ -14,6 +13,7 @@ var FormDownloadProject = require('./FormDownloadProject.js');
 var DeskGallery = require('../desk/DeskGallery.js');
 var PopoverComponentVariant = require('../element/PopoverComponentVariant.js');
 var GlobalOverlay = require('../element/GlobalOverlay.js');
+var PopoverComponentVariantActions = require('../../action/element/PopoverComponentVariantActions.js');
 
 var PageErrors = require('./PageErrors.js');
 var Desk = require('../desk/Desk.js');
@@ -41,6 +41,10 @@ var Application = React.createClass({
 
     mixins: [FormMixin],
 
+    _handleWindowChanges: function(){
+        PopoverComponentVariantActions.hide();
+    },
+
     getInitialState: function(){
         return ApplicationStore.model;
     },
@@ -51,6 +55,7 @@ var Application = React.createClass({
     componentDidMount: function() {
         this._hideModalProgress();
         this.unsubscribe = ApplicationStore.listen(this.onModelChange);
+        React.findDOMNode(this.refs.appBody).addEventListener('scroll', this._handleWindowChanges);
     },
 
     componentDidUpdate: function(){
@@ -59,6 +64,7 @@ var Application = React.createClass({
 
     componentWillUnmount: function() {
         this.unsubscribe();
+        React.findDOMNode(this.refs.appBody).removeEventListener('scroll', this._handleWindowChanges);
     },
 
     render: function(){
@@ -159,12 +165,11 @@ var Application = React.createClass({
 
         return (
             <div style={{overflow: 'hidden'}}>
-                <div style={{position: 'absolute', top: '0', left: '0', right: '0', bottom: '0', overflow: 'auto'}}>
+                <div ref='appBody' style={{position: 'absolute', top: '0', left: '0', right: '0', bottom: '0', overflow: 'auto'}}>
                     {navBar}
                     {content}
                 </div>
                 <ModalProgress/>
-                <ModalVariantsTrigger/>
                 <ModalProjectSettings/>
                 <ModalFileListUpload/>
                 <PopoverComponentVariant/>

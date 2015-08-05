@@ -87,16 +87,46 @@ var PanelAvailableComponentsStore = Reflux.createStore({
         if(previewOptions.showPreview === true){
             PopoverComponentVariantActions.show({
                 componentId: componentId,
+                defaults: this.model.componentDefaults[index],
                 defaultsIndex: index,
                 top: previewOptions.top,
                 left: previewOptions.left,
-                outerWidth: previewOptions.outerWidth
+                outerWidth: previewOptions.outerWidth,
+                canDelete: true
             });
         } else {
             defaultsIndexMap[componentId] = index;
             this.model.defaultsIndex = index;
             this.copyToClipboard(this.model.componentDefaults[index]);
             //PopoverComponentVariantActions.hide();
+        }
+    },
+
+    onDeleteDefaultsIndex: function(index){
+        if(this.model.componentDefaults && this.model.componentDefaults.length > 1){
+            this.model.componentDefaults.splice(index, 1);
+            if(index >= this.model.componentDefaults.length){
+                this.model.defaultsIndex = this.model.componentDefaults.length - 1;
+            } else {
+                this.model.defaultsIndex = index;
+            }
+            defaultsIndexMap[this.model.selectedComponentId] = this.model.defaultsIndex;
+            this.copyToClipboard(this.model.componentDefaults[this.model.defaultsIndex]);
+
+            Server.invoke('saveAllComponentDefaults',
+                {
+                    defaults: this.model.componentDefaults,
+                    componentName: this.model.selectedComponentId
+                },
+                function(err){
+                    console.error(JSON.stringify(err));
+                },
+                function(response){
+                    // do nothing
+                }
+            );
+
+            this.trigger(this.model);
         }
     },
 

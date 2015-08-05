@@ -12,6 +12,8 @@ var WizardAppendComponentActions = require('../../action/wizard/WizardAppendComp
 var FormAvailableComponents = require('./FormAvailableComponents.js');
 var FormAvailableComponentVariants = require('./FormAvailableComponentVariants.js');
 
+var PopoverComponentVariantActions = require('../../action/element/PopoverComponentVariantActions.js');
+
 var WizardAppendComponent = React.createClass({
 
     getInitialState: function(){
@@ -28,6 +30,10 @@ var WizardAppendComponent = React.createClass({
             selectedUmyId: this.props.selectedUmyId,
             command: this.props.command
         });
+    },
+
+    componentWillUpdate: function(nextProps, nextState){
+        PopoverComponentVariantActions.hide();
     },
 
     componentWillUnmount: function() {
@@ -64,6 +70,7 @@ var WizardAppendComponent = React.createClass({
                 stepComponent = (
                     <FormAvailableComponentVariants defaults={this.state.defaults}
                                                     defaultsIndex={this.state.defaultsIndex}
+                                                    componentId={this.state.componentId}
                                                     onCancelStep={WizardAppendComponentActions.cancelStep0}
                                                     onSubmitStep={WizardAppendComponentActions.submitStep1}/>
                 );

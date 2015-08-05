@@ -7,7 +7,8 @@ var PanelAvailableComponentsActions = Reflux.createActions([
     'refreshComponentList',
     'selectComponentItem',
     'deselectComponentItem',
-    'selectComponentItemDefaultsIndex'
+    'selectComponentItemDefaultsIndex',
+    'deleteDefaultsIndex'
 ]);
 
 module.exports = PanelAvailableComponentsActions;

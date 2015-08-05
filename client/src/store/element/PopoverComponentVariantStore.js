@@ -8,6 +8,32 @@ var defaultModel = {
     scrollTop: 0
 };
 
+var getPageModelForDefaults = function(componentId, defaults){
+    var templatePageModel = {
+        pageName: 'TemplatePage',
+        children:[
+            {
+                type: 'div',
+                props: {
+                    style: {
+                        padding: '0.5em'
+                    }
+                },
+                children:[]
+            }
+        ]
+    };
+    if(defaults){
+        templatePageModel.children[0].children.push({
+            type: componentId,
+            props: defaults.props,
+            children: defaults.children,
+            text: defaults.text
+        });
+    }
+    return templatePageModel;
+};
+
 var PopoverComponentVariantStore = Reflux.createStore({
     model: defaultModel,
     listenables: PopoverComponentVariantActions,
@@ -16,6 +42,11 @@ var PopoverComponentVariantStore = Reflux.createStore({
         this.model.top = options.top;
         this.model.left = options.left;
         this.model.outerWidth = options.outerWidth;
+        this.model.defaults = options.defaults;
+        this.model.componentId = options.componentId;
+        this.model.defaultsIndex = options.defaultsIndex;
+        this.model.canDelete = options.canDelete;
+        this.model.templatePageModel = getPageModelForDefaults(options.componentId, options.defaults);
         this.model.isShown = true;
         this.trigger(this.model);
     },
