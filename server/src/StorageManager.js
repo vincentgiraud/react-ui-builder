@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var fs = require('fs-extra');
 var path = require('path');
 var zlib = require('zlib');
@@ -173,6 +173,7 @@ var StorageManager = {
             _data = esformatter.format(_data, esformatterOptions);
             callback(null, _data);
         } catch(e){
+            console.log(_data);
             callback(e.message);
         }
 
@@ -283,6 +284,7 @@ var StorageManager = {
         try{
             _data = esformatter.format(_data, esformatterOptions);
         } catch(e){
+            console.log(_data);
             console.error(e.message);
         }
         return _data;

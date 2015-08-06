@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var React = require('react');
 var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
 var OverlayTreeviewItemPaste = require('../desk/OverlayTreeviewItemPaste.js');

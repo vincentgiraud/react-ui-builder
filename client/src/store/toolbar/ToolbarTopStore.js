@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var Reflux = require('reflux');
 var ToolbarTopActions = require('../../action/toolbar/ToolbarTopActions.js');
 var ApplicationActions = require('../../action/application/ApplicationActions.js');

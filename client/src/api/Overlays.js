@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var Repository = require('./Repository.js');
 var Common = require('./Common.js');
 var DeskPageFrameActions = require('../action/desk/DeskPageFrameActions.js');

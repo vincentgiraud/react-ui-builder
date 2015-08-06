@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var Reflux = require('reflux');
 var FormCodeComponentEditorActions = require('../../action/form/FormCodeComponentEditorActions.js');
 

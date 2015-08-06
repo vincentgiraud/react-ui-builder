@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var fs = require('fs-extra');
 var path = require('path');
 //if(/^win/.test(process.platform)){
@@ -29,7 +29,7 @@ var cleanPropsUmyId = function(modelItem){
         modelItem.props['data-umyid'] = undefined;
         delete modelItem.props['data-umyid'];
     }
-    _.mapObject(modelItem.props, function(value, prop){
+    _.forOwn(modelItem.props, function(value, prop){
         if(_.isObject(value) && value.type){
             cleanPropsUmyId(value);
         }
@@ -44,7 +44,7 @@ var cleanPropsUmyId = function(modelItem){
 function processStyle(styleObject){
     var result = '';
     if(styleObject && !_.isEmpty(styleObject)){
-        _.mapObject(styleObject, function(value, prop){
+        _.forOwn(styleObject, function(value, prop){
             if(_.isString(value) && value.length > 0){
                 result += ' ' + prop + ": '" + value + "',";
             } else if(_.isBoolean(value) || _.isNumber(value)){
@@ -60,7 +60,7 @@ var processProps = function(props){
 
     var result = '';
     if(props && !_.isEmpty(props)){
-        _.mapObject(props, function(value, prop){
+        _.forOwn(props, function(value, prop){
             if(_.isString(value) && value.length > 0){
                 result += prop + "={'" + value + "'} ";
             } else if(_.isBoolean(value) || _.isNumber(value)){
@@ -81,7 +81,7 @@ var processDefaultProps = function(props){
 
     var result = '';
     if(props && !_.isEmpty(props)){
-        _.mapObject(props, function(value, prop){
+        _.forOwn(props, function(value, prop){
             if(result.length > 0){
                 result += ", ";
             }
@@ -107,7 +107,7 @@ var findNeededComponentsArray = function(modelItem, checkArray, resultArray){
         result[modelItem.type] = checkArray[modelItem.type];
     }
     if(modelItem.props){
-        _.mapObject(modelItem.props,
+        _.forOwn(modelItem.props,
             function(propValue, prop){
                 if(_.isObject(propValue) && propValue.type){
                     findNeededComponentsArray(propValue, checkArray, result);
@@ -149,7 +149,7 @@ function translateVariables(indexFilePath, componentGroup, variables){
 function translateComponents(indexFilePath, componentGroup, componentsArray){
     var result = [];
     //
-    _.mapObject(componentsArray, function(value, key){
+    _.forOwn(componentsArray, function(value, key){
         var variableString = '';
         if(value.type === 'require'){
             var indexDirPath = path.dirname(indexFilePath);

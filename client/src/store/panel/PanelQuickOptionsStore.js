@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var Reflux = require('reflux');
 var PanelQuickOptionsActions = require('../../action/panel/PanelQuickOptionsActions.js');
 var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
@@ -60,7 +60,7 @@ var PanelQuickOptionsStore = Reflux.createStore({
         }
         if(searchResult && searchResult.found.props.style){
             var newStyle = {};
-            _.mapObject(searchResult.found.props.style, function(value, prop){
+            _.forOwn(searchResult.found.props.style, function(value, prop){
                 if(removeStyle !== prop){
                     newStyle[prop] = value;
                 }

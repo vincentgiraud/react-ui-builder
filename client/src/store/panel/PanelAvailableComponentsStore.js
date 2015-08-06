@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var Reflux = require('reflux');
 var HtmlComponents = require('../../api/HtmlComponents.js');
 var Server = require('../../api/Server.js');

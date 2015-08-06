@@ -1,4 +1,4 @@
-var _ = require('underscore');
+var _ = require('lodash');
 var React = require('react/addons');
 
 var components = require('<%= indexFilePath.replace(/\\/g, '/') %>');
@@ -82,7 +82,7 @@ var PageForDesk = React.createClass({
 
         var self = this;
         if(_.isObject(type)){
-            _.mapObject(type.propTypes, function(propType, propName){
+            _.forOwn(type.propTypes, function(propType, propName){
                 if(props[propName] && props[propName].type){
                     props[propName] = self._createElement(props[propName], 0);
                 }
@@ -112,7 +112,7 @@ var PageForDesk = React.createClass({
         var result;
         if(index && _.isObject(index) && level <= 1){
             level++;
-            _.mapObject(index, function(value, key){
+            _.forOwn(index, function(value, key){
                 if(!result){
                     if(key === componentName){
                         result = value;

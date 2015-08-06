@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var Common = require('./Common.js');
 var HtmlComponents = require('./HtmlComponents.js');
 //var userProfile = null;
@@ -28,7 +28,7 @@ function findComponent(index, componentName, level, result){
     var _result = result || {};
     if(index && _.isObject(index) && level <= 1){
         level++;
-        _.mapObject(index, function(value, key){
+        _.forOwn(index, function(value, key){
             if(!_result.value){
                 if(key === componentName){
                     _result.value = value;
@@ -250,7 +250,7 @@ var Repository = {
         //
         var components = {};
         //
-        _.mapObject(HtmlComponents, function(component, componentName){
+        _.forOwn(HtmlComponents, function(component, componentName){
             components[componentName] = {
                 type: 'Reference'
             };
@@ -276,19 +276,6 @@ var Repository = {
         return currentProjectModel.lib_components[0];
     },
 
-    //setCurrentPageComponentDefaults: function(type, defaults){
-    //    var currentPageComponentDefaults = defaults;
-    //    flatDefaults = flatDefaults || {};
-    //    flatDefaults[type] =
-    //    _.mapObject(currentPageComponentDefaults, function(lib, libName){
-    //        _.mapObject(lib, function(group, groupName){
-    //            _.mapObject(group, function(componentDefaults, componentName){
-    //                flatDefaults[libName + ':' + groupName + ':' + componentName] = componentDefaults;
-    //            });
-    //        });
-    //    });
-    //},
-    //
     getFlatDefaults: function(){
       return flatDefaults;
     },

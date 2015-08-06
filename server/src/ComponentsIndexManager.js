@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var esprima = require('esprima-fb');
 var escodegen = require('escodegen');
 var fs = require('fs-extra');

@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var ReactBootstrap = require('react-bootstrap');
 var Button = ReactBootstrap.Button;
 var React = require('react');
@@ -79,7 +79,7 @@ var PanelComponentsHierarchy = React.createClass({
         var listItems = [];
         if(pageModel){
             if (pageModel.props){
-                _.mapObject(pageModel.props, function(value, prop){
+                _.forOwn(pageModel.props, function(value, prop){
                     if(_.isObject(value) && value.type){
                         listItems.push(self._buildNode(value));
                     }
@@ -124,7 +124,7 @@ var PanelComponentsHierarchy = React.createClass({
         }
         var innerProps = [];
         if (rootItem.props){
-            _.mapObject(rootItem.props, function(value, prop){
+            _.forOwn(rootItem.props, function(value, prop){
                 if(_.isObject(value) && value.type){
                     innerProps.push(self._buildNode(value));
                 }

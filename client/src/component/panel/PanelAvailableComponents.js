@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var React = require('react');
 var ReactBootstrap = require('react-bootstrap');
 var Button = ReactBootstrap.Button;
@@ -83,10 +83,10 @@ var PanelAvailableComponents = React.createClass({
         var componentsWithNoGroup = [];
         var counter = 0;
         var _filter = this.state.filter ? this.state.filter.toUpperCase() : null;
-        _.mapObject(componentTreeModel, function(group, groupName){
+        _.forOwn(componentTreeModel, function(group, groupName){
             if(_.isObject(group)){
                 var components = [];
-                _.mapObject(group, function(componentTypeValue, componentId){
+                _.forOwn(group, function(componentTypeValue, componentId){
                     if(_filter){
                         if(componentId.toUpperCase().indexOf(_filter) >= 0){
                             components.push(

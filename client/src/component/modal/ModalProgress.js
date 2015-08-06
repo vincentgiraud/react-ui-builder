@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var React = require('react');
 var Modal = require('react-bootstrap').Modal;
 var ModalProgressStore = require('../../store/modal/ModalProgressStore.js');

@@ -1,7 +1,7 @@
 'use strict';
 
 var React = require('react/addons');
-var _ = require("underscore");
+var _ = require("lodash");
 var Server = require('../../api/Server.js');
 var FormMixin = require('../application/FormMixin.js');
 var Repository = require('../../api/Repository.js');

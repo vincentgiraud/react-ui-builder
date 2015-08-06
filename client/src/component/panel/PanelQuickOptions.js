@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var React = require('react');
 var ReactBootstrap = require('react-bootstrap');
 
@@ -218,12 +218,12 @@ var PanelQuickOptions = React.createClass({
 
             var propsStyle = this.state.props.style;
             // clear all groups
-            _.mapObject(StyleGroups, function(value, prop){
+            _.forOwn(StyleGroups, function(value, prop){
                 StyleGroups[prop].array = [];
             });
             // setup groups with existing values
 
-            _.mapObject(StyleOptionsGroupMapping, function(value, prop){
+            _.forOwn(StyleOptionsGroupMapping, function(value, prop){
                 var group = StyleGroups[value.group].array;
                 var cssProperty = {
                     name: prop,
@@ -235,7 +235,7 @@ var PanelQuickOptions = React.createClass({
             });
             var stylePanels = [];
             var eventKey = 1;
-            _.mapObject(StyleGroups, function(value, prop){
+            _.forOwn(StyleGroups, function(value, prop){
                 stylePanels.push(
                     <StylePanel key={'stylePanel' + eventKey}
                                 header={StyleGroups[prop].title}

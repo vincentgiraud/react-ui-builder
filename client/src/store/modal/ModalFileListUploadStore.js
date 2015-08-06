@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var Reflux = require('reflux');
 var Server = require('../../api/Server.js');
 var ModalFileListUploadActions = require('../../action/modal/ModalFileListUploadActions.js');

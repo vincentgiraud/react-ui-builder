@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var Reflux = require('reflux');
 var FormAvailableComponentsActions = require('../../action/wizard/FormAvailableComponentsActions.js');
 

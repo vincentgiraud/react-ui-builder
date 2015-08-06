@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 
 var Common = require('../../api/Common.js');
 var Server = require('../../api/Server.js');

@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 
 var Common = {
 
@@ -100,7 +100,7 @@ var Common = {
         } else {
             modelItem.props['data-umyid'] = _.uniqueId();
         }
-        _.mapObject(modelItem.props, function(value, prop){
+        _.forOwn(modelItem.props, function(value, prop){
             if(_.isObject(value) && value.type){
                 this.setupPropsUmyId(value, force);
             }
@@ -117,7 +117,7 @@ var Common = {
             modelItem.props['data-umyid'] = undefined;
             delete modelItem.props['data-umyid'];
         }
-        _.mapObject(modelItem.props, function(value, prop){
+        _.forOwn(modelItem.props, function(value, prop){
             if(_.isObject(value) && value.type){
                 this.cleanPropsUmyId(value);
             }
@@ -150,7 +150,7 @@ var Common = {
             return true;
         } else {
             if(modelItem.props){
-                _.mapObject(modelItem.props,
+                _.forOwn(modelItem.props,
                     function(propValue, prop){
                         if(_.isObject(propValue) && propValue.type){
                             _parentList.push(propValue);
@@ -191,7 +191,7 @@ var Common = {
      */
     _traverseModel: function(model, visitorCallback){
         if(model.props){
-            _.mapObject(model.props,
+            _.forOwn(model.props,
                 function(propValue, prop){
                     if(_.isObject(propValue) && propValue.type){
                         visitorCallback({

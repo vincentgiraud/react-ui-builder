@@ -1,4 +1,4 @@
-var _ = require('underscore');
+var _ = require('lodash');
 var esprima = require('esprima-fb');
 var escodegen = require('escodegen');
 var fs = require('fs-extra');
@@ -121,7 +121,7 @@ var ComponentCodeRewriter = {
                     var elements = getJSXElements(astSource);
                     //
                     var missingVariables = [];
-                    _.mapObject(elements, function(value, key){
+                    _.forOwn(elements, function(value, key){
                         //console.log('Variable key: ' + key);
                         //console.log('Variable key value: ' + vars[key]);
                         if(!vars[key] && componentsArray[key]){
@@ -136,7 +136,7 @@ var ComponentCodeRewriter = {
                     //
                     if(missingVariables.length > 0){
                         var maxMergeIndex = 0;
-                        _.mapObject(vars, function(val, key){
+                        _.forOwn(vars, function(val, key){
                             if(maxMergeIndex < val.range[1]){
                                 maxMergeIndex = val.range[1];
                             }
