@@ -12,7 +12,7 @@ Additionaly there is a gallery of ready to use components which you can preview 
 Before you continue reading, please, watch this [Short Tutorial](https://www.youtube.com/watch?v=yycaq9qv7us&feature=youtu.be),
 or watch this more advanced [Long Tutorial](https://www.youtube.com/watch?v=5nqOFSjXKPI)
 
-Also there is [on-line demo version](http://umyproto.com/react-ui-builder/)
+Also there is [on-line demo version](http://helmetrex.com/react-ui-builder/)
 
 React UI Builder on Patreon
 ---------------------------
