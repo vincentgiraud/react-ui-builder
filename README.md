@@ -14,9 +14,10 @@ or watch this more advanced [Long Tutorial](https://www.youtube.com/watch?v=5nqO
 
 Also there is [on-line demo version](http://helmetrex.com/react-ui-builder/)
 
-React UI Builder on Patreon
----------------------------
-If you think that the builder is worth to be developed further become our patron: [Page on Patreon](https://www.patreon.com/ipselon?ty=h)
+React UI Builder needs support
+------------------------------
+If you think that it's worth to pledge small amount of money to development of the builder,
+please become our patron, visit: [the page on Patreon](https://www.patreon.com/ipselon?ty=h)
 
 Find our patrons [here](https://github.com/ipselon/react-ui-builder/blob/master/PATRONS.md) (3)
 
