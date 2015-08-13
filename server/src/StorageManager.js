@@ -131,7 +131,8 @@ var StorageManager = {
                     } else {
                         var tpl = _.template(data);
                         var _data = null;
-                        if(options.outputFilePath.indexOf('.js', options.outputFilePath.length - 3) !== -1){
+                        if(options.outputFilePath.indexOf('.js', options.outputFilePath.length - 3) !== -1 ||
+                            options.outputFilePath.indexOf('.jsx', options.outputFilePath.length - 4) !== -1){
                             try{
                                 _data = esformatter.format(tpl(options.fileData), esformatterOptions);
                             } catch(e){

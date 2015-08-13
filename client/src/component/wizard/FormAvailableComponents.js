@@ -75,6 +75,7 @@ var FormAvailableComponents = React.createClass({
     componentDidMount: function () {
         this.unsubscribe = FormAvailableComponentsStore.listen(this.onModelChange);
         $(React.findDOMNode(this)).find('.panel-body').remove();
+        this.refs.inputElement.getInputDOMNode().focus();
     },
 
     componentDidUpdate: function(){

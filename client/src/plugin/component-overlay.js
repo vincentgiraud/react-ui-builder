@@ -49,19 +49,25 @@ var ComponentOverlay = {
                 var menu = $("<div class='umyproto-dropdown umyproto-dropdown-small' ></div>");
                 var menuList = $("<ul class='umyproto-nav umyproto-nav-dropdown'></ul>");
                 for(var x = 0; x < this._options.buttons[i].menu.length; x++){
-                    var menuItemWrapper = $("<li></li>");
-                    var menuItem = $("<a class='umyproto-text-bold' >" + this._options.buttons[i].menu[x].label + "</a>");
-                    menuItem.on("click.umyOverlayMenuItem", (function (callback, _this) {
-                        return function (e) {
-                            //e.preventDefault();
-                            //e.stopPropagation();
-                            if (callback) {
-                                callback(e, _this);
+                    var menuItemWrapper = null;
+                    if(this._options.buttons[i].menu[x].label === '_divider'){
+                        menuItemWrapper = $("<li class='umyproto-nav-divider'></li>");
+                        menuItemWrapper.appendTo(menuList);
+                    } else {
+                        menuItemWrapper = $("<li></li>");
+                        var menuItem = $("<a class='umyproto-text-bold' >" + this._options.buttons[i].menu[x].label + "</a>");
+                        menuItem.on("click.umyOverlayMenuItem", (function (callback, _this) {
+                            return function (e) {
+                                //e.preventDefault();
+                                //e.stopPropagation();
+                                if (callback) {
+                                    callback(e, _this);
+                                }
                             }
-                        }
-                    }(this._options.buttons[i].menu[x].onClick, this)));
-                    menuItem.appendTo(menuItemWrapper);
-                    menuItemWrapper.appendTo(menuList);
+                        }(this._options.buttons[i].menu[x].onClick, this)));
+                        menuItem.appendTo(menuItemWrapper);
+                        menuItemWrapper.appendTo(menuList);
+                    }
                 }
                 menuList.appendTo(menu);
                 item.appendTo(itemGroup);

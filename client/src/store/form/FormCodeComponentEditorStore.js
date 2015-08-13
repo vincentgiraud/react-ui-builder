@@ -21,6 +21,12 @@ var FormCodeComponentEditorStore = Reflux.createStore({
 
     },
 
+    onSubmitWizardGenerateComponent: function(componentSourceDataObject){
+        this.model.wizard = 'None';
+        this.model.generatedSourceCode = componentSourceDataObject;
+        this.trigger(this.model);
+    },
+
     onStartWizardIncludeChildren: function(sourceCode){
         this.model.wizard = 'IncludeChildren';
         this.model.sourceCode = sourceCode;

@@ -5,6 +5,7 @@ var Repository = require('./Repository.js');
 var Common = require('./Common.js');
 var DeskPageFrameActions = require('../action/desk/DeskPageFrameActions.js');
 var ModalQuickActionComponent = require('../action/modal/ModalQuickActionComponentActions.js');
+var ModalComponentGeneratorActions = require('../action/modal/ModalComponentGeneratorActions.js');
 
 var Overlays = {
 
@@ -52,6 +53,10 @@ var Overlays = {
                         ModalQuickActionComponent.show(
                             {selectedUmyId: domNodeId, command: 'addAfter', commandLabel: 'Add after component'}
                         );
+                    }},
+                    {label: '_divider'},
+                    {label: 'Generate source code', onClick: function(){
+                        ModalComponentGeneratorActions.showModal({ selectedUmyId: domNodeId });
                     }}
                 ]
             });

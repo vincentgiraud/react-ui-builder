@@ -7,10 +7,7 @@ var ModalComponentEditorActions = Reflux.createActions([
     'hideModal',
     'toggleModal',
     'saveProperties',
-    'generateComponentChildrenCode',
-    'cancelWizard',
-    'startWizardGenerateComponent',
-    'submitWizardGenerateComponent'
+    'startWizardGenerateComponent'
 
 ]);
 

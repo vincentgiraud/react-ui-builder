@@ -18,12 +18,10 @@ var MenuItem = ReactBootstrap.MenuItem;
 var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
 var FormCodeComponentEditor = require('../form/FormCodeComponentEditor.js');
 var FormPropsComponentEditor = require('../form/FormPropsComponentEditor.js');
-var FormActionsComponentEditor = require('../form/FormActionsComponentEditor.js');
-var FormStoreComponentEditor = require('../form/FormStoreComponentEditor.js');
+//var FormActionsComponentEditor = require('../form/FormActionsComponentEditor.js');
+//var FormStoreComponentEditor = require('../form/FormStoreComponentEditor.js');
 var ModalComponentEditorStore = require('../../store/modal/ModalComponentEditorStore.js');
 var ModalComponentEditorActions = require('../../action/modal/ModalComponentEditorActions.js');
-
-var WizardGenerateComponent = require('../wizard/WizardGenerateComponent.js');
 
 var ModalComponentEditor = React.createClass({
 
@@ -64,7 +62,9 @@ var ModalComponentEditor = React.createClass({
     _handleCreateComponent: function (e) {
         e.stopPropagation();
         e.preventDefault();
-        ModalComponentEditorActions.startWizardGenerateComponent();
+        ModalComponentEditorActions.startWizardGenerateComponent(
+            { selectedUmyId: this.state.selectedUmyId }
+        );
     },
 
     getInitialState: function () {
@@ -142,51 +142,43 @@ var ModalComponentEditor = React.createClass({
             </TabPane>
         );
 
-        if(this.state.wizard === 'GenerateComponent'){
-            tabPanes.push(
-                <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Component'>
-                    <WizardGenerateComponent
-                        style={{height: '400px', width: '100%'}}
-                        selectedUmyId={this.state.selectedUmyId}
-                        />
-                </TabPane>
-            );
-        } else if(this.state.sourceCode){
-            tabPanes.push(
-                <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Component'>
-                    <FormCodeComponentEditor
-                        isSourceCodeGenerated={this.state.isSourceCodeGenerated}
-                        componentName={this.state.componentName}
-                        selectedUmyId={this.state.selectedUmyId}
-                        sourceCode={this.state.sourceCode}
-                        ref='componentSourceCodeEditor'
-                        style={containerStyle}
-                        sourceFilePath={this.state.sourceFilePath}
-                        editorStyle={{height: '400px', width: '100%'}}
-                        />
-                </TabPane>
-            );
-        } else {
-            tabPanes.push(
-                <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Component'>
-                    <div style={{height: '400px', width: '100%'}}>
-                        <div style={{height: '100%', width: '100%', marginTop: '1em'}}>
-                            <table style={{ width: '100%'}}>
-                                <tr>
-                                    <td style={{width: '20%'}}></td>
-                                    <td style={{height: '100%', textAlign: 'center', verticalAlign: 'middle'}}>
-                                        <Button block={false}
-                                                onClick={this._handleCreateComponent}>
-                                            <span>Generate Component's source code</span>
-                                        </Button>
-                                    </td>
-                                    <td style={{width: '20%'}}></td>
-                                </tr>
-                            </table>
+        if(!this.state.errorReadingSourceFile){
+            if(this.state.sourceCode){
+                tabPanes.push(
+                    <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Component'>
+                        <FormCodeComponentEditor
+                            componentName={this.state.componentName}
+                            selectedUmyId={this.state.selectedUmyId}
+                            sourceCode={this.state.sourceCode}
+                            ref='componentSourceCodeEditor'
+                            style={containerStyle}
+                            sourceFilePath={this.state.sourceFilePath}
+                            editorStyle={{height: '400px', width: '100%'}}
+                            />
+                    </TabPane>
+                );
+            } else {
+                tabPanes.push(
+                    <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Component'>
+                        <div style={{height: '400px', width: '100%'}}>
+                            <div style={{height: '100%', width: '100%', marginTop: '1em'}}>
+                                <table style={{ width: '100%'}}>
+                                    <tr>
+                                        <td style={{width: '20%'}}></td>
+                                        <td style={{height: '100%', textAlign: 'center', verticalAlign: 'middle'}}>
+                                            <Button block={false}
+                                                    onClick={this._handleCreateComponent}>
+                                                <span>Generate Component's source code</span>
+                                            </Button>
+                                        </td>
+                                        <td style={{width: '20%'}}></td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
-                    </div>
-                </TabPane>
-            );
+                    </TabPane>
+                );
+            }
         }
 
         if(this.state.storeSourceCode){

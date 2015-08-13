@@ -46,9 +46,16 @@ var OverlayButtons = React.createClass({
                             }
                         }
                     }(menuItem.onClick));
-                    menuItems.push(
-                        <li key={'menuItem' + index}><a style={{cursor: 'pointer'}} onClick={func}>{menuItem.label}</a></li>
-                    );
+                    if(menuItem.label === '_divider'){
+                        menuItems.push(
+                            <li key={'menuItem' + index} role="separator" className="divider"></li>
+                        );
+                        func = undefined;
+                    } else {
+                        menuItems.push(
+                            <li key={'menuItem' + index}><a style={{cursor: 'pointer'}} onClick={func}>{menuItem.label}</a></li>
+                        );
+                    }
                 });
                 buttons.push(
                     <div key={'button' + i} className="btn-group btn-group-xs" role="group">
@@ -88,7 +95,7 @@ var OverlayButtons = React.createClass({
         }
 
         return (
-            <div style={{position: 'absolute', left: 0, top: '-2.1em', display: 'table', width: '100%', zIndex: 1030}}>
+            <div style={{position: 'absolute', left: 0, top: '-1.5em', display: 'table', width: '100%', zIndex: 1030}}>
                 <div className='btn-group btn-group-xs' role='group' style={{display: 'table-row', width: '100%', whiteSpace: 'nowrap'}}>
                     <button style={{display: 'table-cell'}} type='button' className='btn btn-warning' onClick={this._handleClose}>
                         <span className='fa fa-times fa-fw'></span>

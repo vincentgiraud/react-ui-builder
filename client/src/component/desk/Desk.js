@@ -6,6 +6,7 @@ var ToolbarLeft = require('../toolbar/ToolbarLeft.js');
 var PanelAvailableComponents = require('../panel/PanelAvailableComponents.js');
 var PanelComponentsHierarchy = require('../panel/PanelComponentsHierarchy.js');
 var ModalComponentEditor = require('../modal/ModalComponentEditor.js');
+var ModalComponentGenerator = require('../modal/ModalComponentGenerator.js');
 var ModalQuickActionComponent = require('../modal/ModalQuickActionComponent.js');
 
 var ToolbarTop = require('../toolbar/ToolbarTop.js');
@@ -167,6 +168,7 @@ var Desk = React.createClass({
                     {bottomPanelInner}
                 </div>
                 <ModalComponentEditor/>
+                <ModalComponentGenerator/>
                 <ModalQuickActionComponent/>
             </div>
         )

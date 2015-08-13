@@ -11,5 +11,4 @@ process.on('uncaughtException',
         }
     }
 );
-
 api.initServer({ dirname: __dirname, io: io });

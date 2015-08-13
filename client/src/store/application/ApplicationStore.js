@@ -135,7 +135,7 @@ var ApplicationStore = Reflux.createStore({
             //
             ModalProgressActions.showModalProgress('Project is being compiled and loaded. Please wait...', 400);
             //
-            Server.invoke('prepareLocalProject', {dirPath: dirPath},
+            Server.invoke('openLocalProject', { projectDirPath: dirPath },
                 function(errors){
                     //this.onGoToErrors(errors);
                     this.model.errors = errors;
@@ -162,12 +162,23 @@ var ApplicationStore = Reflux.createStore({
                     this.model.errors = null;
                     //
                     this.model.builderConfig.recentProjectDirs = this.model.builderConfig.recentProjectDirs || [];
-                    var found = _.find(this.model.builderConfig.recentProjectDirs, function(item){
-                        return item === dirPath;
+                    var foundIndex = -1;
+                    this.model.builderConfig.recentProjectDirs.map( function(item, index) {
+                        if(item === dirPath){
+                            foundIndex = index;
+                        }
                     });
-                    if(!found){
-                        this.model.builderConfig.recentProjectDirs.push(dirPath);
+                    if(foundIndex >= 0){
+                        this.model.builderConfig.recentProjectDirs.splice(foundIndex, 1);
                     }
+                    this.model.builderConfig.recentProjectDirs.splice(0, 1, dirPath);
+                    //var found = _.find(this.model.builderConfig.recentProjectDirs, function(item){
+                    //    return item === dirPath;
+                    //});
+                    //if(!found){
+                    //    this.model.builderConfig.recentProjectDirs.push(dirPath);
+                    //} else {
+                    //}
                     this.onStoreBuilderConfig(this.model.builderConfig);
                     //
                     Server.onSocketEmit('compilerWatcher.success', function(data){

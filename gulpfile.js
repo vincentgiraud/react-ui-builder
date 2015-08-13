@@ -3,10 +3,27 @@ var gulp = require('gulp'),
     del = require('del'),
     autoprefixer = require('gulp-autoprefixer'),
     sourcemaps = require('gulp-sourcemaps');
-
+    babel = require('gulp-babel');
+    concat = require('gulp-concat');
+    uglify = require('gulp-uglify');
+    watch = require('gulp-watch');
 
 gulp.task('default', function() {
     // place code for your default task here
+});
+
+gulp.task('build-server-dev', function() {
+    return gulp.src('server/src/refactor/**/*.js')
+        .pipe(watch('server/src/refactor/**/*.js'))
+        .pipe(babel())
+        .pipe(gulp.dest('build/lib'));
+});
+
+gulp.task('build-server', function() {
+    return gulp.src('server/src/refactor/**/*.js')
+        .pipe(babel())
+        .pipe(uglify())
+        .pipe(gulp.dest('build/lib'));
 });
 
 gulp.task('less-bootstrap', ['clean'], function() {

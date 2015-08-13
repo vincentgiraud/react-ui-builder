@@ -66,7 +66,7 @@ var PanelAvailableComponentsStore = Reflux.createStore({
 
             }.bind(this),
             function(response){
-                this.model.componentDefaults = response.model;
+                this.model.componentDefaults = response;
                 var defaultsIndex = defaultsIndexMap[componentId];
                 if(!_.isNumber(defaultsIndex) || defaultsIndex >= this.model.componentDefaults.length){
                     defaultsIndex = 0;

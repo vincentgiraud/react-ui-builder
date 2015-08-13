@@ -43,7 +43,7 @@ var WizardAppendComponentStore = Reflux.createStore({
                 this.model.command
             )
         );
-        DeskPageFrameActions.renderPageFrame();
+        DeskPageFrameActions.renderPageFrame(true);
     },
 
     loadDefaultsOptions: function(options, callback){
@@ -82,7 +82,7 @@ var WizardAppendComponentStore = Reflux.createStore({
             }.bind(this),
             function(response){
 
-                callback(response.model);
+                callback(response);
 
             }.bind(this)
         );

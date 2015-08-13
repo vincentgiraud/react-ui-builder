@@ -28,8 +28,11 @@ var DeskPageFrameStore = Reflux.createStore({
     listenables: DeskPageFrameActions,
     model: {},
 
-    onRenderPageFrame: function(){
+    onRenderPageFrame: function(cleanSelection){
         //this.onStopClipboardForOptions();
+        if(cleanSelection){
+            this.model.selectedUmyId = undefined;
+        }
         this.trigger();
     },
 

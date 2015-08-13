@@ -8,7 +8,9 @@ var WizardGenerateComponentActions = Reflux.createActions([
     'startStep0',
     'submitStep0',
     'startStep1',
-    'submitStep1'
+    'submitStep1',
+    'startStep2',
+    'submitStep2'
 
 ]);
 

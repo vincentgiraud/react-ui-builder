@@ -30,18 +30,24 @@ module.exports = [
             //  on the global var jQuery
             "jquery": "jQuery"
         }
-    },
-    {
-        name: "server",
-        entry: {
-            api: './server/src/api.js'
-        },
-        output: {
-            path: './build/lib',
-            filename: '[name].js',
-            libraryTarget: 'commonjs2'
-        },
-        externals: /^[a-z\-0-9_]+$/
     }
+    //,
+    //{
+    //    name: "server",
+    //    entry: {
+    //        api: './server/src/refactor/api.js'
+    //    },
+    //    module: {
+    //        loaders: [
+    //            { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' }
+    //        ]
+    //    },
+    //    output: {
+    //        path: './build/lib',
+    //        filename: '[name].js',
+    //        libraryTarget: 'commonjs2'
+    //    },
+    //    externals: /^[a-z\-0-9_]+$/
+    //}
 ];
 

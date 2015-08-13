@@ -7,6 +7,7 @@ var Repository = require('../../api/Repository.js');
 var Common = require('../../api/Common.js');
 var ModalComponentEditorActions = require('../../action/modal/ModalComponentEditorActions.js');
 var ModalQuickActionComponent = require('../../action/modal/ModalQuickActionComponentActions.js');
+var ModalComponentGeneratorActions = require('../../action/modal/ModalComponentGeneratorActions.js');
 
 var OverlayTreeviewItem = React.createClass({
 
@@ -69,6 +70,10 @@ var OverlayTreeviewItem = React.createClass({
                         ModalQuickActionComponent.show(
                             {selectedUmyId: domNodeId, command: 'addAfter', commandLabel: 'Add after component'}
                         );
+                    }},
+                    {label: '_divider'},
+                    {label: 'Generate source code', onClick: function(){
+                        ModalComponentGeneratorActions.showModal({ selectedUmyId: domNodeId });
                     }}
                 ]
             });
@@ -76,7 +81,7 @@ var OverlayTreeviewItem = React.createClass({
         overlayModel.buttons.push(
             {
                 icon: "fa-mail-forward fa-rotate-270",
-                btnClass: 'btn-info',
+                btnClass: 'btn-primary',
                 onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
@@ -89,7 +94,7 @@ var OverlayTreeviewItem = React.createClass({
             overlayModel.buttons.push(
                 {
                     icon: 'fa-arrow-up',
-                    btnClass: 'btn-info',
+                    btnClass: 'btn-primary',
                     onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
@@ -101,7 +106,7 @@ var OverlayTreeviewItem = React.createClass({
             overlayModel.buttons.push(
                 {
                     icon: 'fa-arrow-down',
-                    btnClass: 'btn-info',
+                    btnClass: 'btn-primary',
                     onClick: (function (_nodeId) {
                         return function (e) {
                             e.preventDefault();
@@ -114,7 +119,7 @@ var OverlayTreeviewItem = React.createClass({
         overlayModel.buttons.push(
             {
                 icon: 'fa-cut',
-                btnClass: 'btn-info',
+                btnClass: 'btn-primary',
                 onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
@@ -126,7 +131,7 @@ var OverlayTreeviewItem = React.createClass({
         overlayModel.buttons.push(
             {
                 icon: 'fa-clipboard',
-                btnClass: 'btn-info',
+                btnClass: 'btn-primary',
                 onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
@@ -138,7 +143,7 @@ var OverlayTreeviewItem = React.createClass({
         overlayModel.buttons.push(
             {
                 icon: 'fa-copy',
-                btnClass: 'btn-info',
+                btnClass: 'btn-primary',
                 onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
@@ -150,7 +155,7 @@ var OverlayTreeviewItem = React.createClass({
         overlayModel.buttons.push(
             {
                 icon: 'fa-trash-o',
-                btnClass: 'btn-info',
+                btnClass: 'btn-primary',
                 onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
@@ -162,7 +167,7 @@ var OverlayTreeviewItem = React.createClass({
         overlayModel.buttons.push(
             {
                 icon: 'fa-gears',
-                btnClass: 'btn-info',
+                btnClass: 'btn-primary',
                 onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();

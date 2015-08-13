@@ -59,6 +59,10 @@ var FormVariantName = React.createClass({
         };
     },
 
+    componentDidMount: function(){
+        React.findDOMNode(this.refs.variantNameInput).focus();
+    },
+
     render: function () {
         return (
             <div style={this.props.formStyle}>
