@@ -112,6 +112,7 @@ var FormPropsComponentEditor = React.createClass({
             );
             editorElement = (
                 <AceEditor ref='editor'
+                           sourceName='componentPropsScript'
                            style={this.props.editorStyle}
                            sourceCode={this.state.propsScript}/>
             );

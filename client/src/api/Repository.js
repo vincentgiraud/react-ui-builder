@@ -15,6 +15,7 @@ var currentPageWindow = null;
 var currentPageDocument = null;
 var componentsTree = null;
 //var currentPageComponentDefaults = null;
+var currentProjectDocument = null;
 
 var htmlForDesk = null;
 
@@ -298,6 +299,15 @@ var Repository = {
 
     getHtmlForDesk: function(){
         return htmlForDesk;
+    },
+
+    setCurrentProjectDocument: function(documentObj){
+        currentProjectDocument = documentObj;
+    },
+
+    getCurrentProjectDocument: function(){
+
+        return currentProjectDocument;
     }
 
 

@@ -79,11 +79,19 @@ var FormGeneratorList = React.createClass({
         return (
             <div style={this.props.formStyle}>
                 <h5 className='text-center'>Select appropriate generators' pack</h5>
-                <div style={{ maxHeight: '22em', width: '100%', overflow: 'auto'}}>
-                    <ListGroup fill>
-                        {generatorItems}
-                    </ListGroup>
-                </div>
+                <table style={{width: '100%'}}>
+                    <tr>
+                        <td style={{width: '20%'}}></td>
+                        <td>
+                            <div style={{ maxHeight: '22em', width: '100%', overflow: 'auto'}}>
+                                <ListGroup fill>
+                                    {generatorItems}
+                                </ListGroup>
+                            </div>
+                        </td>
+                        <td style={{width: '20%'}}></td>
+                    </tr>
+                </table>
                 <div style={{display: 'table', textAlign: 'center', width: '100%', marginTop: '2em'}}>
                     <Button bsStyle='default' onClick={this._handleBackStep}>Back</Button>
                 </div>

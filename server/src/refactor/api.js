@@ -230,8 +230,10 @@ class Api {
         let response = {};
         return this.setupProject(options)
             .then( () => {
+
                 let htmlDirPath = this.storageManager.getProjectBuildDirPath();
-                let htmlURLPrefix = servicePath +'/' + htmlDirPath.substr(0, 30);
+                let refinedDirPath = htmlDirPath.split(path.separator).slice(1).join('').substr(0, 30);
+                let htmlURLPrefix = servicePath +'/' + refinedDirPath;
                 response.htmlURLPrefix = htmlURLPrefix;
                 response.htmlForDesk = 'PageForDesk.html';
                 this.addProjectStaticRoute(htmlURLPrefix, htmlDirPath);
@@ -373,6 +375,27 @@ class Api {
                 return this.storageManager.readSourceFile(options.filePath);
             });
 
+    }
+
+    readComponentDocument(options){
+        return this.validator.validateOptions(options, ['componentName'])
+            .then( () => {
+                return this.storageManager.readComponentDocument(options.componentName);
+            });
+    }
+
+    readProjectDocument(options){
+        return this.indexManager.getComponentsNames()
+            .then( componentsNames => {
+                return this.storageManager.readProjectDocument(componentsNames);
+            });
+    }
+
+    writeProjectDocument(options){
+        return this.validator.validateOptions(options, ['projectDocument'])
+            .then( () => {
+                return this.storageManager.writeProjectDocument(options.projectDocument);
+            });
     }
 
 }

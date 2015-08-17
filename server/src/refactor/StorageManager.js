@@ -1,4 +1,5 @@
 import path from 'path';
+import _ from 'lodash';
 import child_process from 'child_process';
 import FileManager from './FileManager.js';
 import ProjectCompiler from './ProjectCompiler.js';
@@ -11,6 +12,7 @@ const buildDirName = 'build';
 const generatorsDirName = 'generators';
 const sourceDirName = 'src';
 const scriptsDirName = 'scripts';
+const docsDirName = 'docs';
 const fileConfigName = 'config.json';
 const indexFileName = 'index.js';
 const npmPackageFileName = 'package.json';
@@ -48,6 +50,7 @@ class StorageManager {
         this.generatorsDirPath = path.join(this.builderDirPath, generatorsDirName);
         this.sourceDirPath = path.join(this.builderDirPath, sourceDirName);
         this.indexFilePath = path.join(this.sourceDirPath, indexFileName);
+        this.docsDirPath = path.join(this.builderDirPath, docsDirName);
         this.scriptsDirName = scriptsDirName;
         this.configFilePath = path.join(this.builderDirPath, fileConfigName);
     }
@@ -258,6 +261,77 @@ class StorageManager {
                 return this.fileManager.writeJson(
                     path.join(this.builderDirPath, 'defaults', lookupComponentName + '.json'), defaults
                 );
+            });
+    }
+
+    readProjectDocument(components){
+        let documentObj = {
+            overview: {},
+            components: {}
+        };
+        let overviewFilePath = path.join(this.docsDirPath, 'Readme.md');
+        return this.fileManager.ensureFilePath(overviewFilePath)
+            .then( () => {
+                return this.fileManager.readFile(overviewFilePath)
+                    .then( fileData => {
+                        fileData = fileData || 'Project does not have Readme';
+                        documentObj.overview.markdown = fileData;
+                    });
+            })
+            .then( () => {
+                if(components && components.length > 0){
+                    return components.reduce( (sequence, componentName) => {
+                        return sequence.then( () => {
+                            let componentNoteFilePath = path.join(this.docsDirPath, 'components', componentName + '.md');
+                            return this.fileManager.ensureFilePath(componentNoteFilePath)
+                                .then( () => {
+                                    return this.fileManager.readFile(componentNoteFilePath)
+                                        .then( fileData => {
+                                            fileData = fileData || 'Component does not have notes';
+                                            documentObj.components[componentName] = {
+                                                markdown: fileData
+                                            }
+                                        });
+                                });
+                        });
+                    }, Promise.resolve());
+                }
+            })
+            .then( () => {
+                return documentObj;
+            });
+    }
+
+    writeProjectDocument(documentObj){
+        if(documentObj.overview){
+            let overviewFilePath = path.join(this.docsDirPath, 'Readme.md');
+            documentObj.overview.markdown = documentObj.overview.markdown || 'Project does not have Readme';
+            return this.fileManager.writeFile(overviewFilePath, documentObj.overview.markdown, false)
+                .then( () => {
+                    if(documentObj.components){
+                        let sequence = Promise.resolve();
+                        _.forOwn(documentObj.components, (component, componentName) => {
+                            sequence = sequence.then( () => {
+                                let componentNoteFilePath = path.join(this.docsDirPath, 'components', componentName + '.md');
+                                component.markdown = component.markdown || 'Component does not have notes';
+                                return this.fileManager.writeFile(componentNoteFilePath, component.markdown, false);
+                            });
+                        });
+                        return sequence;
+                    }
+                });
+        }
+    }
+
+    readComponentDocument(componentName){
+        let componentNoteFilePath = path.join(this.docsDirPath, 'components', componentName + '.md');
+        return this.fileManager.ensureFilePath(componentNoteFilePath)
+            .then( () => {
+                return this.fileManager.readFile(componentNoteFilePath)
+                    .then( fileData => {
+                        fileData = fileData || 'Component does not have notes';
+                        return fileData;
+                    });
             });
     }
 

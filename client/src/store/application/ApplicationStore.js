@@ -132,18 +132,16 @@ var ApplicationStore = Reflux.createStore({
             dirPath = options.dirPath.trim();
         }
         if(dirPath) {
-            //
+
             ModalProgressActions.showModalProgress('Project is being compiled and loaded. Please wait...', 400);
-            //
+
             Server.invoke('openLocalProject', { projectDirPath: dirPath },
                 function(errors){
-                    //this.onGoToErrors(errors);
+
                     this.model.errors = errors;
                     this.trigger(this.model);
                 }.bind(this),
                 function(response){
-
-                    //console.log(response);
 
                     Repository.setCurrentProjectModel(response.model);
                     Repository.setHtmlForDesk(response.htmlURLPrefix + '/' + response.htmlForDesk);
@@ -160,7 +158,7 @@ var ApplicationStore = Reflux.createStore({
                     });
 
                     this.model.errors = null;
-                    //
+
                     this.model.builderConfig.recentProjectDirs = this.model.builderConfig.recentProjectDirs || [];
                     var foundIndex = -1;
                     this.model.builderConfig.recentProjectDirs.map( function(item, index) {
@@ -171,26 +169,27 @@ var ApplicationStore = Reflux.createStore({
                     if(foundIndex >= 0){
                         this.model.builderConfig.recentProjectDirs.splice(foundIndex, 1);
                     }
-                    this.model.builderConfig.recentProjectDirs.splice(0, 1, dirPath);
-                    //var found = _.find(this.model.builderConfig.recentProjectDirs, function(item){
-                    //    return item === dirPath;
-                    //});
-                    //if(!found){
-                    //    this.model.builderConfig.recentProjectDirs.push(dirPath);
-                    //} else {
-                    //}
+                    this.model.builderConfig.recentProjectDirs.splice(0, 0, dirPath);
+
                     this.onStoreBuilderConfig(this.model.builderConfig);
-                    //
+
                     Server.onSocketEmit('compilerWatcher.success', function(data){
                         Repository.setComponentsTree(data.componentsTree);
                         PanelAvailableComponentsActions.refreshComponentList();
                     });
-                    //
+
                     Server.invoke('setProjectProxy', {}, function(err){}, function(response){});
                     Server.invoke('watchLocalProject', {}, function(err){}, function(response){});
-                    //
+
+                    Server.invoke('readProjectDocument', {},
+                        function(err) { console.log(err); },
+                        function(response){
+                            Repository.setCurrentProjectDocument(response);
+                        }
+                    );
+
                     this.onGoToDeskPage();
-                    //
+
 
                 }.bind(this)
             );

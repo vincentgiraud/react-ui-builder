@@ -134,6 +134,7 @@ var FormGeneratedSourceCode = React.createClass({
                         <td style={{width: '90%'}}>
                             <AceEditor
                                 ref='editor'
+                                sourceName={this.state.selected}
                                 mode='ace/mode/jsx'
                                 isReadOnly={true}
                                 style={{ height: '400px', width: '690px'}}
@@ -144,7 +145,7 @@ var FormGeneratedSourceCode = React.createClass({
 
                 <div style={{display: 'table', textAlign: 'center', width: '100%', marginTop: '2em'}}>
                     <Button bsStyle='default' onClick={this._handleBackStep}>Back</Button>
-                    <Button bsStyle='primary' onClick={this._handleSubmitStep}>Save component</Button>
+                    <Button bsStyle='primary' onClick={this._handleSubmitStep}>Save</Button>
                 </div>
             </div>
         );

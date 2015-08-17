@@ -18,7 +18,7 @@ var AceEditor = React.createClass({
                 this.editor.setReadOnly(true);
             }
             this.editor.$blockScrolling = Infinity;
-
+            this.editor.getSession().on('change', this.handleChange);
             //this.editor.setTheme("ace/theme/tomorrow_night");
         }
         if (sourceCode) {
@@ -39,12 +39,22 @@ var AceEditor = React.createClass({
         return null;
     },
 
+    handleChange: function(e){
+        if(this.props.onChangeText){
+            this.props.onChangeText(this.editor.getSession().getValue());
+        }
+    },
+
     componentDidMount: function(){
         this._checkEditor(this.props.sourceCode);
     },
 
     componentDidUpdate: function(){
         this._checkEditor(this.props.sourceCode);
+    },
+
+    shouldComponentUpdate(nextProps, nextState){
+        return nextProps.sourceName !== this.props.sourceName;
     },
 
     componentWillUnmount: function(){

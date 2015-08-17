@@ -12,6 +12,7 @@ var ModalQuickActionComponent = require('../modal/ModalQuickActionComponent.js')
 var ToolbarTop = require('../toolbar/ToolbarTop.js');
 var ToolbarBreadcrumbs = require('../toolbar/ToolbarBreadcrumbs.js');
 var DeskPageFrame = require('../desk/DeskPageFrame.js');
+var DeskPageDocument = require('../desk/DeskPageDocument.js');
 var DeskPageFramePreview = require('../desk/DeskPageFramePreview.js');
 var Repository = require('../../api/Repository.js');
 var ToolbarTopActions = require('../../action/toolbar/ToolbarTopActions.js');
@@ -92,7 +93,7 @@ var Desk = React.createClass({
         var topPanelHeight = 0;
         var breadcrumbsComponent = null;
 
-        if(!this.state.isLivePreviewMode){
+        if(!this.state.isLivePreviewMode && !this.state.isDocumentMode){
             var toolbarTopStyle = {
                 position: 'absolute',
                 top: 0,
@@ -115,6 +116,8 @@ var Desk = React.createClass({
                 topPanelHeight += 3;
             }
 
+        } else {
+            topPanelHeight = 0.3;
         }
 
         var bodyStyle = {
@@ -143,6 +146,19 @@ var Desk = React.createClass({
         if(this.state.isLivePreviewMode){
             pageFrame = (
                 <DeskPageFramePreview frameBorder="0" style={iframeStyle} src={pageFrameSrc} />
+            );
+        } else if(this.state.isDocumentMode) {
+            var documentStyle = {
+                "height" : "calc(100% - 5px)",
+                "width" : "100%",
+                "minWidth" : "320px",
+                "margin" : "0",
+                "padding" : "0",
+                "border" : "1px solid #000000",
+                "overflow": "auto"
+            };
+            pageFrame = (
+                <DeskPageDocument style={documentStyle} />
             );
         } else {
             pageFrame = (

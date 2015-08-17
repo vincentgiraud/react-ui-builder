@@ -2,6 +2,7 @@
 
 var validator = require('validator');
 var React = require('react');
+var markdown = require('markdown').markdown;
 var ReactBootstrap = require('react-bootstrap');
 var Modal = ReactBootstrap.Modal;
 var Button = ReactBootstrap.Button;
@@ -18,8 +19,6 @@ var MenuItem = ReactBootstrap.MenuItem;
 var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
 var FormCodeComponentEditor = require('../form/FormCodeComponentEditor.js');
 var FormPropsComponentEditor = require('../form/FormPropsComponentEditor.js');
-//var FormActionsComponentEditor = require('../form/FormActionsComponentEditor.js');
-//var FormStoreComponentEditor = require('../form/FormStoreComponentEditor.js');
 var ModalComponentEditorStore = require('../../store/modal/ModalComponentEditorStore.js');
 var ModalComponentEditorActions = require('../../action/modal/ModalComponentEditorActions.js');
 
@@ -112,17 +111,15 @@ var ModalComponentEditor = React.createClass({
                     <div className='container-fluid' style={containerStyle}>
                         <div className='row'>
                             <div className='col-xs-12'>
-                                <p>
-                                    <Input
-                                        type="textarea"
-                                        placeholder="Enter text"
-                                        hasFeedback
-                                        bsStyle={this._validationStateComponentText()}
-                                        value={this.state.componentText}
-                                        onChange={this._handleChangeState}
-                                        ref="componentTextInput"
-                                        style={{width: '100%', height: '400px'}}/>
-                                </p>
+                                <Input
+                                    type="textarea"
+                                    placeholder="Enter text"
+                                    hasFeedback
+                                    bsStyle={this._validationStateComponentText()}
+                                    value={this.state.componentText}
+                                    onChange={this._handleChangeState}
+                                    ref="componentTextInput"
+                                    style={{width: '100%', height: '400px'}}/>
                             </div>
                         </div>
                     </div>
@@ -165,11 +162,13 @@ var ModalComponentEditor = React.createClass({
                                 <table style={{ width: '100%'}}>
                                     <tr>
                                         <td style={{width: '20%'}}></td>
-                                        <td style={{height: '100%', textAlign: 'center', verticalAlign: 'middle'}}>
-                                            <Button block={false}
-                                                    onClick={this._handleCreateComponent}>
-                                                <span>Generate Component's source code</span>
-                                            </Button>
+                                        <td style={{height: '300px', textAlign: 'center', verticalAlign: 'middle'}}>
+                                            <p>
+                                                <Button block={false}
+                                                        onClick={this._handleCreateComponent}>
+                                                    <span>Generate Component's source code</span>
+                                                </Button>
+                                            </p>
                                         </td>
                                         <td style={{width: '20%'}}></td>
                                     </tr>
@@ -180,25 +179,15 @@ var ModalComponentEditor = React.createClass({
                 );
             }
         }
-
-        if(this.state.storeSourceCode){
+        if(this.state.documentMarkdown){
             tabPanes.push(
-                <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Store'>
-                    <FormStoreComponentEditor
-                        ref='storeSourceCodeEditor'
-                        storeSourceCode={this.state.storeSourceCode}
-                        />
-                </TabPane>
-            );
-        }
-
-        if(this.state.actionsSourceCode){
-            tabPanes.push(
-                <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Actions'>
-                    <FormActionsComponentEditor
-                        ref='actionsSourceCodeEditor'
-                        actionsSourceCode={this.state.actionsSourceCode}
-                        />
+                <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Read Me'>
+                    <div style={{height: '400px', marginTop: '1em', width: '100%', overflow: 'auto'}}>
+                        <div style={{width: '100%', padding: '0 2em 0 2em'}}>
+                            <div dangerouslySetInnerHTML={{__html: markdown.toHTML(this.state.documentMarkdown)}} >
+                            </div>
+                        </div>
+                    </div>
                 </TabPane>
             );
         }

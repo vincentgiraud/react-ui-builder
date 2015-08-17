@@ -100,6 +100,13 @@ var ToolbarLeft = React.createClass({
                         <span className="fa fa-eye" />
                     </Button>
 
+                    <Button
+                        bsStyle={this.props.isDocumentMode ? 'primary' : 'default'}
+                        style={{marginTop: '0.25em', width: '100%'}}
+                        onClick={DeskAction.startDocumentMode}>
+                        <span className="fa fa-paperclip fa-flip-vertical" />
+                    </Button>
+
                     <div style={{marginTop: '0.25em', width: '100%', height: '2em'}} />
                 </div>
             </div>

@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var Repository = require('./Repository.js');
 var Common = require('./Common.js');
+var DeskAction = require('../action/desk/DeskActions.js');
 var DeskPageFrameActions = require('../action/desk/DeskPageFrameActions.js');
 var ModalQuickActionComponent = require('../action/modal/ModalQuickActionComponentActions.js');
 var ModalComponentGeneratorActions = require('../action/modal/ModalComponentGeneratorActions.js');
@@ -62,14 +63,15 @@ var Overlays = {
             });
         overlayModel.buttons.push(
             {
-                icon: "umyproto-icon-level-up",
-                tooltip: 'Select parent component',
+                icon: "umyproto-icon-code",
+                tooltip: 'Show component in page treeview',
                 btnClass: 'umyproto-button-primary',
                 onClick: (function (_nodeId) {
                     return function (e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        DeskPageFrameActions.selectParentComponent(_nodeId);
+                        DeskAction.toggleComponentsHierarchy();
+                        //DeskPageFrameActions.selectParentComponent(_nodeId);
                     }
                 })(domNodeId)
             });
@@ -83,7 +85,8 @@ var Overlays = {
                         return function (e) {
                             e.preventDefault();
                             e.stopPropagation();
-                            DeskPageFrameActions.moveUpComponent(_nodeId);
+
+                            //DeskPageFrameActions.moveUpComponent(_nodeId);
                         }
                     })(domNodeId)
                 });

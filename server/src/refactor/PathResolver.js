@@ -9,19 +9,19 @@ export function resolveFromComponentPerspective(dataObject){
     let absoluteComponentPath = _copyObject.component.outputFilePath;
     let absoluteComponentDirPath = path.dirname(absoluteComponentPath);
     let indexFileDirPath = path.dirname(_copyObject.component.indexFilePath);
-    _copyObject.component.relativeFilePathInIndex = path.relative(indexFileDirPath, absoluteComponentPath);
+    _copyObject.component.relativeFilePathInIndex = path.relative(indexFileDirPath, absoluteComponentPath).replace(/\\/g, '/');
 
     _copyObject.component.imports.map( (variable, index) => {
         if(variable.source.substr(0, 6) === '../../'){
             let absoluteSourcePath = path.resolve(indexFileDirPath, variable.source);
-            variable.relativeSource = repairPath(path.relative(absoluteComponentDirPath, absoluteSourcePath));
+            variable.relativeSource = repairPath(path.relative(absoluteComponentDirPath, absoluteSourcePath)).replace(/\\/g, '/');
         } else {
             variable.relativeSource = variable.source;
         }
     });
 
     _.forOwn(_copyObject.modules, (value, prop) => {
-        value.relativeFilePath = repairPath(path.relative(absoluteComponentDirPath, value.outputFilePath));
+        value.relativeFilePath = repairPath(path.relative(absoluteComponentDirPath, value.outputFilePath)).replace(/\\/g, '/');
     });
     return _copyObject;
 
@@ -35,20 +35,20 @@ export function resolveFromModulePerspective(dataObject, moduleId){
     let absoluteModulePath = _copyObject.modules[moduleId].outputFilePath;
     let absoluteModuleDirPath = path.dirname(absoluteModulePath);
 
-    _copyObject.component.relativeFilePath = path.relative(absoluteModuleDirPath, _copyObject.component.outputFilePath);
-    _copyObject.modules[moduleId].relativeFilePathInIndex = path.relative(indexFileDirPath, absoluteModulePath);
+    _copyObject.component.relativeFilePath = path.relative(absoluteModuleDirPath, _copyObject.component.outputFilePath).replace(/\\/g, '/');
+    _copyObject.modules[moduleId].relativeFilePathInIndex = path.relative(indexFileDirPath, absoluteModulePath).replace(/\\/g, '/');
 
     _copyObject.component.imports.map( (variable, index) => {
         if(variable.source.substr(0, 6) === '../../'){
             let absoluteSourcePath = path.resolve(indexFileDirPath, variable.source);
-            variable.relativeSource = repairPath(path.relative(absoluteModuleDirPath, absoluteSourcePath));
+            variable.relativeSource = repairPath(path.relative(absoluteModuleDirPath, absoluteSourcePath)).replace(/\\/g, '/');
         } else {
             variable.relativeSource = variable.source;
         }
     });
 
     _.forOwn(_copyObject.modules, (value, prop) => {
-        value.relativeFilePath = repairPath(path.relative(absoluteModuleDirPath, value.outputFilePath));
+        value.relativeFilePath = repairPath(path.relative(absoluteModuleDirPath, value.outputFilePath)).replace(/\\/g, '/');
     });
 
     return _copyObject;

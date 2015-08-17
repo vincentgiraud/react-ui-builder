@@ -78,18 +78,18 @@ var OverlayTreeviewItem = React.createClass({
                 ]
             });
 
-        overlayModel.buttons.push(
-            {
-                icon: "fa-mail-forward fa-rotate-270",
-                btnClass: 'btn-primary',
-                onClick: (function (_nodeId) {
-                    return function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        DeskPageFrameActions.selectParentComponent(_nodeId);
-                    }
-                })(domNodeId)
-            });
+        //overlayModel.buttons.push(
+        //    {
+        //        icon: "fa-code",
+        //        btnClass: 'btn-primary',
+        //        onClick: (function (_nodeId) {
+        //            return function (e) {
+        //                e.preventDefault();
+        //                e.stopPropagation();
+        //                DeskPageFrameActions.selectParentComponent(_nodeId);
+        //            }
+        //        })(domNodeId)
+        //    });
         if(searchResult.foundProp === '/!#child') {
             overlayModel.buttons.push(
                 {

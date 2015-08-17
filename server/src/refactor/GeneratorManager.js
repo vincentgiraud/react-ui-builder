@@ -136,9 +136,13 @@ class GeneratorManager {
                         }
                     });
                 }
-
                 return this.initGenerator(generatorName).then( generatorObj => {
-
+                    if(!generatorObj.config){
+                        throw Error('Generator ' + generatorObj.filePath + ' is not configured properly.');
+                    }
+                    if(!generatorObj.config.component){
+                        throw Error('Generator ' + generatorObj.filePath + ' configuration does not have component section.');
+                    }
                     dataObj.component.outputFilePath =
                         path.join(
                             this.projectDirPath,
@@ -153,23 +157,24 @@ class GeneratorManager {
                         path.join(generatorObj.dirPath, this.scriptsDirName, generatorObj.config.component.script);
 
                     dataObj.modules = {};
-                    generatorObj.config.modules.map((module, index) => {
+                    if(generatorObj.config.modules && generatorObj.config.modules.length > 0){
+                        generatorObj.config.modules.map((module, index) => {
 
-                        let replaceInfoObj = _.pick(dataObj.component, ['componentName', 'groupName']);
+                            let replaceInfoObj = _.pick(dataObj.component, ['componentName', 'groupName']);
 
-                        dataObj.modules[module.id] = {
-                            outputFilePath: path.join(
-                                this.projectDirPath,
-                                pathResolver.replaceInPath( module.destDirPath, replaceInfoObj ),
-                                pathResolver.replaceInPath( module.name, replaceInfoObj ) + '.js'
-                            ),
-                            name: pathResolver.replaceInPath( module.name, replaceInfoObj ),
-                            generatorScriptPath: path.join(generatorObj.dirPath, this.scriptsDirName, module.script),
-                            validateJS: module.validateJS
-                        };
+                            dataObj.modules[module.id] = {
+                                outputFilePath: path.join(
+                                    this.projectDirPath,
+                                    pathResolver.replaceInPath( module.destDirPath, replaceInfoObj ),
+                                    pathResolver.replaceInPath( module.name, replaceInfoObj ) + '.js'
+                                ),
+                                name: pathResolver.replaceInPath( module.name, replaceInfoObj ),
+                                generatorScriptPath: path.join(generatorObj.dirPath, this.scriptsDirName, module.script),
+                                validateJS: module.validateJS
+                            };
 
-                    });
-
+                        });
+                    }
                     //dataObj.generator = generatorObj;
                     return dataObj;
                 });

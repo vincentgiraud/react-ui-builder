@@ -114,6 +114,7 @@ var FormCodeComponentEditor = React.createClass({
             );
             editorElement = (
                 <AceEditor ref='editor'
+                           sourceName='componentSource'
                            mode='ace/mode/jsx'
                            style={this.props.editorStyle}
                            sourceCode={this.state.sourceCode}/>

@@ -115,6 +115,7 @@ var DeskPageFrame = React.createClass({
 
     _mapDomNodes: function(){
         Repository.resetCurrentPageDomNodes();
+        //console.log(React.renderToString(this.frameEndpoint.Page));
         React.addons.TestUtils.findAllInRenderedTree(this.frameEndpoint.Page,
             function(component){
                 var props = component.props;

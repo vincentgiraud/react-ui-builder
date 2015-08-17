@@ -175,6 +175,19 @@ class IndexManager {
             });
     }
 
+    getComponentsNames(){
+        return this.getComponentsTree()
+            .then( componentsTree => {
+                let componentsNames = [];
+                _.forOwn(componentsTree, (group, groupName) => {
+                    _.forOwn(group, (component, componentName) => {
+                        componentsNames.push(componentName);
+                    });
+                });
+                return componentsNames;
+            });
+    }
+
     addComponent(groupName, componentName, source){
 
         return this.parseIndexFile()

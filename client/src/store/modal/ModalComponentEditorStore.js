@@ -24,6 +24,7 @@ var ModalComponentEditorStore = Reflux.createStore({
 
             this.model.selectedUmyId = options.selectedUmyId;
             this.model.errorReadingSourceFile = false;
+            this.model.documentMarkdown = undefined;
 
             var searchResult = Repository.findInCurrentPageModelByUmyId(this.model.selectedUmyId);
             if(searchResult){
@@ -44,26 +45,42 @@ var ModalComponentEditorStore = Reflux.createStore({
                 this.model.isModalOpen = true;
                 this.model.showTextEditor = !!this.model.componentText;
 
-                if(!componentTypeValue.value || !componentTypeValue.value.absoluteSource){
 
-                    this.trigger(this.model);
+                Server.invoke('readComponentDocument', {componentName: copy.type},
+                    function(errors){
+                        this.model.errors = errors;
+                        this.trigger(this.model);
+                    }.bind(this),
+                    function(response){
+                        this.model.documentMarkdown = response;
 
-                } else if(componentTypeValue.value.absoluteSource) {
+                        if(!componentTypeValue.value || !componentTypeValue.value.absoluteSource){
 
-                    this.model.sourceFilePath = componentTypeValue.value.absoluteSource;
-
-                    Server.invoke('readComponentCode', {filePath: componentTypeValue.value.absoluteSource},
-                        function(errors){
-                            this.model.errors = errors;
-                            this.model.errorReadingSourceFile = true;
                             this.trigger(this.model);
-                        }.bind(this),
-                        function(data){
-                            this.model.sourceCode = data;
-                            this.trigger(this.model);
-                        }.bind(this)
-                    );
-                }
+
+                        } else if(componentTypeValue.value.absoluteSource) {
+
+                            this.model.sourceFilePath = componentTypeValue.value.absoluteSource;
+
+                            Server.invoke('readComponentCode', {filePath: componentTypeValue.value.absoluteSource},
+                                function(errors){
+                                    this.model.errors = errors;
+                                    this.model.errorReadingSourceFile = true;
+                                    this.trigger(this.model);
+                                }.bind(this),
+                                function(data){
+
+                                    this.model.sourceCode = data;
+                                    this.trigger(this.model);
+
+
+
+                                }.bind(this)
+                            );
+                        }
+
+                    }.bind(this)
+                );
 
             }
         }
