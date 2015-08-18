@@ -10,14 +10,14 @@ var PanelComponentHierarchyItem = React.createClass({
 
     render: function(){
 
-        var overlay = null;
-        if(this.props.selected === this.props.umyid){
-            if(this.props.clipboardActive){
-                overlay = <OverlayTreeviewItemPaste />
-            } else {
-                overlay = <OverlayTreeviewItem domNodeId={this.props.umyid} />
-            }
-        }
+        //var overlay = null;
+        //if(this.props.selected === this.props.umyid){
+        //    if(this.props.clipboardActive){
+        //        overlay = <OverlayTreeviewItemPaste />
+        //    } else {
+        //        overlay = <OverlayTreeviewItem domNodeId={this.props.umyid} />
+        //    }
+        //}
 
         var content = null;
 
@@ -35,7 +35,7 @@ var PanelComponentHierarchyItem = React.createClass({
         if(this.props.children && this.props.children.length > 0){
             content = (
                 <li className={className}>
-                    {overlay}
+                    {/*overlay*/}
                     <a key={'toplink'} className={linkClassName} href='#' onClick={this._handleClick}>
                         <span>{'<' + label + '>'}</span>
                     </a>
@@ -48,7 +48,7 @@ var PanelComponentHierarchyItem = React.createClass({
         } else {
             content = (
                 <li className={className}>
-                    {overlay}
+                    {/*overlay*/}
                     <a  className={linkClassName} href='#' onClick={this._handleClick}>
                         <span>{'<' + label + '/>'}</span>
                     </a>

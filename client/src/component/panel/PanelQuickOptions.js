@@ -6,6 +6,7 @@ var ReactBootstrap = require('react-bootstrap');
 
 var PanelQuickOptionsStore = require('../../store/panel/PanelQuickOptionsStore.js');
 var PanelQuickOptionsActions = require('../../action/panel/PanelQuickOptionsActions.js');
+var AceEditor = require('../element/AceEditor.js');
 var StylePanel = require('./StylePanel.js');
 
 var Panel = ReactBootstrap.Panel;
@@ -247,6 +248,9 @@ var PanelQuickOptions = React.createClass({
             }.bind(this));
             panelContent = (
                 <div style={style}>
+                    <div style={{width: '100%', maxHeight: '300px', overflow: 'auto'}}>
+                        <pre style={{fontSize: '10px'}}>{JSON.stringify(this.state.satinizedProps, null, 2)}</pre>
+                    </div>
                     <PanelGroup accordion={true}
                                 defaultActiveKey={this.state.activeStylePanel}
                                 onSelect={this._handleStylePanelSelected}>
@@ -255,6 +259,9 @@ var PanelQuickOptions = React.createClass({
                 </div>
             );
         } else {
+            //<div style={{ padding: '0.5em 0.5em 1.5em 0.5em' }}>
+            //
+            //</div>
             panelContent = (
                 <div style={style}>
                     <h4 className='text-center'>Nothing is selected</h4>

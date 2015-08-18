@@ -33,13 +33,6 @@ var OverlayTreeviewItem = React.createClass({
             {
                 label: searchResult.found.type,
                 btnClass: 'btn-success',
-                onClick: (function (_nodeId) {
-                    return function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        DeskPageFrameActions.selectParentComponent(_nodeId);
-                    }
-                })(domNodeId),
                 menu: [
                     {label: 'Add before component', onClick: function(){
                         ModalQuickActionComponent.show(

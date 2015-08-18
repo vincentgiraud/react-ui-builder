@@ -92,6 +92,15 @@ var PanelComponentsHierarchy = React.createClass({
             }
         }
 
+        var overlay = null;
+        if(this.state.selectedUmyId){
+            if(this.state.clipboardActive){
+                overlay = <OverlayTreeviewItemPaste />
+            } else {
+                overlay = <OverlayTreeviewItem domNodeId={this.state.selectedUmyId} />
+            }
+        }
+
         //
         return (
             <div style={style}>
@@ -101,6 +110,7 @@ var PanelComponentsHierarchy = React.createClass({
                         } onClick={DeskAction.toggleComponentsHierarchy}>
                     <span className='fa fa-times fa-fw'></span>
                 </Button>
+                {overlay}
                 <ul className='umy-treeview-list' style={{border: 0}}>
                     {listItems}
                 </ul>

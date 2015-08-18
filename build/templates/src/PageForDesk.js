@@ -5,7 +5,11 @@ var components = require('./index.js');
 var PageForDesk = React.createClass({
 
     getInitialState: function(){
-        return null;
+        if(this.props.dataModel){
+            return this.props.dataModel;
+        } else{
+            return null;
+        }
     },
 
     componentDidMount: function(){
@@ -81,9 +85,9 @@ var PageForDesk = React.createClass({
 
         var self = this;
         if(_.isObject(type)){
-            _.forOwn(type.propTypes, function(propType, propName){
-                if(props[propName] && props[propName].type){
-                    props[propName] = self._createElement(props[propName], 0);
+            _.forOwn(props, function(prop, propName){
+                if(prop && _.isObject(prop) && prop.type){
+                    props[propName] = self.createElement(prop, 0);
                 }
             });
         }
@@ -125,5 +129,14 @@ var PageForDesk = React.createClass({
     }
 
 });
+
+if(!window.endpoint.renderPageToString){
+    window.endpoint.renderPageToString = (function(){
+        return function(dataModel){
+            console.log('Page name: ' + dataModel.pageName);
+            return React.renderToString(<PageForDesk dataModel={dataModel}/>);
+        }
+    }());
+}
 
 React.render(<PageForDesk/>, document.getElementById('content'));

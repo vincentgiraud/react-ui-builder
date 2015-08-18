@@ -71,6 +71,20 @@ var DeskPageDocument = React.createClass({
         return label;
     },
 
+    handleChangeFind: function(e){
+        var value = this.refs.inputElement.getValue();
+        var newState = {
+            filter: value
+        };
+        this.setState(newState);
+    },
+
+    handleClearFind: function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        this.setState({ filter: '' });
+    },
+
     render: function() {
 
         var alerts = [];
@@ -87,17 +101,32 @@ var DeskPageDocument = React.createClass({
             );
         }
 
+        var _filter = this.state.filter ? this.state.filter.toUpperCase() : null;
         var componentSections = [];
         if(this.state.document.components){
             _.forOwn(this.state.document.components, function(component, componentName) {
-                componentSections.push(
-                    <ListGroupItem key={componentName}
-                                   style={{position: 'relative', cursor: 'pointer'}}
-                                   data-section-key={componentName}
-                                   onClick={this.handleSectionSelect}>
-                        <span>{this.trimComponentName(componentName)}</span>
-                    </ListGroupItem>
-                );
+                if(_filter){
+                    if(componentName.toUpperCase().indexOf(_filter) >= 0){
+                        componentSections.push(
+                            <ListGroupItem key={componentName}
+                                           style={{position: 'relative', cursor: 'pointer'}}
+                                           data-section-key={componentName}
+                                           onClick={this.handleSectionSelect}>
+                                <span>{this.trimComponentName(componentName)}</span>
+                            </ListGroupItem>
+                        );
+                    }
+                } else {
+                    componentSections.push(
+                        <ListGroupItem key={componentName}
+                                       style={{position: 'relative', cursor: 'pointer'}}
+                                       data-section-key={componentName}
+                                       onClick={this.handleSectionSelect}>
+                            <span>{this.trimComponentName(componentName)}</span>
+                        </ListGroupItem>
+                    );
+                }
+
             }.bind(this));
         }
 
@@ -128,6 +157,17 @@ var DeskPageDocument = React.createClass({
                                     <span>Overview</span>
                                 </ListGroupItem>
                             </ListGroup>
+                            <Input
+                                ref='inputElement'
+                                type={ 'text'}
+                                placeholder={ 'Filter...'}
+                                value={this.state.filter}
+                                onChange={this.handleChangeFind}
+                                buttonAfter={ <Button onClick={this.handleClearFind}
+                                          bsStyle={ 'default'}>
+                                    <span className={ 'fa fa-times'}></span>
+                                  </Button>
+                                }/>
                             <ListGroup fill>
                                 {componentSections}
                             </ListGroup>

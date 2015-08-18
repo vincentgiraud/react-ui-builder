@@ -109,13 +109,17 @@ var DeskPageFrame = React.createClass({
                     return true;
                 }.bind(this)
             );
-            this.frameEndpoint.replaceState(Repository.getCurrentPageModel());
+            var pageModel = Repository.getCurrentPageModel();
+            this.frameEndpoint.replaceState(pageModel);
+            //if(this.frameEndpoint.renderPageToString){
+            //    //console.log(this.state.pageName);
+            //    console.log(this.frameEndpoint.renderPageToString(pageModel));
+            //}
         }
     },
 
     _mapDomNodes: function(){
         Repository.resetCurrentPageDomNodes();
-        //console.log(React.renderToString(this.frameEndpoint.Page));
         React.addons.TestUtils.findAllInRenderedTree(this.frameEndpoint.Page,
             function(component){
                 var props = component.props;

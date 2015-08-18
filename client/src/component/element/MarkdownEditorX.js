@@ -19,6 +19,14 @@ var MarkdownEditorX = React.createClass({
         };
     },
 
+    //componentDidMount: function(){
+    //    React.findDOMNode(this.refs.iframe).srcdoc = this.state.htmlContent;
+    //},
+    //
+    //componentDidUpdate: function(){
+    //    React.findDOMNode(this.refs.iframe).srcdoc = this.state.htmlContent;
+    //},
+
     handleSelect: function(key){
         this.setState({ key: key });
     },
@@ -37,6 +45,16 @@ var MarkdownEditorX = React.createClass({
 
     render: function() {
         //var style = _.extend({}, ...this.props.style, )
+        //var iframeStyle = {
+        //    "height" : "500px",
+        //    //"height" : "100%",
+        //    "width" : "100%",
+        //    "minWidth" : "320px",
+        //    "margin" : "0",
+        //    "padding" : "0",
+        //    "border" : "1px solid #000000"
+        //};
+        //<iframe ref='iframe' seamless={true} frameBorder="0" style={iframeStyle} />
         return (
             <TabbedArea activeKey={this.state.key} onSelect={this.handleSelect} style={this.props.style}>
                 <TabPane tab={ 'Preview' }

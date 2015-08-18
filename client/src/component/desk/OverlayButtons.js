@@ -94,13 +94,27 @@ var OverlayButtons = React.createClass({
             }
         }
 
+        var containerStyle = {
+            position: 'absolute',
+            left: '4em',
+            right: '4em',
+            top: '-1.5em',
+            zIndex: 1030
+        };
+
         return (
-            <div style={{position: 'absolute', left: 0, top: '-1.5em', display: 'table', width: '100%', zIndex: 1030}}>
-                <div className='btn-group btn-group-xs' role='group' style={{display: 'table-row', width: '100%', whiteSpace: 'nowrap'}}>
-                    <button style={{display: 'table-cell'}} type='button' className='btn btn-warning' onClick={this._handleClose}>
-                        <span className='fa fa-times fa-fw'></span>
-                    </button>
-                    {buttons}
+            <div style={containerStyle}>
+                <div style={{display: 'table', width: '100%'}}>
+                    <div style={{display: 'table-row', width: '100%', whiteSpace: 'nowrap'}}>
+                        <div style={{display: 'table-cell', textAlign: 'center', width: '100%'}}>
+                            <div className='btn-group btn-group-xs' role='group'>
+                                <button type='button' className='btn btn-warning' onClick={this._handleClose}>
+                                    <span className='fa fa-times fa-fw'></span>
+                                </button>
+                                {buttons}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         );

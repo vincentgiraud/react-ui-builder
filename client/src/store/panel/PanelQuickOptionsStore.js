@@ -8,7 +8,7 @@ var Common = require('../../api/Common.js');
 var Repository = require('../../api/Repository.js');
 
 var defaultModel = {
-    activeStylePanel: 1,
+    activeStylePanel: 0,
     activeStylePane: 1
 };
 
@@ -23,12 +23,15 @@ var PanelQuickOptionsStore = Reflux.createStore({
     onSelectItem: function(modelNode, selectedUmyId){
         this.model.selectedUmyId = selectedUmyId;
         this.model.props = modelNode.found.props;
+        this.model.satinizedProps = _.extend({}, this.model.props);
+        delete this.model.satinizedProps['data-umyid'];
         this.trigger(this.model);
     },
 
     onDeselectItem: function(){
         this.model.selectedUmyId = null;
         this.model.props = null;
+        this.model.satinizedProps = null;
         this.trigger(this.model);
     },
 
