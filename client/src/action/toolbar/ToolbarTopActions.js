@@ -12,7 +12,8 @@ var ToolbarTopActions = Reflux.createActions([
     'copyPage',
     'switchToPage',
     'undo',
-    'redo'
+    'redo',
+    'changeIframeWidth'
 ]);
 
 module.exports = ToolbarTopActions;

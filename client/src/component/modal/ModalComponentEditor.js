@@ -2,7 +2,7 @@
 
 var validator = require('validator');
 var React = require('react');
-var markdown = require('markdown').markdown;
+var marked = require('marked');
 var ReactBootstrap = require('react-bootstrap');
 var Modal = ReactBootstrap.Modal;
 var Button = ReactBootstrap.Button;
@@ -184,7 +184,7 @@ var ModalComponentEditor = React.createClass({
                 <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Read Me'>
                     <div style={{height: '400px', marginTop: '1em', width: '100%', overflow: 'auto'}}>
                         <div style={{width: '100%', padding: '0 2em 0 2em'}}>
-                            <div dangerouslySetInnerHTML={{__html: markdown.toHTML(this.state.documentMarkdown)}} >
+                            <div dangerouslySetInnerHTML={{__html: marked(this.state.documentMarkdown)}} >
                             </div>
                         </div>
                     </div>

@@ -3,6 +3,7 @@
 var React = require('react/addons');
 var ModalProjectSettingsActions = require('../../action/modal/ModalProjectSettingsActions.js');
 var ModalFileListUploadActions = require('../../action/modal/ModalFileListUploadActions.js');
+var ModalStaticSiteGeneratorActions = require('../../action/modal/ModalStaticSiteGeneratorActions.js');
 var Button = require('react-bootstrap').Button;
 var DeskAction = require('../../action/desk/DeskActions.js');
 var ApplicationActions = require('../../action/application/ApplicationActions.js');
@@ -50,6 +51,9 @@ var ToolbarLeft = React.createClass({
                             </li>
                             <li><a href="#" onClick={this._handlePublishProject}>
                                 <span className="fa fa-cloud-upload fa-fw" />&nbsp;Publish project</a>
+                            </li>
+                            <li><a href="#" onClick={this._handleGenerateStaticSite}>
+                                <span className="fa fa-cloud-upload fa-fw" />&nbsp;Create static site</a>
                             </li>
                             <li className="divider" />
                             <li><a href="https://groups.google.com/forum/#!forum/react-ui-builder" target="_blank">
@@ -129,6 +133,12 @@ var ToolbarLeft = React.createClass({
         e.stopPropagation();
         e.preventDefault();
         ModalProjectSettingsActions.showModal();
+    },
+
+    _handleGenerateStaticSite: function(e){
+        e.stopPropagation();
+        e.preventDefault();
+        ModalStaticSiteGeneratorActions.showModal();
     },
 
     _handleShowProjectComponents: function(e){

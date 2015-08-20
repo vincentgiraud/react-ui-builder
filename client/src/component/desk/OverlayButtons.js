@@ -98,7 +98,7 @@ var OverlayButtons = React.createClass({
             position: 'absolute',
             left: '4em',
             right: '4em',
-            top: '-1.5em',
+            top: '2px',
             zIndex: 1030
         };
 

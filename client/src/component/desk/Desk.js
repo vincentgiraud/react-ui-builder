@@ -7,6 +7,7 @@ var PanelAvailableComponents = require('../panel/PanelAvailableComponents.js');
 var PanelComponentsHierarchy = require('../panel/PanelComponentsHierarchy.js');
 var ModalComponentEditor = require('../modal/ModalComponentEditor.js');
 var ModalComponentGenerator = require('../modal/ModalComponentGenerator.js');
+var ModalPageInfoEditor = require('../modal/ModalPageInfoEditor.js');
 var ModalQuickActionComponent = require('../modal/ModalQuickActionComponent.js');
 
 var ToolbarTop = require('../toolbar/ToolbarTop.js');
@@ -131,12 +132,19 @@ var Desk = React.createClass({
             right: 'calc(5px + ' + rightPanelWidth + 'px)'
         };
 
+        var iframeWidth = this.state.iframeWidth;
+        //var marginRight = '0';
+        if(iframeWidth !== '100%'){
+            iframeWidth = parseInt(iframeWidth) + 'px';
+            //marginRight = 'calc((100% - ' + iframeWidth + ')/2)';
+        }
         var iframeStyle = {
             "height" : "calc(100% - 5px)",
             //"height" : "100%",
-            "width" : "100%",
+            "width" : iframeWidth,
             "minWidth" : "320px",
             "margin" : "0",
+            //"marginRight": marginRight,
             "padding" : "0",
             "border" : "1px solid #000000"
         };
@@ -184,6 +192,7 @@ var Desk = React.createClass({
                     {bottomPanelInner}
                 </div>
                 <ModalComponentEditor/>
+                <ModalPageInfoEditor/>
                 <ModalComponentGenerator/>
                 <ModalQuickActionComponent/>
             </div>

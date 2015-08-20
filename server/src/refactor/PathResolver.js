@@ -55,6 +55,38 @@ export function resolveFromModulePerspective(dataObject, moduleId){
 
 }
 
+export function resolveFromProjectPerspective(projectDataObj){
+
+    let indexFileDirPath = path.dirname(projectDataObj.indexFilePath);
+    let absoluteDirPath = projectDataObj.outputDirPath;
+    projectDataObj.pages.map( (pageObj, index) => {
+
+        if(pageObj.imports && pageObj.imports.length > 0){
+            pageObj.imports.map( (variable, index) => {
+                if(variable.source.substr(0, 6) === '../../'){
+                    let absoluteSourcePath = path.resolve(indexFileDirPath, variable.source);
+                    variable.relativeSource = repairPath(path.relative(absoluteDirPath, absoluteSourcePath)).replace(/\\/g, '/');
+                } else {
+                    variable.relativeSource = variable.source;
+                }
+            });
+        }
+
+    });
+    if(projectDataObj.resources){
+        projectDataObj.resources.requires.map( (variable, index) => {
+
+            if(variable.source.substr(0, 6) === '../../'){
+                let absoluteSourcePath = path.resolve(indexFileDirPath, variable.source);
+                variable.relativeSource = repairPath(path.relative(absoluteDirPath, absoluteSourcePath)).replace(/\\/g, '/');
+            } else {
+                variable.relativeSource = variable.source;
+            }
+        });
+    }
+    return projectDataObj;
+}
+
 
 export function replaceInPath(path, options){
     let result = path;

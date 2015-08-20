@@ -6,7 +6,6 @@ var ReactBootstrap = require('react-bootstrap');
 
 var PanelQuickOptionsStore = require('../../store/panel/PanelQuickOptionsStore.js');
 var PanelQuickOptionsActions = require('../../action/panel/PanelQuickOptionsActions.js');
-var AceEditor = require('../element/AceEditor.js');
 var StylePanel = require('./StylePanel.js');
 
 var Panel = ReactBootstrap.Panel;

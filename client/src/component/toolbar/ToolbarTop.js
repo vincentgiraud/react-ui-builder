@@ -7,6 +7,7 @@ var DeskAction = require('../../action/desk/DeskActions.js');
 var ToolbarTopActions = require('../../action/toolbar/ToolbarTopActions.js');
 var ToolbarTopStore = require('../../store/toolbar/ToolbarTopStore.js');
 var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
+var ModalPageInfoEditorActions = require('../../action/modal/ModalPageInfoEditorActions.js');
 
 var cx = React.addons.classSet;
 
@@ -29,17 +30,6 @@ var ToolbarTop = React.createClass({
 
     render: function(){
 
-        //if(this.state.isAddNewComponentMode){
-        //    return (
-        //        <div className='bg-warning' style={this.props.style}>
-        //            <p style={{display: 'table-cell', paddingLeft: '1em', verticalAlign: 'middle'}}><strong>
-        //                <button className='btn btn-info' onClick={this._handleCancelClick}>Cancel</button>
-        //                &nbsp;&nbsp;&nbsp;&nbsp;
-        //                Please choose an element on the page nearby which you want to put selected component
-        //            </strong></p>
-        //        </div>
-        //    );
-        //} else {
         var pagesList = [];
         if(this.state.pages && this.state.pages.length > 0){
             for(var i = 0; i < this.state.pages.length; i++){
@@ -65,9 +55,7 @@ var ToolbarTop = React.createClass({
                 <div key='clipboardLabel' style={{
                                 display: 'table-cell',
                                 verticalAlign: 'middle',
-                                paddingLeft: '0.5em',
-                                minWidth: '30em',
-                                width: '60%'}}>
+                                paddingLeft: '0.5em'}}>
                     <span>In clipboard: </span>
                     <kbd>{'<' + this.state.inClipboard + '>'}</kbd>
                 </div>
@@ -87,13 +75,40 @@ var ToolbarTop = React.createClass({
                     </button>
                 </div>
             );
-            //clipboardContent.push(
-            //    <div key='refreshPage' style={{display: 'table-cell', verticalAlign: 'middle', paddingLeft: '0.5em'}}>
-            //        <button className="btn btn-xs" onClick={this._handleRefreshPage}>
-            //            <span>Refresh Page</span>
-            //        </button>
-            //    </div>
-            //);
+            clipboardContent.push(
+                <div key='widthButton' style={{display: 'table-cell', verticalAlign: 'middle', paddingLeft: '0.5em'}}>
+                    <div className="btn-group" role="group">
+                        <button className="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                            Width: {this.state.iframeWidth}&nbsp;&nbsp;
+                            <span className="caret"></span>
+                            &nbsp;&nbsp;
+                        </button>
+                        <ul className="dropdown-menu dropdown-menu-right" role="menu">
+                            <li>
+                                <a onClick={function(){ ToolbarTopActions.changeIframeWidth({iframeWidth: '100%'}); }}>
+                                    100%
+                                </a>
+                            </li>
+                            <li>
+                                <a onClick={function(){ ToolbarTopActions.changeIframeWidth({iframeWidth: '1200px'}); }}>
+                                    1200px
+                                </a>
+                            </li>
+                            <li>
+                                <a onClick={function(){ ToolbarTopActions.changeIframeWidth({iframeWidth: '700px'}); }}>
+                                    700px
+                                </a>
+                            </li>
+                            <li>
+                                <a onClick={function(){ ToolbarTopActions.changeIframeWidth({iframeWidth: '340px'}); }}>
+                                    340px
+                                </a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            );
             clipboardContent.push(
                 <div key='undoButton' style={{display: 'table-cell', verticalAlign: 'middle', paddingLeft: '0.5em'}}>
                     <button className="btn btn-default btn-xs" onClick={this._handleUndo}>
@@ -101,27 +116,27 @@ var ToolbarTop = React.createClass({
                     </button>
                 </div>
             );
-            clipboardContent.push(
-                <div key='blank' style={{
-                    display: 'table-cell',
-                    verticalAlign: 'middle',
-                    paddingLeft: '0.5em',
-                    minWidth: '30em',
-                    width: '60%'}}>
-                </div>
-            );
+
         }
+        //clipboardContent.push(
+        //    <div key='blank' style={{
+        //            display: 'table-cell',
+        //            verticalAlign: 'middle',
+        //            paddingLeft: '0.5em',
+        //            width: '40%'}}>
+        //    </div>
+        //);
 
         return (
             <div style={this.props.style}>
                 <div style={{width: '100%'}}>
                     <div style={{
                     display: 'table',
-                    padding: '5px 10px 5px 10px',
-                    width: '100%'
+                    padding: '5px 10px 5px 10px'
                 }}>
                         <div style={{display: 'table-row'}}>
-                            <div style={{display: 'table-cell', width: '30%', verticalAlign: 'middle'}}>
+                            <div style={{display: 'table-cell', verticalAlign: 'middle'}}>
+                                {/*
                                 <div className="input-group">
                                 <span className="input-group-btn">
                                     <button className="btn btn-default btn-xs" onClick={this._handleDeletePage}>
@@ -149,6 +164,31 @@ var ToolbarTop = React.createClass({
                                         </ul>
                                     </div>
                                 </div>
+                                 */}
+                                <div className="btn-group" role="group">
+                                    <button className="btn btn-default btn-xs" onClick={this._handleDeletePage}>
+                                        <span className="fa fa-trash" ></span>
+                                    </button>
+                                    <button className="btn btn-default btn-xs" onClick={this._handlePageInfoEdit}>
+                                        <span>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            {this.state.currentPageName}
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        </span>
+                                    </button>
+                                    <div className="btn-group" role="group">
+                                        <button className="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                            &nbsp;&nbsp;
+                                            <span className="caret"></span>
+                                            &nbsp;&nbsp;
+                                        </button>
+                                        <ul className="dropdown-menu dropdown-menu-right" role="menu">
+                                            <li role="presentation" className="dropdown-header">Switch to:</li>
+                                            {pagesList}
+                                        </ul>
+                                    </div>
+                                </div>
+
                             </div>
 
                             {/*<div style={{display: 'table-cell', verticalAlign: 'middle', paddingLeft: '0.5em'}}>
@@ -246,7 +286,14 @@ var ToolbarTop = React.createClass({
         e.stopPropagation();
         e.preventDefault();
         DeskPageFrameActions.stopClipboardForOptions();
+    },
+
+    _handlePageInfoEdit: function(e){
+        e.stopPropagation();
+        e.preventDefault();
+        ModalPageInfoEditorActions.showModal();
     }
+
 
 });
 

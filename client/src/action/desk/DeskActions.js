@@ -8,7 +8,8 @@ var DeskActions = Reflux.createActions([
     'startLivePreviewMode',
     'toggleAvailableComponents',
     'toggleStyleOptions',
-    'toggleComponentsHierarchy'
+    'toggleComponentsHierarchy',
+    'changeIframeWidth'
 ]);
 
 module.exports = DeskActions;

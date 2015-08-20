@@ -15,7 +15,9 @@ var defaultModel = {
     isEditMode: true,
     isLivePreviewMode: false,
     isDocumentMode: false,
-    LoadUserProfile: false
+
+    iframeWidth: '100%'
+    //iframeWidth: '340'
 
 };
 
@@ -69,6 +71,10 @@ var DeskStore = Reflux.createStore({
     },
     onToggleComponentsHierarchy: function(){
         this.model.isComponentsHierarchyButtonActive = !this.model.isComponentsHierarchyButtonActive;
+        this.trigger(this.model);
+    },
+    onChangeIframeWidth: function(options){
+        this.model.iframeWidth = options.iframeWidth;
         this.trigger(this.model);
     }
 

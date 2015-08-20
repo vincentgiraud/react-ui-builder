@@ -89,8 +89,23 @@ class IndexManager {
     getStructure(ast){
 
         let structure = {
+            requires: [],
             groups: {}
         };
+
+        fileParser.traverse(ast, node => {
+            if(node.type === 'ExpressionStatement'
+                && node.expression
+                && node.expression.type === 'CallExpression'
+                && node.expression.callee
+                && node.expression.callee.name === 'require'){
+
+                structure.requires.push({
+                    source: node.expression.arguments[0].value
+                });
+
+            }
+        });
 
         let exportsNode = findExportsNode(ast);
         if(exportsNode){
@@ -127,7 +142,17 @@ class IndexManager {
         return structure;
     }
 
-    resolveAbsoluteSourcePath(groups){
+    resolveAbsoluteSourcePath(indexObj){
+        var requires = indexObj.requires;
+        if(requires && requires.length > 0){
+            _.forEach(requires, item => {
+                if( item.source && item.source.indexOf('../../') === 0){
+                    item.absoluteSource =
+                        path.resolve(path.dirname(this.indexFilePath), item.source);
+                }
+            });
+        }
+        var groups = indexObj.groups;
         if(groups){
             _.forOwn(groups, (group, prop) => {
                 if(group.components && group.components.length > 0){
@@ -140,16 +165,14 @@ class IndexManager {
                 }
             });
         }
-        return groups;
+        return indexObj;
     }
 
     initIndex(){
         return this.parseIndexFile()
             .then((ast) => {
                 let indexObject = this.getStructure(ast);
-                if(indexObject.groups){
-                    indexObject.groups = this.resolveAbsoluteSourcePath(indexObject.groups);
-                }
+                indexObject = this.resolveAbsoluteSourcePath(indexObject);
                 return indexObject;
             });
     }

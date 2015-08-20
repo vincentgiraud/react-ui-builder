@@ -3,7 +3,8 @@
 
 var React = require('react');
 var ReactBootstrap = require('react-bootstrap');
-var markdown = require('markdown').markdown;
+//var markdown = require('markdown').markdown;
+var marked = require('marked');
 var Panel = ReactBootstrap.Panel;
 var TabbedArea = ReactBootstrap.TabbedArea;
 var TabPane = ReactBootstrap.TabPane;
@@ -14,7 +15,7 @@ var MarkdownEditorX = React.createClass({
     getInitialState: function(){
 
         return {
-            htmlContent: markdown.toHTML(this.props.markdownSource),
+            htmlContent: marked(this.props.markdownSource),
             key: 0
         };
     },
@@ -37,7 +38,7 @@ var MarkdownEditorX = React.createClass({
                 this.props.onMarkdownChange(this.refs.editor.getSourceCode());
             }
         }
-        var htmlContent = markdown.toHTML(markdownSource);
+        var htmlContent = marked(markdownSource);
         this.setState({
             htmlContent: htmlContent
         })
@@ -80,6 +81,15 @@ var MarkdownEditorX = React.createClass({
                                     <a href='http://markdown-guide.readthedocs.org/en/latest/basics.html'
                                        target='blank'>
                                         Markdown Basics
+                                    </a>
+                                </span>
+                    </p>
+                    <p>
+                        <span>Also support of </span>
+                                <span>
+                                    <a href='https://help.github.com/articles/github-flavored-markdown/'
+                                       target='blank'>
+                                        GFM
                                     </a>
                                 </span>
                     </p>

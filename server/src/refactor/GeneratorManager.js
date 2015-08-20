@@ -264,7 +264,7 @@ class GeneratorManager {
                                 generatedObj.component.componentName,
                                 generatedObj.component.relativeFilePathInIndex
                             )
-                        })
+                        });
                 })
         });
         return sequence;

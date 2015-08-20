@@ -69,8 +69,9 @@ var PanelComponentsHierarchy = React.createClass({
             //display: this.props.displayStyle,
             padding: '2em 1em 1em 1em',
             height: '100%',
-            overflow: 'auto'
-            //border: '1px solid #ffffff'
+            overflow: 'auto',
+            border: '1px solid #DBDBDB',
+            borderRadius: '3px'
         };
 
         //
@@ -106,7 +107,7 @@ var PanelComponentsHierarchy = React.createClass({
             <div style={style}>
                 <Button bsSize='xsmall'
                         style={
-                            {padding: '0.2em', position: 'absolute', top: '-1.5em', left: '1em', width: '2em', height: '2em', zIndex: '1030'}
+                            {padding: '0.2em', position: 'absolute', top: '2px', left: '2px', width: '2em', height: '2em', zIndex: '1030'}
                         } onClick={DeskAction.toggleComponentsHierarchy}>
                     <span className='fa fa-times fa-fw'></span>
                 </Button>

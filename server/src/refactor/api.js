@@ -24,6 +24,7 @@ import GeneratorManager from './GeneratorManager.js';
 import StorageManager from './StorageManager.js';
 import ClientManager from './ClientManager.js';
 import Validator from './Validator.js';
+import StaticSiteManager from './StaticSiteManager.js';
 
 class Api {
 
@@ -32,6 +33,7 @@ class Api {
         this.systemEnv = systemEnv;
 
         this.storageManager = new StorageManager(this.systemEnv.serverDir);
+        this.staticSiteManager = new StaticSiteManager(this.systemEnv.serverDir);
         this.clientManager = new ClientManager();
         this.validator = new Validator();
 
@@ -133,6 +135,7 @@ class Api {
                 this.generatorManager = new GeneratorManager(options.projectDirPath);
 
                 this.storageManager.setProjectDirPath(options.projectDirPath);
+                this.staticSiteManager.setProjectDirPath(options.projectDirPath);
 
                 return 'OK';
             });
@@ -395,6 +398,24 @@ class Api {
         return this.validator.validateOptions(options, ['projectDocument'])
             .then( () => {
                 return this.storageManager.writeProjectDocument(options.projectDocument);
+            });
+    }
+
+    generateStaticSite(options){
+        return this.validator.validateOptions(options, ['projectModel', 'pageContents', 'destDirName'])
+            .then( () => {
+                return this.indexManager.initIndex()
+                    .then( indexObj => {
+                        return this.staticSiteManager.doGeneration(
+                            options.projectModel, options.destDirName, indexObj, options.pageContents
+                        )
+                            .then( generatedObj => {
+                                //console.log(JSON.stringify(generatedObj, null, 4));
+
+                                return this.staticSiteManager.commitGeneration(generatedObj);
+
+                            });
+                    });
             });
     }
 

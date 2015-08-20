@@ -92,6 +92,10 @@ var Repository = {
         }
     },
 
+    getCurrentPageIndex: function(){
+        return currentPageIndex;
+    },
+
     deleteCurrentPageModel: function(){
         if(currentProjectModel.pages && currentProjectModel.pages.length > 1){
             this._appendUndoState();
@@ -158,10 +162,6 @@ var Repository = {
         return undoPool.length;
     },
 
-    setCurrentPageName: function(pageName){
-        currentPageModel.pageName = pageName;
-    },
-
     renewCurrentProjectModel: function(projectModel){
         this._appendUndoState();
         currentProjectModel = projectModel;
@@ -176,6 +176,31 @@ var Repository = {
 
     getCurrentPageModel: function(){
         return Common.fulex(currentPageModel);
+    },
+
+    getCurrentPageName: function(){
+        return currentPageModel.pageName;
+    },
+
+    setCurrentPageName: function(pageName){
+        currentPageModel.pageName = pageName;
+    },
+
+    getCurrentPageTitle:function(){
+        return currentPageModel.pageTitle;
+    },
+
+    setCurrentPageTitle:function(pageTitle){
+        currentPageModel.pageTitle = pageTitle;
+    },
+
+    getCurrentPageMetaInfo: function(){
+        var result = currentPageModel.pageMetaInfo || [];
+        return _.clone(result);
+    },
+
+    setCurrentPageMetaInfo: function(metaInfo){
+        currentPageModel.pageMetaInfo = _.clone(metaInfo);
     },
 
     getTemplatePageModel: function(){
@@ -201,10 +226,6 @@ var Repository = {
                 }
             ]
         };
-    },
-
-    getCurrentPageName: function(){
-        return currentPageModel.pageName;
     },
 
     findInCurrentPageModelByUmyId: function(umyId){
@@ -271,26 +292,6 @@ var Repository = {
 
     getComponentsTreeGroups: function(){
         return _.keys(componentsTree);
-    },
-
-    getCurrentProjectFramework: function(){
-        return currentProjectModel.lib_components[0];
-    },
-
-    getFlatDefaults: function(){
-      return flatDefaults;
-    },
-
-    setFlatDefaults: function(defaults){
-      flatDefaults = defaults;
-    },
-
-    getCurrentProjectExportDirPath: function(){
-        return currentProjectModel.exportDirPath;
-    },
-
-    setCurrentProjectExportDirPath: function(dirPath){
-        currentProjectModel.exportDirPath = dirPath;
     },
 
     setHtmlForDesk: function(path){
