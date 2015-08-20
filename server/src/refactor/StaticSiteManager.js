@@ -132,7 +132,7 @@ class StaticSiteManager {
         let pageTemplateFilePath = path.join(this.siteTemplateDirPath, 'Page.tpl');
         let htmlTemplateFilePath = path.join(this.siteTemplateDirPath, 'Html.tpl');
         let resourcesTemplateFilePath = path.join(this.siteTemplateDirPath, 'Resources.tpl');
-        let serverTemplateFilePath = path.join(this.siteTemplateDirPath, 'Server.tpl');
+        let serverTemplateFilePath = path.join(this.siteTemplateDirPath, 'server.tpl');
         let pageTemplate = null;
         let htmlTemplate = null;
         let resourcesTemplate = null;
