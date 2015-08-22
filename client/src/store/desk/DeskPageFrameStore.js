@@ -17,7 +17,8 @@ var PanelAvailableComponentsActions = require('../../action/panel/PanelAvailable
 var ModalComponentEditorActions = require('../../action/modal/ModalComponentEditorActions.js');
 var ToolbarTopActions = require('../../action/toolbar/ToolbarTopActions.js');
 var ToolbarBreadcrumbsActions = require('../../action/toolbar/ToolbarBreadcrumbsActions.js');
-var PanelQuickOptionsActions = require('../../action/panel/PanelQuickOptionsActions.js');
+var PanelOptionsActions = require('../../action/panel/PanelOptionsActions.js');
+//var PanelQuickOptionsActions = require('../../action/panel/PanelQuickOptionsActions.js');
 
 var componentOverlay = null;
 var umyIdToCutPaste = null;
@@ -90,7 +91,7 @@ var DeskPageFrameStore = Reflux.createStore({
                     componentOverlay.append(domNode.domElement);
                 }
                 ToolbarBreadcrumbsActions.selectItem(searchResult);
-                PanelQuickOptionsActions.selectItem(searchResult, this.model.selectedUmyId);
+                PanelOptionsActions.selectItem(searchResult, this.model.selectedUmyId);
                 PanelComponentsHierarchyActions.selectTreeviewItem(this.model.selectedUmyId, this.model.clipboardActiveMode);
             }
         }
@@ -112,7 +113,7 @@ var DeskPageFrameStore = Reflux.createStore({
         }
         PanelComponentsHierarchyActions.deselectTreeviewItem();
         ToolbarBreadcrumbsActions.deselectItem();
-        PanelQuickOptionsActions.deselectItem();
+        PanelOptionsActions.deselectItem();
     },
 
     onStartClipboardForOptions: function(options){
@@ -189,13 +190,13 @@ var DeskPageFrameStore = Reflux.createStore({
     },
 
     onDeleteComponent: function(domNodeId){
-        //
+
         Repository.renewCurrentProjectModel(
             Common.deleteFromModel(Repository.getCurrentProjectModel(), domNodeId)
         );
         PanelComponentsHierarchyActions.refreshTreeview();
-        //
         this.trigger();
+
     },
 
     onDuplicateComponent: function(domNodeId){
@@ -211,22 +212,18 @@ var DeskPageFrameStore = Reflux.createStore({
     },
 
     onMoveUpComponent: function(domNodeId){
-        //
         Repository.renewCurrentProjectModel(
             Common.moveUpInModel(Repository.getCurrentProjectModel(), domNodeId)
         );
         PanelComponentsHierarchyActions.refreshTreeview();
-        //
         this.trigger();
     },
 
     onMoveDownComponent: function(domNodeId){
-        //
         Repository.renewCurrentProjectModel(
             Common.moveDownInModel(Repository.getCurrentProjectModel(), domNodeId)
         );
         PanelComponentsHierarchyActions.refreshTreeview();
-        //
         this.trigger();
     },
 
@@ -320,8 +317,6 @@ var DeskPageFrameStore = Reflux.createStore({
             );
             this.model.selectedUmyId = null;
         }
-        this.onStopClipboardForOptions();
-        this.trigger();
     },
 
     onInsertLast: function(){
@@ -356,8 +351,6 @@ var DeskPageFrameStore = Reflux.createStore({
             );
             this.model.selectedUmyId = null;
         }
-        this.onStopClipboardForOptions();
-        this.trigger();
     },
 
     onAddAfter: function(){
@@ -392,8 +385,6 @@ var DeskPageFrameStore = Reflux.createStore({
             );
             this.model.selectedUmyId = null;
         }
-        this.onStopClipboardForOptions();
-        this.trigger();
     },
 
     onWrap: function(){
@@ -428,8 +419,6 @@ var DeskPageFrameStore = Reflux.createStore({
             );
             this.model.selectedUmyId = null;
         }
-        this.onStopClipboardForOptions();
-        this.trigger();
     },
 
     onReplace: function(){
@@ -464,8 +453,6 @@ var DeskPageFrameStore = Reflux.createStore({
             );
             this.model.selectedUmyId = null;
         }
-        this.onStopClipboardForOptions();
-        this.trigger();
     },
 
     onShowPropertyEditor: function(){

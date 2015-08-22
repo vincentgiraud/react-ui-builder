@@ -43,11 +43,21 @@ var WizardGenerateComponentStore = Reflux.createStore({
         if(!componentName || componentName.length <= 0 || !validator.isAlphanumeric(componentName)){
             this.model.errors.push('Please enter alphanumeric value for component name');
         }
+
+        if(componentGroup === componentName){
+            this.model.errors.push('Component name is equal to group name.');
+        }
+
         var testComponent = Repository.getComponentFromTree(componentName);
         if(testComponent.value){
             this.model.errors.push(
-                'There is already a component with name: ' + componentName + '. Please specify another component name.'
+                'There is already a component with name: ' + componentName + '.'
             );
+        }
+
+        var pageNames = Repository.getCurrentProjectPageNames();
+        if(_.includes(pageNames, componentName)){
+            this.model.errors.push('Entered component name is equal to the name of the existing page.');
         }
 
         if(this.model.errors.length === 0){

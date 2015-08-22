@@ -159,7 +159,6 @@ var PanelComponentsHierarchy = React.createClass({
         return (
             <PanelComponentHierarchyItem
                 key={'listitem' + rootItem.props['data-umyid']}
-                componentName={rootItem.componentName}
                 selected={this.state.selectedUmyId}
                 umyid={rootItem.props['data-umyid']}
                 copyMark={this.state.copyMarkUmyId}

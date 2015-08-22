@@ -17,7 +17,8 @@ var DeskPageDocument = require('../desk/DeskPageDocument.js');
 var DeskPageFramePreview = require('../desk/DeskPageFramePreview.js');
 var Repository = require('../../api/Repository.js');
 var ToolbarTopActions = require('../../action/toolbar/ToolbarTopActions.js');
-var PanelQuickOptions = require('../panel/PanelQuickOptions.js');
+//var PanelQuickOptions = require('../panel/PanelQuickOptions.js');
+var PanelOptions = require('../panel/PanelOptions.js');
 var SidePanel = require('../element/SidePanel.js');
 
 var Desk = React.createClass({
@@ -59,7 +60,8 @@ var Desk = React.createClass({
         var rightPanelInner = null;
         if(this.state.isStyleOptionsButtonActive){
             rightPanelWidth = 250;
-            rightPanelInner = (<PanelQuickOptions></PanelQuickOptions>);
+            //rightPanelInner = (<PanelQuickOptions></PanelQuickOptions>);
+            rightPanelInner = (<PanelOptions></PanelOptions>);
         }
 
         var leftPanelStyle = {
@@ -150,10 +152,9 @@ var Desk = React.createClass({
         };
 
         var pageFrame = null;
-        var pageFrameSrc = Repository.getHtmlForDesk();
         if(this.state.isLivePreviewMode){
             pageFrame = (
-                <DeskPageFramePreview frameBorder="0" style={iframeStyle} src={pageFrameSrc} />
+                <DeskPageFramePreview frameBorder="0" style={iframeStyle} />
             );
         } else if(this.state.isDocumentMode) {
             var documentStyle = {
@@ -170,7 +171,7 @@ var Desk = React.createClass({
             );
         } else {
             pageFrame = (
-                <DeskPageFrame frameBorder="0" style={iframeStyle} src={pageFrameSrc} />
+                <DeskPageFrame frameBorder="0" style={iframeStyle} />
             );
         }
 

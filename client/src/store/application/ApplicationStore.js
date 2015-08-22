@@ -147,15 +147,15 @@ var ApplicationStore = Reflux.createStore({
                     Repository.setHtmlForDesk(response.htmlURLPrefix + '/' + response.htmlForDesk);
                     Repository.setCurrentPageModelByIndex(0);
                     Repository.setComponentsTree(response.componentsTree);
-                    Repository.setCallbackAfterProjectModelRenew(function(){
-                        Server.invoke('saveProjectModel', {
-                            model: Repository.getCurrentProjectModel()
-                        }, function(err){
-                            console.error(JSON.stringify(err));
-                        }, function(response){
-                            //console.log('Project model is saved successfully');
-                        });
-                    });
+                    //Repository.setCallbackAfterProjectModelRenew(function(){
+                    //    Server.invoke('saveProjectModel', {
+                    //        model: Repository.getCurrentProjectModel()
+                    //    }, function(err){
+                    //        console.error(JSON.stringify(err));
+                    //    }, function(response){
+                    //        //console.log('Project model is saved successfully');
+                    //    });
+                    //});
 
                     this.model.errors = null;
 
@@ -200,7 +200,7 @@ var ApplicationStore = Reflux.createStore({
     },
 
     onStopAutosaveProjectModel: function(){
-        Repository.setCallbackAfterProjectModelRenew(null);
+        //Repository.setCallbackAfterProjectModelRenew(null);
         Server.invoke('stopWatchLocalProject', function(err){}, function(){});
     },
 

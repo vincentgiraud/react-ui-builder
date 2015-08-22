@@ -50,41 +50,53 @@ var ModalPageInfoEditorStore = Reflux.createStore({
     onSaveProperties: function(options){
 
         this.model.errors = [];
-        if(options.pageName && validator.isAlphanumeric(options.pageName)){
-            var firstChar = options.pageName.charAt(0).toUpperCase();
-            var pageName = firstChar + options.pageName.substr(1);
-
-            Repository.setCurrentPageName(pageName);
-
+        var pageName = null;
+        if(!options.pageName || !validator.isAlphanumeric(options.pageName)){
+            this.model.errors.push('Enter valid alphanumeric page name value');
         } else {
-            this.model.errors = ['Enter valid alphanumeric page name value'];
+            var firstChar = options.pageName.charAt(0).toUpperCase();
+            pageName = firstChar + options.pageName.substr(1);
+
+            var testComponent = Repository.getComponentFromTree(pageName);
+            if(testComponent.value){
+                this.model.errors.push('Entered name is equal to the name of the existing component.');
+            }
         }
 
-        Repository.setCurrentPageTitle(options.pageTitle);
+        var pageNames = Repository.getCurrentProjectPageNames();
+        var currentPageIndex = Repository.getCurrentPageIndex();
+        pageNames.map(function(page, index){
+            if(page === pageName && index !== currentPageIndex){
+                this.model.errors.push('Entered name is equal to the name of the existing page.');
+            }
+        }.bind(this));
 
+        var metaInfo = [];
         if(options.propsScript){
             try{
-                var metaInfo = JSON.parse(options.propsScript);
-                if(_.isArray(metaInfo)){
-                    Repository.setCurrentPageMetaInfo(metaInfo);
-                } else {
-                    this.model.errors.push('Meta info should be array of values.');
+                metaInfo = JSON.parse(options.propsScript);
+                if(!_.isArray(metaInfo)){
+                    this.model.errors.push('Meta info should be an array of values.');
                 }
             } catch(e){
                 this.model.errors.push(e.message);
             }
-        } else {
-            Repository.setCurrentPageMetaInfo([]);
         }
 
 
         if(this.model.errors.length === 0){
+            Repository.setCurrentPageName(pageName);
+            Repository.setCurrentPageTitle(options.pageTitle);
+            Repository.setCurrentPageMetaInfo(metaInfo);
+
             var projectModel = Repository.getCurrentProjectModel();
             Repository.renewCurrentProjectModel(projectModel);
             this.model.isModalOpen = false;
             ToolbarTopActions.refreshPageList();
+            this.trigger(this.model);
+        } else {
+            this.trigger(this.model);
         }
-        this.trigger(this.model);
 
     }
 

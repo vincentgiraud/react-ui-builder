@@ -13,24 +13,19 @@ var Common = require('../../api/Common.js');
 var DeskPageFrame = React.createClass({
     mixins: [FormMixin],
 
-    getInitialState: function(){
-        return Repository.getCurrentPageModel();
-    },
-
     render: function() {
-        return (<iframe {...this.props} />);
+        return (<iframe {...this.props} src={Repository.getHtmlForDesk()} />);
     },
 
     componentDidMount: function() {
-        //this._hideModalProgress();
+
         this.unsubscribe = DeskPageFrameStore.listen(this._changeFrameContent);
-        //
+
         var domNode = React.findDOMNode(this);
         domNode.onload = (function(){
-            //console.log('IFrame is loaded and ready');
             this._renderFrameContent();
         }).bind(this);
-        //
+
         Server.onSocketEmit('compilerWatcher.errors', function(data){
             var messages = [];
             _.each(data, function(item){
@@ -39,11 +34,9 @@ var DeskPageFrame = React.createClass({
                 });
             });
             this._showModalMessageArray(messages);
-            //console.error(JSON.stringify(data, null, 4));
         }.bind(this));
+
         Server.onSocketEmit('compilerWatcher.success', function(data){
-            //this._hideModalProgress();
-            //this._showModalProgress('Please wait. Loading page...', 0);
             if(data.compiledProcessCount >= 1){
                 if(domNode.contentDocument && domNode.contentDocument.documentElement){
                     this.contentScrollTop = domNode.contentDocument.documentElement.scrollTop;
@@ -51,7 +44,6 @@ var DeskPageFrame = React.createClass({
                 domNode.src = Repository.getHtmlForDesk();
             }
         }.bind(this));
-        //
     },
 
     componentWillUnmount: function(){
@@ -64,7 +56,7 @@ var DeskPageFrame = React.createClass({
     },
 
     _renderFrameContent: function() {
-        //this._showModalProgress('Please wait. Loading page...', 400);
+
         var domNode = React.findDOMNode(this);
         var doc = domNode.contentDocument;
         var win = domNode.contentWindow;
@@ -109,12 +101,8 @@ var DeskPageFrame = React.createClass({
                     return true;
                 }.bind(this)
             );
-            var pageModel = Repository.getCurrentPageModel();
-            this.frameEndpoint.replaceState(pageModel);
-            //if(this.frameEndpoint.renderPageToString){
-            //    //console.log(this.state.pageName);
-            //    console.log(this.frameEndpoint.renderPageToString(pageModel));
-            //}
+
+            this.frameEndpoint.replaceState(Repository.getCurrentPageModel());
         }
     },
 

@@ -86,7 +86,7 @@ var Overlays = {
                             e.preventDefault();
                             e.stopPropagation();
 
-                            //DeskPageFrameActions.moveUpComponent(_nodeId);
+                            DeskPageFrameActions.moveUpComponent(_nodeId);
                         }
                     })(domNodeId)
                 });

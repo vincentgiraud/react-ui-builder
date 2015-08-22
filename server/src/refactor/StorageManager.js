@@ -154,12 +154,12 @@ class StorageManager {
     }
 
     readProjectJsonModel(){
-        let srcFilePath = path.join(this.builderDirPath, 'model.json');
+        let srcFilePath = path.join(this.buildDirPath, 'model.json');
         return this.fileManager.readJson(srcFilePath);
     }
 
     writeProjectJsonModel(jsonObj){
-        let srcFilePath = path.join(this.builderDirPath, 'model.json');
+        let srcFilePath = path.join(this.buildDirPath, 'model.json');
         return this.fileManager.writeJson(srcFilePath, jsonObj);
     }
 
@@ -177,11 +177,11 @@ class StorageManager {
             .then( () => {
                 let npmPackageFilePath = path.join(this.serverTemplateDirPath, npmPackageFileName);
                 return this.fileManager.copyFile(npmPackageFilePath, path.join(this.projectDirPath, npmPackageFileName));
-            })
-            .then( () => {
-                let modelFilePath = path.join(this.serverTemplateDirPath, 'model.json');
-                return this.fileManager.copyFile(modelFilePath, path.join(this.builderDirPath, 'model.json'));
             });
+            //.then( () => {
+            //    let modelFilePath = path.join(this.serverTemplateDirPath,, 'model.json');
+            //    return this.fileManager.copyFile(modelFilePath, path.join(this.buildDirPath, 'model.json'));
+            //});
     }
 
     installPackages(){
@@ -208,7 +208,10 @@ class StorageManager {
             .then( () => {
                 let pageForDeskFilePath = path.join(this.sourceDirPath, 'PageForDesk.js');
                 var nodeModulesPath = path.join(this.projectDirPath, 'node_modules');
-                return this.compiler.compile(pageForDeskFilePath, this.buildDirPath, 'bundle.js', nodeModulesPath);
+                //console.log('Start compiling in ' + this.sourceDirPath);
+                return this.compiler.stopWatchCompiler().then( () => {
+                    return this.compiler.compile(pageForDeskFilePath, this.buildDirPath, 'bundle.js', nodeModulesPath);
+                });
             });
     }
 

@@ -139,20 +139,17 @@ var ModalComponentEditorStore = Reflux.createStore({
                             this.trigger(this.model);
                         }.bind(this),
                         function(response){
-
                             Repository.renewCurrentProjectModel(projectModel);
                             DeskPageFrameActions.renderPageFrame();
-                            //
                             this.model.isModalOpen = false;
                             this.trigger(this.model);
+
                         }.bind(this)
                     );
 
             } else {
-
                 Repository.renewCurrentProjectModel(projectModel);
                 DeskPageFrameActions.renderPageFrame();
-
                 this.model.isModalOpen = false;
                 this.trigger(this.model);
             }

@@ -2,20 +2,65 @@ var _ = require('lodash');
 var React = require('react/addons');
 var components = require('./index.js');
 
+
+function get(onError, onSuccess){
+    $.ajax({
+        type: 'GET',
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        url: "model.json"
+    }).always(function(response, textStatus){
+        //console.log("%o, %o, %o", response, textStatus, response.result);
+        if(textStatus === 'success'){
+            onSuccess(response);
+        }  else {
+            if(onError){
+                onError("Internal Server Error: " + textStatus);
+            }
+        }
+    });
+}
+
 var PageForDesk = React.createClass({
 
     getInitialState: function(){
-        if(this.props.dataModel){
-            return this.props.dataModel;
-        } else{
-            return null;
-        }
+        return null;
     },
 
     componentDidMount: function(){
         window.endpoint.Page = this;
-        if(window.endpoint.onComponentDidMount){
-            window.endpoint.onComponentDidMount();
+
+        if(window.location.pathname){
+            var pathArray = window.location.pathname.split('/');
+            if(pathArray.length > 0){
+                var pageNameArray = pathArray[pathArray.length - 1].split('.');
+
+            }
+            if(pageNameArray[0] !== 'PageForDesk'){
+                get(
+                    function(error){
+                        console.log(error);
+                        this.setState(null);
+                        if(window.endpoint.onComponentDidMount){
+                            window.endpoint.onComponentDidMount();
+                        }
+                    }.bind(this),
+                    function(response){
+                        var pageModel = null;
+                        if(response && response.pages){
+                            response.pages.map(function(page){
+                                if(page.pageName === pageNameArray[0]){
+                                    pageModel = page;
+                                }
+                            });
+                        }
+                        this.setState(pageModel);
+                        if(window.endpoint.onComponentDidMount){
+                            window.endpoint.onComponentDidMount();
+                        }
+                    }.bind(this)
+                );
+            }
         }
     },
 
@@ -133,7 +178,6 @@ var PageForDesk = React.createClass({
 if(!window.endpoint.renderPageToString){
     window.endpoint.renderPageToString = (function(){
         return function(dataModel){
-            console.log('Page name: ' + dataModel.pageName);
             return React.renderToString(<PageForDesk dataModel={dataModel}/>);
         }
     }());

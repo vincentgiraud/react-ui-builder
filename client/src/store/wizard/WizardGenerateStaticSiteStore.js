@@ -74,6 +74,7 @@ var WizardGenerateStaticSiteStore = Reflux.createStore({
             var endpoint = Repository.getCurrentPageWindow() ? Repository.getCurrentPageWindow().endpoint : null;
 
             var projectModel = Repository.getCurrentProjectModel();
+            Repository.cleanProjectModel(projectModel);
             if(projectModel.pages && projectModel.pages.length > 0){
                 projectModel.pages.map(function(page){
                     Common.cleanPropsUmyId(page);

@@ -129,6 +129,24 @@ var Common = {
         }
     },
 
+    deleteInalidTypeItems: function(modelItem, test){
+        //_.forOwn(modelItem.props, function(value, prop){
+        //    if(_.isObject(value) && value.type){
+        //        this.cleanPropsUmyId(value);
+        //    }
+        //}, this);
+        var localArray = [];
+        if(modelItem.children && modelItem.children.length > 0){
+            for(var i = 0; i < modelItem.children.length; i++){
+                this.deleteInalidTypeItems(modelItem.children[i], test);
+                if(modelItem.children[i].type && test(modelItem.children[i].type)){
+                    localArray.push(modelItem.children[i]);
+                }
+            }
+        }
+        modelItem.children = localArray;
+    },
+
     /**
      *
      * @param {object} modelItem

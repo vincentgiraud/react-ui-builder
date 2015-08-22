@@ -25,6 +25,7 @@ import StorageManager from './StorageManager.js';
 import ClientManager from './ClientManager.js';
 import Validator from './Validator.js';
 import StaticSiteManager from './StaticSiteManager.js';
+import LivePreviewManager from './LivePreviewManager.js';
 
 class Api {
 
@@ -34,14 +35,15 @@ class Api {
 
         this.storageManager = new StorageManager(this.systemEnv.serverDir);
         this.staticSiteManager = new StaticSiteManager(this.systemEnv.serverDir);
+        this.livePreviewManager = new LivePreviewManager(this.systemEnv.serverDir);
         this.clientManager = new ClientManager();
         this.validator = new Validator();
 
         this.app = express();
-        this.app.use(bodyParser.json());
-        this.app.use('/builder', express.static(path.join(this.systemEnv.serverDir, 'html')));
-        this.app.use('/.data', express.static(path.join(this.systemEnv.serverDir, '.data')));
-        this.app.post('/invoke', (req, res) => {
+        // use middleware body parsers only for certain routes, because of the proxying post request is hanging
+        this.app.use('/builder', bodyParser.json(), express.static(path.join(this.systemEnv.serverDir, 'html')));
+        this.app.use('/.data', bodyParser.json(), express.static(path.join(this.systemEnv.serverDir, '.data')));
+        this.app.post('/invoke', bodyParser.json(), (req, res) => {
             let methodName = req.body.methodName;
             let data = req.body.data || {};
             this[methodName](data)
@@ -136,6 +138,7 @@ class Api {
 
                 this.storageManager.setProjectDirPath(options.projectDirPath);
                 this.staticSiteManager.setProjectDirPath(options.projectDirPath);
+                this.livePreviewManager.setProjectDirPath(options.projectDirPath);
 
                 return 'OK';
             });
@@ -148,7 +151,7 @@ class Api {
                 this.proxyURL = proxyURL;
 
                 if(!this.proxy){
-                    this.proxy = httpProxy.createProxyServer();
+                    this.proxy = httpProxy.createProxyServer({});
                     this.proxy.on('error', (err, req, res) => {
                         console.log('Proxy server error connecting to ' + this.proxyURL + req.url);
                     });
@@ -164,6 +167,17 @@ class Api {
                             }
                         }
                     });
+                    //this.app.get('/*', (req, res, next) => {
+                    //    if (req.url.indexOf(servicePath) === 0) {
+                    //        next('route');
+                    //    } else {
+                    //        if(this.proxyURL && this.proxyURL.length > 0){
+                    //            this.proxy.web(req, res, { target: this.proxyURL });
+                    //        } else {
+                    //            next('route');
+                    //        }
+                    //    }
+                    //});
                 }
                 return { proxyURL: this.proxyURL };
             });
@@ -176,32 +190,32 @@ class Api {
     getProjectGallery(options){
         return this.clientManager.getAllProjects(options);
     }
-
-    preparePreview(options){
-        return this.storageManager.cleanServerStorage()
-            .then( () => {
-                let _options = {
-                    id: options.projectId,
-                    packageFileName: builderPackFileName
-                };
-                return this.clientManager.downloadGalleryFile(_options);
-            })
-            .then( fileBody => {
-                return this.storageManager.writeServerBinaryFile(builderPackFileName, fileBody);
-            })
-            .then( () => {
-                return this.storageManager.unpackServerFile(builderPackFileName);
-            })
-            .then( () => {
-                return this.storageManager.readServerJsonFile(modelFileName);
-            })
-            .then( modelObj => {
-                return {
-                    projectModel: modelObj,
-                    htmlForDesk:  '/.data/build/PageForDesk.html'
-                }
-            });
-    }
+    //
+    //preparePreview(options){
+    //    return this.storageManager.cleanServerStorage()
+    //        .then( () => {
+    //            let _options = {
+    //                id: options.projectId,
+    //                packageFileName: builderPackFileName
+    //            };
+    //            return this.clientManager.downloadGalleryFile(_options);
+    //        })
+    //        .then( fileBody => {
+    //            return this.storageManager.writeServerBinaryFile(builderPackFileName, fileBody);
+    //        })
+    //        .then( () => {
+    //            return this.storageManager.unpackServerFile(builderPackFileName);
+    //        })
+    //        .then( () => {
+    //            return this.storageManager.readServerJsonFile(modelFileName);
+    //        })
+    //        .then( modelObj => {
+    //            return {
+    //                projectModel: modelObj,
+    //                htmlForDesk:  '/.data/build/PageForDesk.html'
+    //            }
+    //        });
+    //}
 
     downloadProject(options) {
         let _options = {
@@ -233,10 +247,10 @@ class Api {
         let response = {};
         return this.setupProject(options)
             .then( () => {
-
                 let htmlDirPath = this.storageManager.getProjectBuildDirPath();
-                let refinedDirPath = htmlDirPath.split(path.separator).slice(1).join('').substr(0, 30);
-                let htmlURLPrefix = servicePath +'/' + refinedDirPath;
+                let refinedDirPath = htmlDirPath.replace(/\\/g, '/').substr(0, 250);
+                let htmlURLPrefix = servicePath + refinedDirPath;
+                this.htmlURLPrefix = htmlURLPrefix;
                 response.htmlURLPrefix = htmlURLPrefix;
                 response.htmlForDesk = 'PageForDesk.html';
                 this.addProjectStaticRoute(htmlURLPrefix, htmlDirPath);
@@ -275,7 +289,7 @@ class Api {
             })
             .then( () => {
                 let htmlDirPath = this.storageManager.getProjectBuildDirPath();
-                let htmlURLPrefix = servicePath +'/' + htmlDirPath.substr(0, 30);
+                let htmlURLPrefix = servicePath + htmlDirPath.substr(0, 30);
                 response.htmlURLPrefix = htmlURLPrefix;
                 response.htmlForDesk = 'PageForDesk.html';
                 this.addProjectStaticRoute(htmlURLPrefix, htmlDirPath);
@@ -416,6 +430,15 @@ class Api {
 
                             });
                     });
+            });
+    }
+
+    generateLivePreview(options){
+        return this.validator.validateOptions(options, ['projectModel'])
+            .then( () => {
+                return this.livePreviewManager.doGeneration(options.projectModel);
+            }).then( () => {
+                return this.htmlURLPrefix + '/live-preview';
             });
     }
 

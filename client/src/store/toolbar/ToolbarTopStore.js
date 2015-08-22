@@ -50,12 +50,6 @@ var ToolbarTopStore = Reflux.createStore({
         this.trigger(this.model);
     },
 
-    onCurrentPageNameChange: function(newPageName){
-        Repository.setCurrentPageName(newPageName);
-        this.model.currentPageName = Repository.getCurrentPageName();
-        this.onRefreshPageList();
-    },
-
     onAddNewPage: function(){
         var projectModel = Repository.getCurrentProjectModel();
         var newPageModel = Repository.getTemplatePageModel();

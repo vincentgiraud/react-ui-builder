@@ -2,6 +2,7 @@
 
 var _ = require('lodash');
 var Common = require('./Common.js');
+var Server = require('./Server.js');
 var HtmlComponents = require('./HtmlComponents.js');
 //var userProfile = null;
 //var currentProject = null;
@@ -47,6 +48,15 @@ function findComponent(index, componentName, level, result){
 
 var Repository = {
 
+    saveProjectModel: function(callback){
+        Server.invoke('saveProjectModel', {
+            model: currentProjectModel
+        }, function(err){
+            console.error(JSON.stringify(err));
+        }, function(response){
+        });
+    },
+
     setCurrentProjectModel: function(projectModel){
         undoPool = [];
         currentProjectModel = projectModel;
@@ -62,10 +72,6 @@ var Repository = {
 
     getCurrentProjectName: function(){
         return currentProjectName;
-    },
-
-    setCallbackAfterProjectModelRenew: function(callback){
-        callbackAfterProjectModelRenew = callback;
     },
 
     setCurrentPageModel: function(pageName){
@@ -96,7 +102,7 @@ var Repository = {
         return currentPageIndex;
     },
 
-    deleteCurrentPageModel: function(){
+    deleteCurrentPageModel: function(callback){
         if(currentProjectModel.pages && currentProjectModel.pages.length > 1){
             this._appendUndoState();
             //
@@ -113,9 +119,7 @@ var Repository = {
             }
             currentPageModel = currentProjectModel.pages[currentPageIndex];
             //
-            if(callbackAfterProjectModelRenew){
-                callbackAfterProjectModelRenew(currentProjectModel);
-            }
+            this.saveProjectModel(callback);
         }
     },
 
@@ -139,12 +143,13 @@ var Repository = {
     //    });
     //},
     //
-    undoCurrentProjectModel: function(){
+    undoCurrentProjectModel: function(callback){
         if(undoPool.length > 0){
             var undoState = _.last(undoPool);
             currentProjectModel = undoState.projectModel;
             this.setCurrentPageModelByIndex(undoState.pageIndex);
             undoPool = _.initial(undoPool);
+            this.saveProjectModel(callback);
         }
     },
     //
@@ -162,15 +167,26 @@ var Repository = {
         return undoPool.length;
     },
 
-    renewCurrentProjectModel: function(projectModel){
+    renewCurrentProjectModel: function(projectModel, callback){
         this._appendUndoState();
         currentProjectModel = projectModel;
         _.each(currentProjectModel.pages, function(page){
             Common.setupPropsUmyId(page);
         });
         this.setCurrentPageModelByIndex(currentPageIndex);
-        if(callbackAfterProjectModelRenew){
-            callbackAfterProjectModelRenew(currentProjectModel);
+
+        this.saveProjectModel(callback);
+    },
+
+    cleanProjectModel: function(projectModel){
+        var test = function(type){
+            var testComponent = findComponent(componentsTree, type, 0);
+            return !!testComponent.value;
+        };
+        if(projectModel && projectModel.pages){
+            _.each(projectModel.pages, function(page){
+                Common.deleteInalidTypeItems(page, test);
+            });
         }
     },
 

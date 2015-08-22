@@ -13,7 +13,7 @@ module.exports = [
         module: {
             loaders: [
                 //{ test: /\.js$/, exclude: /node_modules/, loader: 'jsx-loader?harmony' },
-                { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' },
+                { test: /\.js$/, exclude: /node_modules/, loader: 'babel?cacheDirectory' },
                 { test: /\.css$/, exclude: /node_modules/, loader: "style-loader!css-loader" },
                 //{ test: /\.(eot|woff|ttf|svg|png|jpg)([\?]?.*)$/, loader: 'url-loader?limit=8000&name=[name]-[hash].[ext]' }
                 { test: /\.(eot|woff|ttf|svg|png|jpg)([\?]?.*)$/, exclude: /node_modules/, loader: 'url-loader' }
@@ -21,7 +21,8 @@ module.exports = [
             ]
         },
         plugins: [
-            new webpack.optimize.UglifyJsPlugin()
+            new webpack.optimize.DedupePlugin(),
+            new webpack.optimize.UglifyJsPlugin({minimize: true})
         ],
         externals: {
             // require("jquery") is external and available
