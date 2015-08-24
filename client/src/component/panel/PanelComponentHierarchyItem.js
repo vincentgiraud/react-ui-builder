@@ -2,11 +2,31 @@
 
 var _ = require('lodash');
 var React = require('react');
+var ReactBootstrap = require('react-bootstrap');
+var Button = ReactBootstrap.Button;
+var Input = ReactBootstrap.Input;
+
 var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
+
 var OverlayTreeviewItemPaste = require('../desk/OverlayTreeviewItemPaste.js');
 var OverlayTreeviewItem = require('../desk/OverlayTreeviewItem.js');
 
+
 var PanelComponentHierarchyItem = React.createClass({
+
+    getInitialState: function(){
+        return {
+            showAddBeforeSelect: false
+        };
+    },
+
+    handleAddBefore: function(e){
+        e.stopPropagation();
+        e.preventDefault();
+        this.setState({
+            showAddBeforeSelect: true
+        });
+    },
 
     render: function(){
 
@@ -21,26 +41,31 @@ var PanelComponentHierarchyItem = React.createClass({
 
         var content = null;
 
-        var className = 'umy-treeview-list-item' + (this.props.selected === this.props.umyid ? ' bg-info' : '');
-        if(this.props.copyMark === this.props.umyid){
+        var isSelected = this.props.selected === this.props.umyid;
+        var isCopyMark = this.props.copyMark === this.props.umyid;
+        var isCutMark = this.props.cutMark === this.props.umyid;
+
+        var className = 'umy-treeview-list-item' + (isSelected ? ' bg-info' : '');
+        if(isCopyMark){
             className += ' umy-grid-basic-border-copy';
         }
-        if(this.props.cutMark === this.props.umyid){
+        if(isCutMark){
             className += ' umy-grid-basic-border-cut';
         }
         //
         var linkClassName = '';
         var label = this.props.type;
         //
+
         if(this.props.children && this.props.children.length > 0){
             content = (
                 <li className={className}>
                     {/*overlay*/}
-                    <a key={'toplink'} className={linkClassName} href='#' onClick={this._handleClick}>
+                    <a key={'toplink'} className={linkClassName} href="#" onClick={this._handleClick}>
                         <span>{'<' + label + '>'}</span>
                     </a>
                     {this.props.children}
-                    <a key={'bottomlink'} className={linkClassName} href='#' onClick={this._handleClick}>
+                    <a key={'bottomlink'} className={linkClassName} href="#" onClick={this._handleClick}>
                         <span>{'</' + label + '>'}</span>
                     </a>
                 </li>
@@ -49,7 +74,7 @@ var PanelComponentHierarchyItem = React.createClass({
             content = (
                 <li className={className}>
                     {/*overlay*/}
-                    <a  className={linkClassName} href='#' onClick={this._handleClick}>
+                    <a  className={linkClassName} href="#" onClick={this._handleClick}>
                         <span>{'<' + label + '/>'}</span>
                     </a>
                 </li>

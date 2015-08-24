@@ -71,19 +71,30 @@ export function resolveFromProjectPerspective(projectDataObj){
                 }
             });
         }
+        if(pageObj.resources){
+            pageObj.resources.requires.map( (variable, index) => {
+
+                if(variable.source.substr(0, 6) === '../../'){
+                    let absoluteSourcePath = path.resolve(indexFileDirPath, variable.source);
+                    variable.relativeSource = repairPath(path.relative(absoluteDirPath, absoluteSourcePath)).replace(/\\/g, '/');
+                } else {
+                    variable.relativeSource = variable.source;
+                }
+            });
+        }
 
     });
-    if(projectDataObj.resources){
-        projectDataObj.resources.requires.map( (variable, index) => {
-
-            if(variable.source.substr(0, 6) === '../../'){
-                let absoluteSourcePath = path.resolve(indexFileDirPath, variable.source);
-                variable.relativeSource = repairPath(path.relative(absoluteDirPath, absoluteSourcePath)).replace(/\\/g, '/');
-            } else {
-                variable.relativeSource = variable.source;
-            }
-        });
-    }
+    //if(projectDataObj.resources){
+    //    projectDataObj.resources.requires.map( (variable, index) => {
+    //
+    //        if(variable.source.substr(0, 6) === '../../'){
+    //            let absoluteSourcePath = path.resolve(indexFileDirPath, variable.source);
+    //            variable.relativeSource = repairPath(path.relative(absoluteDirPath, absoluteSourcePath)).replace(/\\/g, '/');
+    //        } else {
+    //            variable.relativeSource = variable.source;
+    //        }
+    //    });
+    //}
     return projectDataObj;
 }
 

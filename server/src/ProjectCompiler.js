@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import webpack from 'webpack';
+import ExtractTextPlugin from "extract-text-webpack-plugin";
 
 class ProjectCompiler {
 
@@ -16,9 +17,9 @@ class ProjectCompiler {
                 debug: true,
                 module: {
                     loaders: [
-                        { test: /\.css$/, loader: "style-loader!css-loader" },
-                        { test: /\.(eot|woff|ttf|svg|png|jpg)([\?]?.*)$/, loader: 'url-loader' },
-                        { test: /\.(js|jsx)$/, exclude: /node_modules/, loader: 'babel?cacheDirectory' }
+                        { test: /\.(js|jsx)$/, exclude: /node_modules/, loader: 'babel?cacheDirectory' },
+                        { test: /\.css$/, exclude: /node_modules/, loader: "style-loader!css-loader" },
+                        { test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)([\?]?.*)$/, exclude: /node_modules/, loader: 'url-loader' }
                     ]
                 },
                 //resolveLoader: { root: path.join(__dirname, "node_modules") },
@@ -65,8 +66,13 @@ class ProjectCompiler {
         return new Promise((resolve, reject) => {
 
             var plugins = [
+                new ExtractTextPlugin("styles.css"),
                 new webpack.optimize.DedupePlugin(),
-                new webpack.optimize.UglifyJsPlugin({minimize: true})
+                new webpack.optimize.UglifyJsPlugin({
+                    compress: {
+                        warnings: false
+                    }
+                })
             ];
             if(isCommons){
                 plugins.push(new webpack.optimize.CommonsChunkPlugin({ name: 'commons', filename: 'commons.js'}));
@@ -82,9 +88,9 @@ class ProjectCompiler {
                 debug: true,
                 module: {
                     loaders: [
-                        { test: /\.(js|jsx)$/, exclude: /node_modules/, loader: 'babel?cacheDirectory' },
-                        { test: /\.css$/, loader: "style-loader!css-loader" },
-                        { test: /\.(eot|woff|ttf|svg|png|jpg)([\?]?.*)$/, loader: 'url-loader' }
+                        {test: /\.css$/, exclude: /node_modules/, loader: ExtractTextPlugin.extract("style-loader", "css-loader?-autoprefixer") },
+                        {test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)([\?]?.*)$/, exclude: /node_modules/, loader: 'url-loader'},
+                        {test: /\.(js|jsx)$/, exclude: /node_modules/, loader: 'babel?cacheDirectory'}
                     ]
                 },
                 plugins: plugins,
@@ -143,8 +149,8 @@ class ProjectCompiler {
                 module: {
                     loaders: [
                         { test: /\.(js|jsx)$/, exclude: /node_modules/, loader: 'babel?cacheDirectory' },
-                        { test: /\.css$/, loader: "style-loader!css-loader" },
-                        { test: /\.(eot|woff|ttf|svg|png|jpg)([\?]?.*)$/, loader: 'url-loader' }
+                        { test: /\.css$/, exclude: /node_modules/, loader: "style-loader!css-loader" },
+                        { test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)([\?]?.*)$/, exclude: /node_modules/, loader: 'url-loader' }
                     ]
                 },
                 //resolveLoader: { root: path.join(__dirname, "node_modules") },
@@ -201,8 +207,8 @@ class ProjectCompiler {
                 debug: true,
                 module: {
                     loaders: [
-                        {test: /\.css$/, loader: "style-loader!css-loader"},
-                        {test: /\.(eot|woff|ttf|svg|png|jpg)([\?]?.*)$/, loader: 'url-loader'},
+                        {test: /\.css$/, exclude: /node_modules/, loader: "style-loader!css-loader"},
+                        {test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)([\?]?.*)$/, exclude: /node_modules/, loader: 'url-loader'},
                         {test: /\.(js|jsx)$/, exclude: /node_modules/, loader: 'babel?cacheDirectory'}
                     ]
                 },

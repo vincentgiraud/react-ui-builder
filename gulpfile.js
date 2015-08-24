@@ -13,14 +13,14 @@ gulp.task('default', function() {
 });
 
 gulp.task('build-server-dev', function() {
-    return gulp.src('server/src/refactor/**/*.js')
-        .pipe(watch('server/src/refactor/**/*.js'))
+    return gulp.src('server/src/**/*.js')
+        .pipe(watch('server/src/**/*.js'))
         .pipe(babel())
         .pipe(gulp.dest('build/lib'));
 });
 
 gulp.task('build-server', function() {
-    return gulp.src('server/src/refactor/**/*.js')
+    return gulp.src('server/src/**/*.js')
         .pipe(babel())
         .pipe(uglify())
         .pipe(gulp.dest('build/lib'));
@@ -32,14 +32,14 @@ gulp.task('less-bootstrap', ['clean'], function() {
         dest: './client/lib/bootstrap/css/custom'
     };
     return gulp.src(config.src)
-        .pipe(sourcemaps.init())
+        //.pipe(sourcemaps.init())
         .pipe(less())
         .pipe(autoprefixer({cascade: false, browsers: ['last 2 versions']}))
-        .pipe(sourcemaps.write())
+        //.pipe(sourcemaps.write())
         .pipe(gulp.dest(config.dest, {overwrite: true}));
 });
 
 gulp.task('clean', function(cb) {
     // You can use multiple globbing patterns as you would with `gulp.src`
-    del(['./client/lib/bootstrap/css/custommain.css'], cb);
+    del(['./client/lib/bootstrap/css/custom'], cb);
 });

@@ -70,7 +70,9 @@
     return result;
 };%>
 'use strict';
-
+<% _.forEach(resources.requires, function(item, index) { %>
+require('<%=item.relativeSource%>');
+<% }); %>
 var React = require('react');
 <% _.forEach(imports, function(item, index) { %>
 var <%=item.name%> = require('<%=item.relativeSource%>')<%if(item.member){%>.<%=item.member%><%}%>;

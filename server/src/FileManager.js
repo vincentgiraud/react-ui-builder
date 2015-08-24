@@ -199,6 +199,48 @@ class FileManager {
         });
     }
 
+    readDirectoryFlat(dirPath){
+
+        return new Promise( (resolve, reject) => {
+            fs.lstat(dirPath, (err, stat) => {
+                if (err) {
+                    reject(err);
+                }
+                var found = {files: []},
+                    total = 0;
+
+                // Read through all the files in this directory
+                if (stat.isDirectory()) {
+                    fs.readdir(dirPath, (err, files) => {
+                        total = files.length;
+                        if (total === 0) {
+                            resolve(found);
+                        }
+                        for (var x = 0, l = files.length; x < l; x++) {
+                            var absPath = path.join(dirPath, files[x]);
+                            fs.stat(absPath, (function(_path, _name, _x){
+                                return (err, stat) => {
+                                    found.files.push({
+                                        name: _name,
+                                        path: _path,
+                                        isDirectory: stat.isDirectory()
+                                    });
+                                    if(_x === total - 1){
+                                        resolve(found);
+                                    }
+                                }
+                            })(absPath, files[x], x));
+                        }
+                    });
+                } else {
+                    reject("path: " + dirPath + " is not a directory");
+                }
+
+            });
+        });
+
+    }
+
     checkDirIsEmpty(dirPath){
         return new Promise( (resolve, reject) => {
             fs.stat(dirPath, (err, stat) => {
@@ -262,7 +304,7 @@ class FileManager {
         return new Promise( (resolve, reject) => {
             fs.createReadStream(srcFilePath)
                 .pipe(zlib.createGunzip())
-                .pipe(tar.extract(destDirPath, { dmode: '0555', fmode: '0444' })
+                .pipe(tar.extract(destDirPath, { dmode: '0666', fmode: '0666' })
                     .on('finish', () => { resolve(); }))
                     .on('error', err => { reject(err); });
         });

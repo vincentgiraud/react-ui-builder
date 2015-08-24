@@ -4,6 +4,7 @@ var _ = require('lodash');
 var Reflux = require('reflux');
 var HtmlComponents = require('../../api/HtmlComponents.js');
 var Server = require('../../api/Server.js');
+var Common = require('../../api/Common.js');
 var PanelAvailableComponentsActions = require('../../action/panel/PanelAvailableComponentsActions.js');
 var Repository = require('../../api/Repository.js');
 var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
@@ -144,7 +145,71 @@ var PanelAvailableComponentsStore = Reflux.createStore({
             text: options.text
         }});
         this.trigger(this.model);
+    },
+
+    onQuickAppend: function(options, command, umyId){
+        var componentDefaults = [];
+        Server.invoke('loadComponentDefaults', {componentName: options.componentId},
+            function(err){
+                var htmlDefaults = HtmlComponents[options.componentId];
+                if(htmlDefaults){
+                    componentDefaults.push({
+                        variantName: 'Default',
+                        type: options.componentId,
+                        props: htmlDefaults.props,
+                        children: htmlDefaults.children,
+                        text: htmlDefaults.text
+                    });
+                } else {
+                    componentDefaults.push({
+                        type: options.componentId
+                    });
+                }
+                Server.invoke('saveComponentDefaults',
+                    {
+                        componentName: options.componentId,
+                        componentOptions: componentDefaults[0]
+                    },
+                    function(err){
+                        //console.error(JSON.stringify(err));
+                    },
+                    function(response){
+                        // do nothing
+                    }
+                );
+
+                this.doAppend(componentDefaults[0], command, umyId);
+
+            }.bind(this),
+            function(response){
+
+                var defaultsIndex = defaultsIndexMap[options.componentId];
+                defaultsIndex = defaultsIndex || 0;
+                this.doAppend(response[defaultsIndex], command, umyId);
+
+            }.bind(this)
+        );
+
+    },
+
+    doAppend: function(options, command, umyId){
+        var _options = {
+            type: options.type,
+            props: options.props || {},
+            children: options.children || [],
+            text: options.text
+        };
+        Repository.renewCurrentProjectModel(
+            Common.pasteInModelFromClipboard(
+                _options,
+                umyId,
+                Repository.getCurrentProjectModel(),
+                command
+            )
+        );
+        DeskPageFrameActions.renderPageFrame(true);
     }
+
 });
 
 module.exports = PanelAvailableComponentsStore;

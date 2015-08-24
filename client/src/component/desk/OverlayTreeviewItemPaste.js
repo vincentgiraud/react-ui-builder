@@ -86,7 +86,7 @@ var OverlayTreeviewItemPaste = React.createClass({
                 },
                 {
                     label: 'Cancel',
-                    btnClass: 'btn-primary',
+                    btnClass: 'btn-warning',
                     onClick: (function () {
                         return function (e) {
                             e.preventDefault();

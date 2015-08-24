@@ -29,6 +29,13 @@ var DeskPageFramePreview = React.createClass({
             }.bind(this)
         );
 
+        //Server.onSocketEmit('compilerWatcher.success', function(data){
+        //    if(data.compiledProcessCount >= 1){
+        //        var domNode = React.findDOMNode(this);
+        //        domNode.src = response + '/' + Repository.getCurrentPageName() + '.html'
+        //    }
+        //}.bind(this));
+
     }
 
 

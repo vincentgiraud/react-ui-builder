@@ -11,7 +11,6 @@ var FormSignUp = require('./FormSignUp.js');
 var FormStart = require('./FormStart.js');
 var FormBrowseGallery = require('./FormBrowseGallery.js');
 var FormDownloadProject = require('./FormDownloadProject.js');
-var DeskGallery = require('../desk/DeskGallery.js');
 var PopoverComponentVariant = require('../element/PopoverComponentVariant.js');
 var GlobalOverlay = require('../element/GlobalOverlay.js');
 var PopoverComponentVariantActions = require('../../action/element/PopoverComponentVariantActions.js');
@@ -92,16 +91,26 @@ var Application = React.createClass({
         }
         var navBar = (
             <Navbar
-                brand={
-                    <div style={{position: 'relative'}}>
-                        <div className='umy-logo' style={{position: 'absolute', left: '-40px', top: '0'}}></div>
-                        <span>React UI Builder</span>
-                        <span className='text-muted' ref='brandTitle' style={{marginLeft: '1em'}}>{'(' + this.state.packageVersion + ')'}</span>
-                    </div>
-                }
                 staticTop={true}
                 fixedTop={true} toggleNavKey={0}>
+                <div className='umy-logo' style={{position: 'absolute', left: 'calc(50% - 20px)', top: '0'}}></div>
                 <CollapsibleNav eventKey={0}>
+                    <Nav navbar>
+                        <div style={{display: 'table'}}>
+                            <div style={{display: 'table-row'}}>
+                                <div style={{display: 'table-cell', verticalAlign: 'middle', paddingLeft: '0.5em', paddingRight: '0.5em', paddingTop: '0.5em', paddingBottom: '0.5em'} }>
+                                    <p style={{ margin: '0px', color: '#000'}} className='text-left'>
+                                        <span>Helmet</span>
+                                    </p>
+                                    <p style={{margin: '0px', whiteSpace: 'nowrap'}} className={'text-left text-info'}>
+                                        <small>React UI Builder</small>
+                                        <small className='text-muted' ref='brandTitle' style={{marginLeft: '0.2em'}}>{this.state.packageVersion}</small>
+                                    </p>
+                                </div>
+                                <div style={{display: 'table-cell', verticalAlign: 'middle', paddingLeft: '0.5em', paddingRight: '0.5em', paddingTop: '0.5em', paddingBottom: '0.5em', width: '10%'} }></div>
+                            </div>
+                        </div>
+                    </Nav>
                     <Nav navbar right={true}>
                         {linkToHome}
                         <NavItem href="https://groups.google.com/forum/#!forum/react-ui-builder" target="_blank">
@@ -128,14 +137,6 @@ var Application = React.createClass({
                 <FormBrowseGallery
                     errors={this.state.errors}
                     projects={this.state.projects}/>
-            );
-        } else if(this.state.stage === 'previewProject'){
-            navBar = null;
-            content = (
-                <DeskGallery
-                    projectId={this.state.previewProjectId}
-                    src={this.state.previewHtml}
-                    projectModel={this.state.previewProjectModel}/>
             );
         } else if(this.state.stage === 'downloadProjectForm'){
             content = (

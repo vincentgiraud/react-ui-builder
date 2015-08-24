@@ -16,9 +16,6 @@ const esformatterOptions = {
             // ...
         }
     },
-    whiteSpace : {
-        // ...
-    },
     "plugins": [
         "esformatter-jsx"
     ],

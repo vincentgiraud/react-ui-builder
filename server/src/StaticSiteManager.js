@@ -104,19 +104,20 @@ class StaticSiteManager {
             indexFilePath: this.indexFilePath,
             pages:[]
         };
+        let resources = this.createResourcesDataObject(indexObj);
         if(projectModel && projectModel.pages && projectModel.pages.length > 0){
             projectModel.pages.map( (page, index) => {
                 if(pageContents[page.pageName]){
                     let pageDataObject = this.createPageDataObject(page, indexObj);
                     pageDataObject.htmlContent = pageContents[page.pageName].htmlContent;
                     pageDataObject.isIndexPage = pageContents[page.pageName].isIndexPage;
+                    pageDataObject.resources = resources;
                     projectDataObj.pages.push(pageDataObject);
                 }
             });
         } else {
             throw Error('Project does not have pages.');
         }
-        projectDataObj.resources = this.createResourcesDataObject(indexObj);
         projectDataObj = pathResolver.resolveFromProjectPerspective(projectDataObj);
         return projectDataObj;
     }
@@ -131,12 +132,8 @@ class StaticSiteManager {
 
         let pageTemplateFilePath = path.join(this.siteTemplateDirPath, 'Page.tpl');
         let htmlTemplateFilePath = path.join(this.siteTemplateDirPath, 'Html.tpl');
-        let resourcesTemplateFilePath = path.join(this.siteTemplateDirPath, 'Resources.tpl');
-        let serverTemplateFilePath = path.join(this.siteTemplateDirPath, 'server.tpl');
         let pageTemplate = null;
         let htmlTemplate = null;
-        let resourcesTemplate = null;
-        let serverTemplate = null;
         return this.fileManager.readFile(pageTemplateFilePath)
             .then( fileData => {
                 pageTemplate = _.template(fileData);
@@ -145,18 +142,6 @@ class StaticSiteManager {
                 return this.fileManager.readFile(htmlTemplateFilePath)
                     .then( fileData => {
                         htmlTemplate = _.template(fileData);
-                    });
-            })
-            .then( () => {
-                return this.fileManager.readFile(resourcesTemplateFilePath)
-                    .then( fileData => {
-                        resourcesTemplate = _.template(fileData);
-                    });
-            })
-            .then( () => {
-                return this.fileManager.readFile(serverTemplateFilePath)
-                    .then( fileData => {
-                        serverTemplate = _.template(fileData);
                     });
             })
             .then( () => {
@@ -172,15 +157,6 @@ class StaticSiteManager {
                         bundleFileName: page.pageName
                     });
                 });
-                generatedObject.resources = {
-                    outputFilePath: path.join(projectDataObj.outputDirPath, 'resources.js'),
-                    sourceCode: resourcesTemplate(projectDataObj.resources),
-                    bundleFileName: 'resources.bundle.js'
-                };
-                generatedObject.server = {
-                    outputFilePath: path.join(projectDataObj.staticDirPath, 'server.js'),
-                    sourceCode: serverTemplate(projectDataObj)
-                };
                 return generatedObject;
             });
     }
@@ -193,25 +169,6 @@ class StaticSiteManager {
 
         sequence = sequence.then(() => {
             return this.fileManager.removeFile(generatedObj.staticDirPath);
-        });
-
-        sequence = sequence.then( () => {
-            return this.fileManager.ensureFilePath(generatedObj.resources.outputFilePath)
-                .then(() => {
-                    return this.fileManager.writeFile(
-                        generatedObj.resources.outputFilePath,
-                        generatedObj.resources.sourceCode,
-                        true
-                    );
-                })
-                .then( () => {
-                    return this.compiler.compileOptimized(
-                        generatedObj.resources.outputFilePath,
-                        generatedObj.bundleDirPath,
-                        generatedObj.resources.bundleFileName,
-                        nodeModulesPath
-                    );
-                });
         });
 
         generatedObj.pages.map( (page, index) => {
@@ -250,14 +207,6 @@ class StaticSiteManager {
                 true
             );
         });
-
-        //sequence = sequence.then( () => {
-        //    return this.fileManager.writeFile(
-        //        generatedObj.server.outputFilePath,
-        //        generatedObj.server.sourceCode,
-        //        true
-        //    )
-        //});
 
         return sequence;
     }

@@ -24,7 +24,11 @@ function get(onError, onSuccess){
 var PageForDesk = React.createClass({
 
     getInitialState: function(){
-        return null;
+        if(this.props.dataModel){
+            return this.props.dataModel;
+        } else{
+            return null;
+        }
     },
 
     componentDidMount: function(){

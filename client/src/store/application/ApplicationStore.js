@@ -204,23 +204,6 @@ var ApplicationStore = Reflux.createStore({
         Server.invoke('stopWatchLocalProject', function(err){}, function(){});
     },
 
-    onPreviewProject: function(projectId){
-        ModalProgressActions.showModalProgress('Preparing preview. Please wait...', 300);
-        Server.invoke('preparePreview', {projectId: projectId},
-            function (errors) {
-                this.onGoToErrors(errors);
-            }.bind(this),
-            function (response) {
-                this.model.previewProjectId = projectId;
-                this.model.previewProjectModel = response.projectModel;
-                this.model.previewHtml = response.htmlForDesk;
-                this.model.errors = null;
-                this.model.stage = 'previewProject';
-                this.trigger(this.model);
-            }.bind(this)
-        );
-    },
-
     onStartDownloadProject: function(projectId){
         this.model.cloneProjectId = projectId;
         this.model.errors = null;

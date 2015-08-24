@@ -1,4 +1,5 @@
 var webpack = require("webpack");
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = [
     {
@@ -14,17 +15,14 @@ module.exports = [
         debug: true,
         module: {
             loaders: [
-                //{ test: /\.js$/, exclude: /node_modules/, loader: 'jsx-loader?harmony' },
                 { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' },
-                { test: /\.css$/, exclude: /node_modules/, loader: "style-loader!css-loader" },
-                { test: /\.less$/, exclude: /node_modules/, loader: "style-loader!css-loader!less-loader"},
-                //{ test: /\.(eot|woff|ttf|svg|png|jpg)([\?]?.*)$/, loader: 'url-loader?limit=8000&name=[name]-[hash].[ext]' }
-                { test: /\.(eot|woff|ttf|svg|png|jpg)([\?]?.*)$/, exclude: /node_modules/, loader: 'url-loader' }
-                //{ test: /\.(eot|woff|ttf)([\?]?.*)$/, loader: "file-loader" }
-                //{ test: /[\\\/]node_modules[\\\/]modernizr[\\\/]modernizr-build\.js$/,
-                //    loader: "imports?this=>window!exports?window.Modernizr" }
+                { test: /\.css$/, exclude: /node_modules/, loader: ExtractTextPlugin.extract("style-loader", "css-loader") },
+                { test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)([\?]?.*)$/, exclude: /node_modules/, loader: 'url-loader' }
             ]
         },
+        plugins: [
+            new ExtractTextPlugin("styles.css")
+        ],
         externals: {
             // require("jquery") is external and available
             //  on the global var jQuery

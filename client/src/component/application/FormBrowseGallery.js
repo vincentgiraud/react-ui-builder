@@ -69,7 +69,6 @@ var FormStart = React.createClass({
         }
         return (
             <Grid fluent={true} style={{marginTop: '70px'}}>
-                <h4>Choose project you want to clone</h4>
                 <CollapsibleLabel style={{margin: '0.3em 0 0.3em 0'}} title='Legal stuff'>
                     <div style={{padding: '1em'}}>
                         <p>Data published to the React UI Builder gallery is not part of React UI Builder itself,

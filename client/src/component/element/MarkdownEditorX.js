@@ -44,6 +44,10 @@ var MarkdownEditorX = React.createClass({
         })
     },
 
+    getMarkdownSource: function(){
+        return this.refs.editor.getSourceCode();
+    },
+
     render: function() {
         //var style = _.extend({}, ...this.props.style, )
         //var iframeStyle = {
@@ -56,13 +60,23 @@ var MarkdownEditorX = React.createClass({
         //    "border" : "1px solid #000000"
         //};
         //<iframe ref='iframe' seamless={true} frameBorder="0" style={iframeStyle} />
+        var editorStyle = {
+            height: this.props.editorHeight || '500px',
+            width: '100%'
+        };
+        var previewStyle = {
+            height: this.props.previewHeight || '100%'
+        };
+
         return (
             <TabbedArea activeKey={this.state.key} onSelect={this.handleSelect} style={this.props.style}>
                 <TabPane tab={ 'Preview' }
                          style={ { padding: '0.5em'} }
                          eventKey={ 0 }>
-                    <div dangerouslySetInnerHTML={{__html: this.state.htmlContent}}>
-                    </div>
+                    <Panel>
+                        <div style={previewStyle} dangerouslySetInnerHTML={{__html: this.state.htmlContent}}>
+                        </div>
+                    </Panel>
                 </TabPane>
                 <TabPane tab={ 'Editor' }
                          style={ { padding: '0.5em'} }
@@ -72,8 +86,8 @@ var MarkdownEditorX = React.createClass({
                         sourceName={this.props.sourceName}
                         onChangeText={this.handleMarkdownChange}
                         mode='ace/mode/markdown'
-                        style={{height: '500px', width: '100%'}}
-                        sourceCode={this.props.markdownSource} />
+                        style={ editorStyle }
+                        sourceCode={ this.props.markdownSource } />
                     <hr/>
                     <p style={{marginTop: '1em'}}>
                         <span>A quick reference of </span>

@@ -42,7 +42,20 @@ class ClientManager {
     }
 
     downloadGalleryFile(options){
-        return this.client.download( '/downloadGalleryFile', _.pick(options, ['id', 'packageFileName']) );
+        let _options = _.pick(options, ['id', 'packageFileName']);
+        return this.client.downloadGet( '/downloadGalleryFile?id=' + _options.id + '&packageFileName=' + _options.packageFileName);
+    }
+
+    createProject(options){
+        return this.client.post('/secure/createProject', options, true);
+    }
+
+    uploadProjectFiles(options){
+        var uploadConfig = {
+            url: '/secure/uploadProject/' + options.projectId,
+            filePaths: options.filePaths
+        };
+        return this.client.upload(uploadConfig, true);
     }
 
 }

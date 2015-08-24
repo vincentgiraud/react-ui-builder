@@ -39,7 +39,6 @@ var DeskPageFrameStore = Reflux.createStore({
 
     onReloadPageFrame: function(){
         //this.onStopClipboardForOptions();
-        console.log("Reloading page frame");
         this.trigger({
             src: Repository.getHtmlForDesk()
         });
@@ -47,7 +46,7 @@ var DeskPageFrameStore = Reflux.createStore({
 
     onDidRenderPageFrame: function(){
         // Load all components defaults
-        //ApplicationActions.loadComponentsDefaults();
+
         // workaround for not proper iframe page rerendering
         var window = Repository.getCurrentPageDocument();
         $(window).find('.umy-grid-basic-border-copy').removeClass('umy-grid-basic-border-copy');
@@ -317,6 +316,8 @@ var DeskPageFrameStore = Reflux.createStore({
             );
             this.model.selectedUmyId = null;
         }
+        this.onStopClipboardForOptions();
+        this.trigger();
     },
 
     onInsertLast: function(){
@@ -351,6 +352,8 @@ var DeskPageFrameStore = Reflux.createStore({
             );
             this.model.selectedUmyId = null;
         }
+        this.onStopClipboardForOptions();
+        this.trigger();
     },
 
     onAddAfter: function(){
@@ -385,6 +388,8 @@ var DeskPageFrameStore = Reflux.createStore({
             );
             this.model.selectedUmyId = null;
         }
+        this.onStopClipboardForOptions();
+        this.trigger();
     },
 
     onWrap: function(){
@@ -419,6 +424,8 @@ var DeskPageFrameStore = Reflux.createStore({
             );
             this.model.selectedUmyId = null;
         }
+        this.onStopClipboardForOptions();
+        this.trigger();
     },
 
     onReplace: function(){
@@ -453,6 +460,8 @@ var DeskPageFrameStore = Reflux.createStore({
             );
             this.model.selectedUmyId = null;
         }
+        this.onStopClipboardForOptions();
+        this.trigger();
     },
 
     onShowPropertyEditor: function(){
@@ -460,7 +469,6 @@ var DeskPageFrameStore = Reflux.createStore({
             selectedUmyId: this.model.selectedUmyId
         });
     }
-
 
 });
 

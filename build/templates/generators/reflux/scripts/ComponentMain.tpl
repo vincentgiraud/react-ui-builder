@@ -16,9 +16,9 @@
         if(styleObject && !_.isEmpty(styleObject)){
             _.forOwn(styleObject, function(value, prop){
                 if(_.isString(value) && value.length > 0){
-                    result += ' ' + prop + ": '" + value + "',";
+                    result += prop + ": '" + value + "',";
                 } else if(_.isBoolean(value) || _.isNumber(value)){
-                    result += ' ' + prop + ": " + value + ",";
+                    result += prop + ": " + value + ",";
                 }
             });
             result = result.substr(0, result.length - 1);
@@ -37,9 +37,9 @@
                     result += prop + "={" + value + "} ";
                 } else if(_.isObject(value)){
                     if(prop === 'style'){
-                        result += prop + "={{ " + processStyle(value) + " }} ";
+                        result += prop + "={{" + processStyle(value) + "}} ";
                     } else if(value['type']){
-                        result += prop +"={ " + processChild(value) + " }";
+                        result += prop +"={" + processChild(value) + "}";
                     }
                 }
             });
@@ -60,9 +60,9 @@
                     result += prop + ": " + value;
                 } else if(_.isObject(value)){
                     if(prop === 'style'){
-                        result += prop + ": { " + processStyle(value) + " }";
+                        result += prop + ": {" + processStyle(value) + "}";
                     } else if(value['type']){
-                        result += prop +": ( " + processChild(value) + " )";
+                        result += prop +": (" + processChild(value) + ")";
                     }
                 }
             });
@@ -72,12 +72,9 @@
 'use strict';
 
 var React = require('react');
-<% _.forEach(component.imports, function(item, index) { %>
-var <%=item.name%> = require('<%=item.relativeSource%>')<%if(item.member){%>.<%=item.member%><%}%>;
-<% }); %>
-<% _.forOwn(modules, function(module, name) { %>
-var <%=module.name%> = require('<%=module.relativeFilePath%>');
-<% });%>
+<% _.forEach(component.imports, function(item, index) { %>var <%=item.name%> = require('<%=item.relativeSource%>')<%if(item.member){%>.<%=item.member%><%}%>;<% }); %>
+<% _.forOwn(modules, function(module, name) { %>var <%=module.name%> = require('<%=module.relativeFilePath%>');<% });%>
+
 var <%=component.componentName%> = React.createClass({
 
     getDefaultProps: function () {

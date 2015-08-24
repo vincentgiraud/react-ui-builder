@@ -8,8 +8,8 @@
         <% if(pageMetaInfo && pageMetaInfo.length > 0){ _.forEach(pageMetaInfo, function(item, index) { %>
         <meta <%_.forOwn(item, function(value, prop){%> <%=prop%>="<%=value%>" <%});%>></meta>
         <% });} %>
+        <link rel="stylesheet" href="styles.css"/>
         <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-        <script src="resources.bundle.js"></script>
     </head>
     <body>
         <div id="content">
