@@ -293,6 +293,13 @@ class Api {
         return this.storageManager.readProjectDir();
     }
 
+    checkCreateProject(options){
+        return this.validator.validateOptions(options, ['projectName'])
+            .then( () => {
+                return this.clientManager.checkCreateProject({ projectName: options.projectName });
+            });
+    }
+
     createProject(options){
         return this.validator.validateOptions(options,
             ['projectName', 'projectDescription', 'projectLicense', 'files', 'pageContents', 'projectModel'])

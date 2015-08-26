@@ -16,11 +16,12 @@ var TabbedArea = ReactBootstrap.TabbedArea;
 var TabPane = ReactBootstrap.TabPane;
 var DropdownButton = ReactBootstrap.DropdownButton;
 var MenuItem = ReactBootstrap.MenuItem;
+var PageList = require('../element/PageList.js');
 
-var FormVariantName = React.createClass({
+var FormUploadProjectPageList = React.createClass({
 
 
-    _handleBackStep: function (e) {
+    handleBackStep: function (e) {
         e.preventDefault();
         e.stopPropagation();
         if (this.props.onBackStep) {
@@ -28,22 +29,14 @@ var FormVariantName = React.createClass({
         }
     },
 
-    _handleSubmitStep: function (e) {
+    handleSubmitStep: function (e) {
         e.preventDefault();
         e.stopPropagation();
         if (this.props.onSubmitStep) {
             this.props.onSubmitStep({
-                variantName: this.state.variantName
+                pageContents: this.refs.pageList.getPageContents()
             });
         }
-    },
-
-    _handleVariantNameChange: function () {
-        var variantName = React.findDOMNode(this.refs.variantNameInput).value;
-        var newState = {
-            variantName: variantName
-        };
-        this.setState(newState);
     },
 
     getDefaultProps: function () {
@@ -53,16 +46,6 @@ var FormVariantName = React.createClass({
         };
     },
 
-    getInitialState: function(){
-        return {
-            variantName: ''
-        };
-    },
-
-    componentDidMount: function(){
-        React.findDOMNode(this.refs.variantNameInput).focus();
-    },
-
     render: function () {
         return (
             <div style={this.props.formStyle}>
@@ -70,26 +53,19 @@ var FormVariantName = React.createClass({
                     <tr>
                         <td style={{width: '20%'}}></td>
                         <td>
-                            <h4>{this.props.commitmentMessage}</h4>
-                            <div className='form-group '>
-                                <label htmlFor='variantNameElement'>Variant name:</label>
-                                <input id='variantNameElement'
-                                       ref='variantNameInput'
-                                       className="form-control input-sm"
-                                       type="text"
-                                       placeholder='Enter variant name'
-                                       value={this.state.variantName}
-                                       onChange={this._handleVariantNameChange}
-                                    />
-                            </div>
+                            <h4 className="text-center">Select sample pages</h4>
+                            <PageList
+                                ref='pageList'
+                                pageContents={this.props.pageContents}
+                                listHeight="324px" />
 
                         </td>
                         <td style={{width: '20%'}}></td>
                     </tr>
                 </table>
                 <div style={{display: 'table', textAlign: 'center', width: '100%', marginTop: '2em'}}>
-                    <Button bsStyle='default' onClick={this._handleBackStep}>Cancel</Button>
-                    <Button bsStyle='primary' onClick={this._handleSubmitStep}>Commit</Button>
+                    <Button bsStyle='default' onClick={this.handleBackStep}>Back</Button>
+                    <Button bsStyle='primary' onClick={this.handleSubmitStep}>Next</Button>
                 </div>
             </div>
         );
@@ -97,4 +73,4 @@ var FormVariantName = React.createClass({
 
 });
 
-module.exports = FormVariantName;
+module.exports = FormUploadProjectPageList;

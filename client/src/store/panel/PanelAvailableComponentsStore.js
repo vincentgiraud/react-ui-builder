@@ -199,15 +199,14 @@ var PanelAvailableComponentsStore = Reflux.createStore({
             children: options.children || [],
             text: options.text
         };
-        Repository.renewCurrentProjectModel(
-            Common.pasteInModelFromClipboard(
-                _options,
-                umyId,
-                Repository.getCurrentProjectModel(),
-                command
-            )
+        var transformationResult = Common.pasteInModelFromClipboard(
+            _options,
+            umyId,
+            Repository.getCurrentProjectModel(),
+            command
         );
-        DeskPageFrameActions.renderPageFrame(true);
+        Repository.renewCurrentProjectModel(transformationResult.projectModel);
+        DeskPageFrameActions.renderPageFrame(transformationResult.selectedUmyId);
     }
 
 });

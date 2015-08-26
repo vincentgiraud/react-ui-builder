@@ -28,7 +28,8 @@ var ModalPageInfoEditorStore = Reflux.createStore({
 
             this.model.documentMarkdown = '#### Meta info\n\nMeta info is an array of values.\n\n ' +
                 '**Example:**\n\n ```\n[\n\t{ name: \'some name\', property: \'some property value\'},\n\t' +
-                '{ name: \'some name\', property: \'some property value\'}\n]\n```\n';
+                '{ name: \'some name\', property: \'some property value\'}\n]\n```\n\nPage\'s meta info will be placed ' +
+                'into meta tags in HTML file after generation of static content of the page.';
 
             this.trigger(this.model);
 

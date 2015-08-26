@@ -24,6 +24,8 @@ var AceEditor = React.createClass({
         if (sourceCode) {
             this.editor.getSession().setValue(sourceCode);
         }
+        this.editor.focus();
+        this.editor.navigateFileEnd();
     },
 
     getDefaultProps: function(){

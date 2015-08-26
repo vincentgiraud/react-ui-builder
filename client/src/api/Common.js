@@ -282,6 +282,7 @@ var Common = {
             //
             var srcSearchResult = null;
             var searchResult = null;
+            var resultUmyId = null;
             for(var i = 0; i < projectModel.pages.length; i++){
                 if(!srcSearchResult){
                     srcSearchResult = Common.findByUmyId(projectModel.pages[i], srcUmyId);
@@ -293,6 +294,7 @@ var Common = {
             if (searchResult && srcSearchResult) {
                 var clipboard = Common.fulex(srcSearchResult.found);
                 Common.setupPropsUmyId(clipboard, true);
+                resultUmyId = clipboard.props['data-umyid'];
                 var modelItem = null;
                 var modelIndex = null;
                 switch (modifyMode) {
@@ -357,7 +359,10 @@ var Common = {
                 searchResult = null;
                 modelItem = null;
             }
-            return projectModel;
+            return {
+                projectModel: projectModel,
+                selectedUmyId: resultUmyId
+            };
         } else {
             throw new Error('Some parameters are not set');
         }
@@ -375,6 +380,7 @@ var Common = {
         if(clipboard && destUmyId && projectModel && modifyMode){
             //
             var searchResult = null;
+            var resultUmyId = null;
             for(var i = 0; i < projectModel.pages.length; i++){
                 if(!searchResult){
                     searchResult = Common.findByUmyId(projectModel.pages[i], destUmyId);
@@ -384,6 +390,7 @@ var Common = {
             if (searchResult) {
                 var options = Common.fulex(clipboard);
                 Common.setupPropsUmyId(options, true);
+                resultUmyId = options.props['data-umyid'];
                 var modelItem = null;
                 var modelIndex = null;
                 switch (modifyMode) {
@@ -444,7 +451,10 @@ var Common = {
                 searchResult = null;
                 modelItem = null;
             }
-            return projectModel;
+            return {
+                projectModel: projectModel,
+                selectedUmyId: resultUmyId
+            };
         } else {
             throw new Error('Some parameters are not set');
         }

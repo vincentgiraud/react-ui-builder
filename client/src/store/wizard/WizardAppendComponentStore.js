@@ -35,15 +35,14 @@ var WizardAppendComponentStore = Reflux.createStore({
             children: options.children || [],
             text: options.text
         };
-        Repository.renewCurrentProjectModel(
-            Common.pasteInModelFromClipboard(
-                _options,
-                this.model.selectedUmyId,
-                Repository.getCurrentProjectModel(),
-                this.model.command
-            )
+        var transformationResult = Common.pasteInModelFromClipboard(
+            _options,
+            this.model.selectedUmyId,
+            Repository.getCurrentProjectModel(),
+            this.model.command
         );
-        DeskPageFrameActions.renderPageFrame(true);
+        Repository.renewCurrentProjectModel(transformationResult.projectModel);
+        DeskPageFrameActions.renderPageFrame(transformationResult.selectedUmyId);
     },
 
     loadDefaultsOptions: function(options, callback){

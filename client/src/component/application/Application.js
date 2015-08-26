@@ -4,7 +4,7 @@ var React = require('react');
 var ApplicationStore = require('../../store/application/ApplicationStore.js');
 var ModalProgress = require('../modal/ModalProgress.js');
 var ModalProjectSettings = require('../modal/ModalProjectSettings.js');
-var ModalFileListUpload = require('../modal/ModalFileListUpload.js');
+var ModalUploadProject = require('../modal/ModalUploadProject.js');
 var ModalStaticSiteGenerator = require('../modal/ModalStaticSiteGenerator.js');
 var FormSignIn = require('./FormSignIn.js');
 var FormSignUp = require('./FormSignUp.js');
@@ -174,7 +174,7 @@ var Application = React.createClass({
                 <ModalProgress/>
                 <ModalStaticSiteGenerator/>
                 <ModalProjectSettings/>
-                <ModalFileListUpload/>
+                <ModalUploadProject/>
                 <PopoverComponentVariant/>
                 <GlobalOverlay/>
             </div>

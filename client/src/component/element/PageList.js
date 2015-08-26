@@ -99,7 +99,6 @@ var PageList = React.createClass({
 
         return (
             <div {...this.props}>
-                <h5 style={{marginTop: "1em"}} className="text-center">Select pages</h5>
                 <div style={styleTable}>
                     <table className="table" style={{width: '100%'}}>
                         <tr>

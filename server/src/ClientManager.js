@@ -50,6 +50,10 @@ class ClientManager {
         return this.client.post('/secure/createProject', options, true);
     }
 
+    checkCreateProject(options){
+        return this.client.post('/secure/checkCreateProject', options, true);
+    }
+
     uploadProjectFiles(options){
         var uploadConfig = {
             url: '/secure/uploadProject/' + options.projectId,
