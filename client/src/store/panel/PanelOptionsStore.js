@@ -48,7 +48,12 @@ var PanelOptionsStore = Reflux.createStore({
             DeskPageFrameActions.renderPageFrame();
         }
         //console.log(JSON.stringify(newStyle, null, 4));
+    },
+
+    onSetFocusTo: function(options){
+        this.model.focusedElementId = options.elementId;
     }
+
 
 });
 

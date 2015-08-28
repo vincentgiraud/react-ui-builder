@@ -48,6 +48,14 @@ var OptionInput = React.createClass({
         }
     },
 
+    handleFocus: function(){
+        if(this.props.onSetFocus){
+            this.props.onSetFocus({
+                elementId: this.props.path
+            });
+        }
+    },
+
     handleOnKeyDown: function(e){
         if(e.keyCode == 13 || e.keyCode == 27){
             this.handleChange();
@@ -85,6 +93,19 @@ var OptionInput = React.createClass({
         };
     },
 
+    componentDidMount: function(){
+        if(this.props.focused){
+            var input = React.findDOMNode(this.refs.inputElement);
+            if(this.state.propertyType !== 'checkbox') {
+                var len = input.value ? input.value.length : 0;
+                input.focus();
+                input.setSelectionRange(len, len);
+            } else {
+                input.focus();
+            }
+        }
+    },
+
     render: function () {
         var element = null;
         var style = {
@@ -97,6 +118,7 @@ var OptionInput = React.createClass({
                        type={this.state.propertyType}
                        className="form-control"
                        checked={this.getValueFromObject()}
+                       onFocus={this.handleFocus}
                        style={style}
                        onChange={this.handleChangeCheckboxValue}/>
             );
@@ -108,9 +130,9 @@ var OptionInput = React.createClass({
                        className="form-control"
                        value={this.getValueFromObject()}
                        style={style}
+                       onFocus={this.handleFocus}
                        onChange={this.handleChangeInputValue}
-                       onKeyDown={this.handleOnKeyDown}
-                       onBlur={this.handleChange}/>
+                       onKeyDown={this.handleOnKeyDown}/>
             );
         }
 

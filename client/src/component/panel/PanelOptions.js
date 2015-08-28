@@ -60,10 +60,12 @@ var PanelOptions = React.createClass({
                                     style={{marginTop: '0.5em', padding: '0 1em 0 1em'}}
                                     valueObject={valueObject}
                                     path={pathTo}
+                                    focused={pathTo === this.state.focusedElementId}
+                                    onSetFocus={PanelOptionsActions.setFocusTo}
                                     onChangeValue={PanelOptionsActions.changeOptions}/>
                             );
                         }
-                    });
+                    }.bind(this));
                 } else {
                     var valueObject = {};
                     var pathTo = prop;
@@ -74,10 +76,12 @@ var PanelOptions = React.createClass({
                             style={{marginTop: '0.5em', padding: '0 1em 0 1em'}}
                             valueObject={valueObject}
                             path={pathTo}
+                            focused={pathTo === this.state.focusedElementId}
+                            onSetFocus={PanelOptionsActions.setFocusTo}
                             onChangeValue={PanelOptionsActions.changeOptions}/>
                     );
                 }
-            });
+            }.bind(this));
 
             panelContent = (
                 <div style={style}>

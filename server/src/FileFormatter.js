@@ -34,6 +34,7 @@ const esformatterOptions = {
         "firstAttributeOnSameLine": true,
         // align the attributes with the first attribute (if the first attribute was kept on the same line as on the open tag)
         "alignWithFirstAttribute": true,
+        "spaceInJSXExpressionContainers": " ",
         "htmlOptions": { // same as the ones passed to jsbeautifier.html
             "brace_style": "collapse",
             "indent_char": " ",

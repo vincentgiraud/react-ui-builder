@@ -277,7 +277,7 @@ var DeskPageFrameStore = Reflux.createStore({
                 Repository.getCurrentProjectModel(),
                 'addBefore'
             );
-            Repository.renewCurrentProjectModel(transformationResult);
+            Repository.renewCurrentProjectModel(transformationResult.projectModel);
             this.model.selectedUmyId = transformationResult.selectedUmyId;
         }
         this.onStopClipboardForOptions();

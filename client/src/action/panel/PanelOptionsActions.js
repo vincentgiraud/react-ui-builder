@@ -5,7 +5,8 @@ var Reflux = require('reflux');
 var PanelOptionsActions = Reflux.createActions([
     'selectItem',
     'deselectItem',
-    'changeOptions'
+    'changeOptions',
+    'setFocusTo'
 ]);
 
 module.exports = PanelOptionsActions;
