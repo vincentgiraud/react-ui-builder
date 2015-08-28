@@ -48,6 +48,14 @@ var OptionInput = React.createClass({
         }
     },
 
+    handleDelete: function(e){
+        if(this.props.onDeleteValue){
+            this.props.onDeleteValue({
+                path: this.props.path
+            })
+        }
+    },
+
     handleFocus: function(){
         if(this.props.onSetFocus){
             this.props.onSetFocus({
@@ -114,6 +122,7 @@ var OptionInput = React.createClass({
         if(this.state.propertyType === 'checkbox') {
             style.width = '1em';
             element = (
+                <div style={{position: 'relative'}}>
                 <input ref="inputElement"
                        type={this.state.propertyType}
                        className="form-control"
@@ -121,18 +130,29 @@ var OptionInput = React.createClass({
                        onFocus={this.handleFocus}
                        style={style}
                        onChange={this.handleChangeCheckboxValue}/>
+                    <span
+                        style={{position: 'absolute', top: '0.5em', left: '-1em', cursor: 'pointer'}}
+                        className="fa fa-trash-o"
+                        onClick={this.handleDelete}></span>
+                </div>
             );
 
         } else if(this.state.propertyType === 'text' || this.state.propertyType === 'number') {
             element = (
-                <input ref="inputElement"
-                       type={this.state.propertyType}
-                       className="form-control"
-                       value={this.getValueFromObject()}
-                       style={style}
-                       onFocus={this.handleFocus}
-                       onChange={this.handleChangeInputValue}
-                       onKeyDown={this.handleOnKeyDown}/>
+                <div style={{position: 'relative'}}>
+                    <input ref="inputElement"
+                           type={this.state.propertyType}
+                           className="form-control"
+                           value={this.getValueFromObject()}
+                           style={style}
+                           onFocus={this.handleFocus}
+                           onChange={this.handleChangeInputValue}
+                           onKeyDown={this.handleOnKeyDown}/>
+                    <span
+                        style={{position: 'absolute', top: '0.5em', left: '-1em', cursor: 'pointer'}}
+                        className="fa fa-trash-o"
+                        onClick={this.handleDelete}></span>
+                </div>
             );
         }
 

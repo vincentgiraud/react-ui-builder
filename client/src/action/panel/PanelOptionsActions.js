@@ -6,7 +6,8 @@ var PanelOptionsActions = Reflux.createActions([
     'selectItem',
     'deselectItem',
     'changeOptions',
-    'setFocusTo'
+    'setFocusTo',
+    'deleteOptions'
 ]);
 
 module.exports = PanelOptionsActions;

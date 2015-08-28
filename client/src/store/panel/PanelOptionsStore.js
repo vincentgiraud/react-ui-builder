@@ -50,6 +50,22 @@ var PanelOptionsStore = Reflux.createStore({
         //console.log(JSON.stringify(newStyle, null, 4));
     },
 
+    onDeleteOptions: function(options){
+        var projectModel = Repository.getCurrentProjectModel();
+        var searchResult = null;
+        for(var i = 0; i < projectModel.pages.length; i++){
+            if(!searchResult){
+                searchResult = Common.findByUmyId(projectModel.pages[i], this.model.selectedUmyId);
+            }
+        }
+        if(searchResult){
+            searchResult.found.props = searchResult.found.props || {};
+            searchResult.found.props = Common.cleanex(Common.delex(searchResult.found.props, options.path));
+            Repository.renewCurrentProjectModel(projectModel);
+            DeskPageFrameActions.renderPageFrame();
+        }
+    },
+
     onSetFocusTo: function(options){
         this.model.focusedElementId = options.elementId;
     }

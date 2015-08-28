@@ -7,6 +7,7 @@ var ReactBootstrap = require('react-bootstrap');
 var PanelOptionsStore = require('../../store/panel/PanelOptionsStore.js');
 var PanelOptionsActions = require('../../action/panel/PanelOptionsActions.js');
 var OptionInput = require('../element/OptionInput.js');
+var CollapsiblePlusOptionInput = require('../element/CollapsiblePlusOptionInput.js');
 
 var Panel = ReactBootstrap.Panel;
 var PanelGroup = ReactBootstrap.PanelGroup;
@@ -32,6 +33,22 @@ var PanelOptions = React.createClass({
 
     getDefaultProps: function() {
         return {};
+    },
+
+    handleAddNewProp: function(options){
+        if(options.path && /^[a-zA-Z0-9.]+$/.test(options.path)){
+            var valueObject = {};
+            if(/^[0-9.]+$/.test(options.value)){
+                _.set(valueObject, options.path, parseFloat(options.value));
+            } else if(options.value === "true"){
+                _.set(valueObject, options.path, true);
+            } else if(options.value === "false"){
+                _.set(valueObject, options.path, false);
+            } else {
+                _.set(valueObject, options.path, '' + options.value);
+            }
+            PanelOptionsActions.changeOptions(valueObject);
+        }
     },
 
     render: function() {
@@ -61,6 +78,7 @@ var PanelOptions = React.createClass({
                                     valueObject={valueObject}
                                     path={pathTo}
                                     focused={pathTo === this.state.focusedElementId}
+                                    onDeleteValue={PanelOptionsActions.deleteOptions}
                                     onSetFocus={PanelOptionsActions.setFocusTo}
                                     onChangeValue={PanelOptionsActions.changeOptions}/>
                             );
@@ -77,6 +95,7 @@ var PanelOptions = React.createClass({
                             valueObject={valueObject}
                             path={pathTo}
                             focused={pathTo === this.state.focusedElementId}
+                            onDeleteValue={PanelOptionsActions.deleteOptions}
                             onSetFocus={PanelOptionsActions.setFocusTo}
                             onChangeValue={PanelOptionsActions.changeOptions}/>
                     );
@@ -85,8 +104,13 @@ var PanelOptions = React.createClass({
 
             panelContent = (
                 <div style={style}>
-                    <div style={{width: '100%', overflow: 'auto'}}>
-                        <pre style={{fontSize: '10px'}}>{JSON.stringify(this.state.satinizedProps, null, 2)}</pre>
+                    <div style={{position: 'relative'}}>
+                        <div style={{width: '100%', overflow: 'auto'}}>
+                            <pre style={{fontSize: '10px'}}>{JSON.stringify(this.state.satinizedProps, null, 2)}</pre>
+                        </div>
+                        <CollapsiblePlusOptionInput
+                            style={{position: 'absolute', top: 'calc(100% - 1.8em)', width: '100%', zIndex: '1030'}}
+                            onCommit={this.handleAddNewProp}/>
                     </div>
                     {optionInputs}
                 </div>

@@ -46,6 +46,62 @@ var Common = {
         }
         return obj1;
     },
+    delex: function (obj, path) {
+        var pathArray = path.split('.');
+        if(pathArray.length === 1 && obj[path] !== undefined){
+            delete obj[path];
+        } else {
+            var tempObj = obj;
+            pathArray.map(function(step, index){
+                if(index === pathArray.length - 1 && tempObj[step] !== undefined){
+                    delete tempObj[step];
+                } else {
+                    tempObj = tempObj[step];
+                }
+            });
+        }
+        return obj;
+    },
+    cleanex: function (obj2) {
+        var obj1 = null;
+        var tempObj = null;
+        if (_.isArray(obj2)) {
+            obj1 = [];
+            for (var i = 0; i < obj2.length; i++) {
+                tempObj = this.cleanex(obj2[i]);
+                if(_.isObject(tempObj)){
+                    if(!_.isEmpty(tempObj)){
+                        obj1.push(tempObj);
+                    }
+                } else {
+                    obj1.push(tempObj);
+                }
+            }
+        } else if (_.isObject(obj2)) {
+            obj1 = {};
+            for (var item in obj2) {
+                if (obj2.hasOwnProperty(item)) {
+                    tempObj = this.cleanex(obj2[item]);
+                    if(_.isObject(tempObj)){
+                        if(!_.isEmpty(tempObj)){
+                            obj1[item] = tempObj;
+                        }
+                    } else {
+                        obj1[item] = tempObj;
+                    }
+                }
+            }
+        } else {
+            if(_.isObject(obj2)){
+                if(!_.isEmpty(obj2)){
+                    obj1 = obj2;
+                }
+            } else {
+                obj1 = obj2;
+            }
+        }
+        return obj1;
+    },
     isVisible: function (element) {
         var invisibleParent = false;
         if ($(element).css("display") === "none") {
