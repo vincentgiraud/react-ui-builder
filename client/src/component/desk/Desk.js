@@ -20,6 +20,7 @@ var ToolbarTopActions = require('../../action/toolbar/ToolbarTopActions.js');
 //var PanelQuickOptions = require('../panel/PanelQuickOptions.js');
 var PanelOptions = require('../panel/PanelOptions.js');
 var SidePanel = require('../element/SidePanel.js');
+var PopoverComponentVariantActions = require('../../action/element/PopoverComponentVariantActions.js');
 
 var Desk = React.createClass({
 
@@ -174,6 +175,8 @@ var Desk = React.createClass({
                 <DeskPageFrame frameBorder="0" style={iframeStyle} />
             );
         }
+
+        PopoverComponentVariantActions.hide();
 
         return (
             <div>

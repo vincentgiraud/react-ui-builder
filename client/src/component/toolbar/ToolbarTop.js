@@ -83,24 +83,24 @@ var ToolbarTop = React.createClass({
                             <span className="caret"></span>
                             &nbsp;&nbsp;
                         </button>
-                        <ul className="dropdown-menu dropdown-menu-right" role="menu">
+                        <ul className="dropdown-menu" role="menu">
                             <li>
-                                <a onClick={function(){ ToolbarTopActions.changeIframeWidth({iframeWidth: '100%'}); }}>
+                                <a href="#" onClick={function(){ ToolbarTopActions.changeIframeWidth({iframeWidth: '100%'}); }}>
                                     100%
                                 </a>
                             </li>
                             <li>
-                                <a onClick={function(){ ToolbarTopActions.changeIframeWidth({iframeWidth: '1200px'}); }}>
+                                <a href="#" onClick={function(){ ToolbarTopActions.changeIframeWidth({iframeWidth: '1200px'}); }}>
                                     1200px
                                 </a>
                             </li>
                             <li>
-                                <a onClick={function(){ ToolbarTopActions.changeIframeWidth({iframeWidth: '700px'}); }}>
+                                <a href="#" onClick={function(){ ToolbarTopActions.changeIframeWidth({iframeWidth: '700px'}); }}>
                                     700px
                                 </a>
                             </li>
                             <li>
-                                <a onClick={function(){ ToolbarTopActions.changeIframeWidth({iframeWidth: '340px'}); }}>
+                                <a href="#" onClick={function(){ ToolbarTopActions.changeIframeWidth({iframeWidth: '340px'}); }}>
                                     340px
                                 </a>
                             </li>
@@ -182,7 +182,7 @@ var ToolbarTop = React.createClass({
                                             <span className="caret"></span>
                                             &nbsp;&nbsp;
                                         </button>
-                                        <ul className="dropdown-menu dropdown-menu-right" role="menu">
+                                        <ul className="dropdown-menu" role="menu">
                                             <li role="presentation" className="dropdown-header">Switch to:</li>
                                             {pagesList}
                                         </ul>

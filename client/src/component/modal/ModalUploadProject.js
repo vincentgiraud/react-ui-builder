@@ -82,7 +82,7 @@ var ModalUploadProject = React.createClass({
         } else if(this.state.stage === 'serverConnectionError'){
             modalContent = (
                 <div>
-                    <h5>Error connection with server.</h5>
+                    <h5>Error connection to server.</h5>
                     <h5><span>If you are not authenticated, please sign in on &nbsp;</span>
                         <a href='#' onClick={this._handleLoginForm}>this form</a>
                     </h5>
