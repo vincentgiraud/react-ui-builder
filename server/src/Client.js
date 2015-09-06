@@ -1,270 +1,256 @@
-'use strict';
+import fs from 'fs-extra';
+import request from 'request';
+import FileManager from './FileManager.js';
 
-var fs = require('fs-extra');
-var request = require('request');
-
-var defaultConfiguration = {
-    serviceURL: 'http://umyproto.com/react-builder-service'
-    //serviceURL: 'http://localhost:8888/react-builder-service'
+const defaultConfiguration = {
+    //serviceURL: 'http://umyproto.com/react-builder-service'
+    serviceURL: 'http://localhost/rbs'
 };
 
-var Client = {
+class Client {
 
-    configModel: defaultConfiguration,
+    constructor (configuration = defaultConfiguration) {
+        this.configModel = configuration;
+        this.fileManager = new FileManager();
+    }
 
-    post: function(methodName, body, callback, isAuth){
-        var self = this;
-        var url = self.configModel.serviceURL + '/' + methodName;
-        var requestOptions = {
-            uri: url,
-            method: 'POST',
-            json: true,
-            body: body
-        };
-        if(isAuth){
-            if(self.configModel.user && self.configModel.pass){
-                requestOptions.auth = {
-                    'user': self.configModel.user,
-                    'pass': self.configModel.pass,
-                    'sendImmediately': true
+    setupUserCredentials(options){
+        return new Promise( (resolve, reject) => {
+            this.configModel.user = options.user;
+            this.configModel.pass = options.pass;
+            resolve();
+        });
+    }
+
+    removeUserCredentials(){
+        return new Promise( (resolve, reject) => {
+            this.configModel.user = null;
+            this.configModel.pass = null;
+            resolve();
+        });
+    }
+
+    getUser(){
+        return this.configModel.user;
+    }
+
+    post (methodName, body, isAuth = false) {
+        return new Promise( (resolve, reject) => {
+            const url = this.configModel.serviceURL + '/' + methodName;
+            var requestOptions = {
+                uri: url,
+                method: 'POST',
+                json: true,
+                body: body
+            };
+            if (isAuth) {
+                if (this.configModel.user && this.configModel.pass) {
+                    requestOptions.auth = {
+                        'user': this.configModel.user,
+                        'pass': this.configModel.pass,
+                        'sendImmediately': true
+                    }
+                } else {
+                    reject('Specify user name and password or create new account.');
                 }
-            } else {
-                if(callback){
-                    callback({error: true, errors:['Specify user name and password or create new account.']});
-                }
-                return;
             }
-        }
-        setTimeout(function(){
-            try{
+            try {
                 request(
                     requestOptions,
-                    function (error, response, body) {
-                        if(response){
-                            if(response.statusCode !== 200){
-                                if(response.statusCode === 401){
-                                    if(callback){
-                                        callback({error: true, errors:['User is not authenticated']})
-                                    }
+                    (error, response, body) => {
+                        if (response) {
+                            if (response.statusCode !== 200) {
+                                if (response.statusCode === 401) {
+                                    reject('User is not authenticated');
                                 } else {
-                                    if(callback){
-                                        callback(
-                                            {
-                                                error: true,
-                                                errors:
-                                                    ['Got error code ' + response.statusCode + ' processing request to ' + url]
-                                            }
-                                        )
-                                    }
+                                    reject('Got error code ' + response.statusCode + ' processing request to ' + url);
                                 }
-                            } else if(error){
-                                //console.error('Error connection to ' + self.configModel.serviceURL);
-                                if(callback){
-                                    callback({error: true, errors:['Error connection to ' + self.configModel.serviceURL]});
-                                }
+                            } else if (error) {
+                                reject('Error connection to ' + this.configModel.serviceURL);
                             } else {
-                                if(callback){
-                                    callback(body);
+                                if (body.error === true) {
+                                    let errorMessage = "Error: ";
+                                    if(body.errors && body.errors.length > 0){
+                                        body.errors.map( errorStr => {
+                                            errorMessage += errorStr + ', ';
+                                        });
+                                    }
+                                    reject(errorMessage.substr(0, errorMessage.length - 2));
+                                } else {
+                                    resolve(body.data);
                                 }
                             }
                         } else {
-                            if(callback){
-                                callback({error: true, errors:['Error connection to ' + self.configModel.serviceURL]});
-                            }
+                            reject('Error connection to ' + this.configModel.serviceURL);
                         }
                     }
                 )
-            } catch(e){
-                if(callback){
-                    callback({error: true, errors:['Error: ' + e.message]});
-                }
+            } catch (e) {
+                reject('Error: ' + e.message);
             }
-        }, 0);
-    },
+        });
+    }
 
-    /**
-     *
-     * @param {array} optionArray
-     * {string} url
-     * {string} destPath
-     * {object} requestBody
-     * @param {function} callback
-     * @param {boolean} isAuth
-     * @param {int} index
-     */
-    download: function(optionArray, callback, isAuth, index){
-        if(index >= 0 && index < optionArray.length){
-            var path = optionArray[index].destPath;
-            var requestBody = optionArray[index].requestBody;
-            var self = this;
-            var url = self.configModel.serviceURL + optionArray[index].url;
-            var requestOptions = {
+    download(methodName, body, isAuth = false) {
+        return new Promise( (resolve, reject) => {
+            const requestBody = body;
+            const url = this.configModel.serviceURL + methodName;
+            let requestOptions = {
                 uri: url,
                 headers: {'Content-type': 'application/json'},
                 method: 'POST',
                 body: JSON.stringify(requestBody),
                 encoding: null
             };
-            if(isAuth){
-                if(self.configModel.user && self.configModel.pass){
+            if (isAuth) {
+                if (this.configModel.user && this.configModel.pass) {
                     requestOptions.auth = {
-                        'user': self.configModel.user,
-                        'pass': self.configModel.pass,
+                        'user': this.configModel.user,
+                        'pass': this.configModel.pass,
                         'sendImmediately': true
                     }
                 } else {
-                    if(callback){
-                        callback('Specify user name and password or create new account.');
-                    }
-                    return;
+                    reject('Specify user name and password or create new account.');
                 }
             }
-            setTimeout(function(){
-                try{
-                    request(
-                        requestOptions,
-                        function (error, response, body) {
-                            if(response){
-                                if(response.statusCode !== 200){
-                                    if(response.statusCode === 401){
-                                        if(callback){
-                                            callback('User is not authenticated');
-                                        }
-                                    } else {
-                                        if(callback){
-                                            callback('Got error code ' + response.statusCode + ' processing request to ' + url);
-                                        }
-                                    }
-                                } else if(error){
-                                    if(callback){
-                                        callback('Error connection to ' + self.configModel.serviceURL);
-                                    }
+            try {
+                request(
+                    requestOptions,
+                    (error, response, body) => {
+                        if (response) {
+                            if (response.statusCode !== 200) {
+                                if (response.statusCode === 401) {
+                                    reject('User is not authenticated');
                                 } else {
-                                    //console.log(body);
-                                    fs.writeFile(path, body, {encoding: null}, function(err){
-                                        if(err){
-                                            if(callback){
-                                                callback(err);
-                                            }
-                                        } else {
-                                            self.download(optionArray, callback, isAuth, ++index);
-                                        }
-                                    });
+                                    reject('Got error code ' + response.statusCode + ' processing request to ' + url);
                                 }
+                            } else if (error) {
+                                reject('Error connection to ' + this.configModel.serviceURL);
                             } else {
-                                if(callback){
-                                    callback('Error connection to ' + self.configModel.serviceURL);
-                                }
+                                resolve(body);
                             }
+                        } else {
+                            reject('Error connection to ' + this.configModel.serviceURL);
                         }
-                    )
-                } catch(e){
-                    if(callback){
-                        callback('Error: ' + e.message);
                     }
-                }
-            }, 0);
-        } else {
-            if(callback){
-                callback();
+                )
+            } catch (e) {
+                reject('Error: ' + e.message);
             }
-        }
-    },
+        });
 
-    /**
-     *
-     * @param {array} optionArray
-     * {string} url
-     * {string} destPath
-     * {array} filePaths
-     * @param {function} callback
-     * @param {boolean} isAuth
-     * @param {int} index
-     */
-    upload: function(optionArray, callback, isAuth, index){
-        if(index >= 0 && index < optionArray.length){
-            var self = this;
-            var url = self.configModel.serviceURL + optionArray[index].url;
-            var requestOptions = {
+    }
+
+    downloadGet(methodName, isAuth = false) {
+        return new Promise( (resolve, reject) => {
+            const url = this.configModel.serviceURL + methodName;
+            let requestOptions = {
+                uri: url,
+                method: 'GET',
+                encoding: null
+            };
+            if (isAuth) {
+                if (this.configModel.user && this.configModel.pass) {
+                    requestOptions.auth = {
+                        'user': this.configModel.user,
+                        'pass': this.configModel.pass,
+                        'sendImmediately': true
+                    }
+                } else {
+                    reject('Specify user name and password or create new account.');
+                }
+            }
+            try {
+                request(
+                    requestOptions,
+                    (error, response, body) => {
+                        if (response) {
+                            if (response.statusCode !== 200) {
+                                if (response.statusCode === 401) {
+                                    reject('User is not authenticated');
+                                } else {
+                                    reject('Got error code ' + response.statusCode + ' processing request to ' + url);
+                                }
+                            } else if (error) {
+                                reject('Error connection to ' + this.configModel.serviceURL);
+                            } else {
+                                resolve(body);
+                            }
+                        } else {
+                            reject('Error connection to ' + this.configModel.serviceURL);
+                        }
+                    }
+                )
+            } catch (e) {
+                reject('Error: ' + e.message);
+            }
+        });
+
+    }
+
+    upload(option, isAuth = false) {
+        return new Promise( (resolve, reject) => {
+            const url = this.configModel.serviceURL + option.url;
+            let requestOptions = {
                 uri: url,
                 method: 'POST'
             };
-            if(isAuth){
-                if(self.configModel.user && self.configModel.pass){
+            if (isAuth) {
+                if (this.configModel.user && this.configModel.pass) {
                     requestOptions.auth = {
-                        'user': self.configModel.user,
-                        'pass': self.configModel.pass,
+                        'user': this.configModel.user,
+                        'pass': this.configModel.pass,
                         'sendImmediately': true
                     }
                 } else {
-                    if(callback){
-                        callback('Specify user name and password or create new account.');
-                    }
-                    return;
+                    reject('Specify user name and password or create new account.');
                 }
             }
             requestOptions.formData = {};
-            if(optionArray[index].filePaths && optionArray[index].filePaths.length > 0){
-                optionArray[index].filePaths.map(function(filePath, index){
+            if (option.filePaths && option.filePaths.length > 0) {
+                option.filePaths.map( (filePath, index) => {
                     requestOptions.formData['file_' + index] = fs.createReadStream(filePath);
                 });
+            } else {
+                reject('Files for uploading were not specified.');
             }
-            setTimeout(function(){
-                try{
-                    request(
-                        requestOptions,
-                        function (error, response, body) {
-                            if(response){
-                                if(response.statusCode !== 200){
-                                    if(response.statusCode === 401){
-                                        if(callback){
-                                            callback('User is not authenticated');
-                                        }
-                                    } else {
-                                        if(callback){
-                                            callback('Got error code ' + response.statusCode + ' processing request to ' + url);
-                                        }
-                                    }
-                                } else if(error){
-                                    if(callback){
-                                        callback('Error connection to ' + self.configModel.serviceURL);
-                                    }
+            try {
+                request(
+                    requestOptions,
+                    (error, response, body) => {
+                        if (response) {
+                            if (response.statusCode !== 200) {
+                                if (response.statusCode === 401) {
+                                    reject('User is not authenticated');
                                 } else {
-                                    if(body){
-                                        try{
-                                            var responseObj = JSON.parse(body);
-                                            if(responseObj.error === true){
-                                                callback(body);
-                                            } else {
-                                                self.upload(optionArray, callback, isAuth, ++index);
-                                            }
-                                        } catch(e){
-                                            callback(body);
-                                        }
-                                    } else {
-                                        self.upload(optionArray, callback, isAuth, ++index);
-                                    }
+                                    reject('Got error code ' + response.statusCode + ' processing request to ' + url);
                                 }
-                            } else {
-                                if(callback){
-                                    callback('Error connection to ' + self.configModel.serviceURL);
+                            } else if (error) {
+                                reject('Error connection to ' + this.configModel.serviceURL);
+                            } else if (body) {
+                                if (body.error === true) {
+                                    let errorMessage = "Error: ";
+                                    if(body.errors && body.errors.length > 0){
+                                        body.errors.map( errorStr => {
+                                            errorMessage += errorStr + ', ';
+                                        });
+                                    }
+                                    reject(errorMessage.substr(0, errorMessage.length - 2));
+                                } else {
+                                    resolve(body.data);
                                 }
                             }
+                        } else {
+                            reject('Error connection to ' + this.configModel.serviceURL);
                         }
-                    )
-                } catch(e){
-                    if(callback){
-                        callback('Error: ' + e.message);
                     }
-                }
-            }, 0);
-        } else {
-            if(callback){
-                callback();
+                )
+            } catch (e) {
+                reject('Error: ' + e.message);
             }
-        }
+        });
     }
 
-};
+}
 
-module.exports = Client;
+export default Client;

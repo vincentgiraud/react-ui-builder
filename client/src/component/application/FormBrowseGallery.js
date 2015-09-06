@@ -13,8 +13,7 @@ var Input = ReactBootstrap.Input;
 var ListGroup = ReactBootstrap.ListGroup;
 var ListGroupItem = ReactBootstrap.ListGroupItem;
 
-var CollapsibleHorizontalDivider = require('../element/CollapsibleHorizontalDivider.js');
-var ModalProgressTrigger = require('../modal/ModalProgressTrigger.js');
+var CollapsibleLabel = require('../element/CollapsibleLabel.js');
 var FormMixin = require('./FormMixin.js');
 
 var ApplicationActions = require('../../action/application/ApplicationActions.js');
@@ -70,8 +69,7 @@ var FormStart = React.createClass({
         }
         return (
             <Grid fluent={true} style={{marginTop: '70px'}}>
-                <h4>Choose project you want to clone</h4>
-                <CollapsibleHorizontalDivider style={{margin: '0.3em 0 0.3em 0'}} title='Legal stuff'>
+                <CollapsibleLabel style={{margin: '0.3em 0 0.3em 0'}} title='Legal stuff'>
                     <div style={{padding: '1em'}}>
                         <p>Data published to the React UI Builder gallery is not part of React UI Builder itself,
                             and is the sole property of the publisher. While every effort is made to ensure accountability,
@@ -87,7 +85,7 @@ var FormStart = React.createClass({
                             Please inspect the source.
                         </p>
                     </div>
-                </CollapsibleHorizontalDivider>
+                </CollapsibleLabel>
                 {alert}
                 {projectThumbnails}
             </Grid>

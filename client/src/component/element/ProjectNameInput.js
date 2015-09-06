@@ -25,6 +25,12 @@ var ProjectNameInput = React.createClass({
         };
     },
 
+    componentWillReceiveProps(nextProps){
+        this.setState({
+            value: nextProps.value
+        })
+    },
+
     _validationStateValue: function(){
         if(this.state.value
             && this.state.value.length >= 5

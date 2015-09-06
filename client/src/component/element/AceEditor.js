@@ -14,13 +14,18 @@ var AceEditor = React.createClass({
             //this.editor.getSession().setMode("ace/mode/jsx");
             this.editor.getSession().setMode(this.props.mode);
             this.editor.getSession().setTabSize(4);
+            if(this.props.isReadOnly){
+                this.editor.setReadOnly(true);
+            }
             this.editor.$blockScrolling = Infinity;
-
-            //this.editor.setTheme("ace/theme/chrome");
+            this.editor.getSession().on('change', this.handleChange);
+            //this.editor.setTheme("ace/theme/tomorrow_night");
         }
         if (sourceCode) {
             this.editor.getSession().setValue(sourceCode);
         }
+        this.editor.focus();
+        this.editor.navigateFileEnd();
     },
 
     getDefaultProps: function(){
@@ -36,12 +41,22 @@ var AceEditor = React.createClass({
         return null;
     },
 
+    handleChange: function(e){
+        if(this.props.onChangeText){
+            this.props.onChangeText(this.editor.getSession().getValue());
+        }
+    },
+
     componentDidMount: function(){
         this._checkEditor(this.props.sourceCode);
     },
 
     componentDidUpdate: function(){
         this._checkEditor(this.props.sourceCode);
+    },
+
+    shouldComponentUpdate(nextProps, nextState){
+        return nextProps.sourceName !== this.props.sourceName;
     },
 
     componentWillUnmount: function(){

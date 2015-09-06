@@ -20,6 +20,7 @@ var OverlayTreeviewItemPaste = React.createClass({
             buttons: [
                 {
                     label: 'Before',
+                    btnClass: 'btn-primary',
                     onClick: (function () {
                         return function (e) {
                             e.preventDefault();
@@ -30,6 +31,7 @@ var OverlayTreeviewItemPaste = React.createClass({
                 },
                 {
                     label: 'First',
+                    btnClass: 'btn-primary',
                     onClick: (function () {
                         return function (e) {
                             e.preventDefault();
@@ -40,6 +42,7 @@ var OverlayTreeviewItemPaste = React.createClass({
                 },
                 {
                     label: 'Wrap',
+                    btnClass: 'btn-primary',
                     onClick: (function () {
                         return function (e) {
                             e.preventDefault();
@@ -50,6 +53,7 @@ var OverlayTreeviewItemPaste = React.createClass({
                 },
                 {
                     label: 'Replace',
+                    btnClass: 'btn-primary',
                     onClick: (function () {
                         return function (e) {
                             e.preventDefault();
@@ -60,6 +64,7 @@ var OverlayTreeviewItemPaste = React.createClass({
                 },
                 {
                     label: 'Last',
+                    btnClass: 'btn-primary',
                     onClick: (function () {
                         return function (e) {
                             e.preventDefault();
@@ -70,6 +75,7 @@ var OverlayTreeviewItemPaste = React.createClass({
                 },
                 {
                     label: 'After',
+                    btnClass: 'btn-primary',
                     onClick: (function () {
                         return function (e) {
                             e.preventDefault();

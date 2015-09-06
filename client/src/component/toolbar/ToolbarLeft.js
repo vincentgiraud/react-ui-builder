@@ -1,10 +1,9 @@
 'use strict';
 
 var React = require('react/addons');
-var ModalProgressTrigger = require('../modal/ModalProgressTrigger.js');
-var ModalProgressTriggerAction = require('../../action/modal/ModalProgressTriggerActions.js');
-var ModalProjectSettingsTriggerActions = require('../../action/modal/ModalProjectSettingsTriggerActions.js');
-var ModalFileListUploadTriggerActions = require('../../action/modal/ModalFileListUploadTriggerActions.js');
+var ModalProjectSettingsActions = require('../../action/modal/ModalProjectSettingsActions.js');
+var ModalUploadProjectActions = require('../../action/modal/ModalUploadProjectActions.js');
+var ModalStaticSiteGeneratorActions = require('../../action/modal/ModalStaticSiteGeneratorActions.js');
 var Button = require('react-bootstrap').Button;
 var DeskAction = require('../../action/desk/DeskActions.js');
 var ApplicationActions = require('../../action/application/ApplicationActions.js');
@@ -48,14 +47,18 @@ var ToolbarLeft = React.createClass({
                         </a>
                         <ul className="dropdown-menu" role="menu">
                             <li><a href="#" onClick={this._handleProjectSettings}>
-                                <span className="fa fa-gears fa-fw" />&nbsp;Project settings</a>
+                                <span className="fa fa-gears fa-fw" />&nbsp;Set project proxy</a>
                             </li>
+                            <li className="divider" />
                             <li><a href="#" onClick={this._handlePublishProject}>
                                 <span className="fa fa-cloud-upload fa-fw" />&nbsp;Publish project</a>
                             </li>
+                            <li><a href="#" onClick={this._handleGenerateStaticSite}>
+                                <span className="fa fa-sitemap fa-fw" />&nbsp;Create static site</a>
+                            </li>
                             <li className="divider" />
                             <li><a href="https://groups.google.com/forum/#!forum/react-ui-builder" target="_blank">
-                                <span className="fa fa-comments-o fa-fw"></span>&nbsp;Forum / Help</a>
+                                <span className="fa fa-comments-o fa-fw"></span>&nbsp;Forum</a>
                             </li>
                             <li className="divider" />
                             <li><a href="#" onClick={ApplicationActions.goToStartPage}>
@@ -102,6 +105,13 @@ var ToolbarLeft = React.createClass({
                         <span className="fa fa-eye" />
                     </Button>
 
+                    <Button
+                        bsStyle={this.props.isDocumentMode ? 'primary' : 'default'}
+                        style={{marginTop: '0.25em', width: '100%'}}
+                        onClick={DeskAction.startDocumentMode}>
+                        <span className="fa fa-paperclip fa-flip-vertical" />
+                    </Button>
+
                     <div style={{marginTop: '0.25em', width: '100%', height: '2em'}} />
                 </div>
             </div>
@@ -117,13 +127,19 @@ var ToolbarLeft = React.createClass({
     _handlePublishProject: function(e){
         e.stopPropagation();
         e.preventDefault();
-        ModalFileListUploadTriggerActions.showModal();
+        ModalUploadProjectActions.showModal();
     },
 
     _handleProjectSettings: function(e){
         e.stopPropagation();
         e.preventDefault();
-        ModalProjectSettingsTriggerActions.showModal();
+        ModalProjectSettingsActions.showModal();
+    },
+
+    _handleGenerateStaticSite: function(e){
+        e.stopPropagation();
+        e.preventDefault();
+        ModalStaticSiteGeneratorActions.showModal();
     },
 
     _handleShowProjectComponents: function(e){

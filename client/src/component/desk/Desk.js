@@ -5,15 +5,22 @@ var DeskStore = require('../../store/desk/DeskStore.js');
 var ToolbarLeft = require('../toolbar/ToolbarLeft.js');
 var PanelAvailableComponents = require('../panel/PanelAvailableComponents.js');
 var PanelComponentsHierarchy = require('../panel/PanelComponentsHierarchy.js');
-var ModalComponentEditorTrigger = require('../modal/ModalComponentEditorTrigger.js');
-var ModalCodeGeneratorTrigger = require('../modal/ModalCodeGeneratorTrigger.js');
+var ModalComponentEditor = require('../modal/ModalComponentEditor.js');
+var ModalComponentGenerator = require('../modal/ModalComponentGenerator.js');
+var ModalPageInfoEditor = require('../modal/ModalPageInfoEditor.js');
+var ModalQuickActionComponent = require('../modal/ModalQuickActionComponent.js');
+
 var ToolbarTop = require('../toolbar/ToolbarTop.js');
 var ToolbarBreadcrumbs = require('../toolbar/ToolbarBreadcrumbs.js');
 var DeskPageFrame = require('../desk/DeskPageFrame.js');
+var DeskPageDocument = require('../desk/DeskPageDocument.js');
 var DeskPageFramePreview = require('../desk/DeskPageFramePreview.js');
 var Repository = require('../../api/Repository.js');
 var ToolbarTopActions = require('../../action/toolbar/ToolbarTopActions.js');
-var PanelQuickOptions = require('../panel/PanelQuickOptions.js');
+//var PanelQuickOptions = require('../panel/PanelQuickOptions.js');
+var PanelOptions = require('../panel/PanelOptions.js');
+var SidePanel = require('../element/SidePanel.js');
+var PopoverComponentVariantActions = require('../../action/element/PopoverComponentVariantActions.js');
 
 var Desk = React.createClass({
 
@@ -54,7 +61,8 @@ var Desk = React.createClass({
         var rightPanelInner = null;
         if(this.state.isStyleOptionsButtonActive){
             rightPanelWidth = 250;
-            rightPanelInner = (<PanelQuickOptions></PanelQuickOptions>);
+            //rightPanelInner = (<PanelQuickOptions></PanelQuickOptions>);
+            rightPanelInner = (<PanelOptions></PanelOptions>);
         }
 
         var leftPanelStyle = {
@@ -89,7 +97,7 @@ var Desk = React.createClass({
         var topPanelHeight = 0;
         var breadcrumbsComponent = null;
 
-        if(!this.state.isLivePreviewMode){
+        if(!this.state.isLivePreviewMode && !this.state.isDocumentMode){
             var toolbarTopStyle = {
                 position: 'absolute',
                 top: 0,
@@ -112,6 +120,8 @@ var Desk = React.createClass({
                 topPanelHeight += 3;
             }
 
+        } else {
+            topPanelHeight = 0.3;
         }
 
         var bodyStyle = {
@@ -125,34 +135,55 @@ var Desk = React.createClass({
             right: 'calc(5px + ' + rightPanelWidth + 'px)'
         };
 
+        var iframeWidth = this.state.iframeWidth;
+        //var marginRight = '0';
+        if(iframeWidth !== '100%'){
+            iframeWidth = parseInt(iframeWidth) + 'px';
+            //marginRight = 'calc((100% - ' + iframeWidth + ')/2)';
+        }
         var iframeStyle = {
             "height" : "calc(100% - 5px)",
             //"height" : "100%",
-            "width" : "100%",
+            "width" : iframeWidth,
             "minWidth" : "320px",
             "margin" : "0",
+            //"marginRight": marginRight,
             "padding" : "0",
             "border" : "1px solid #000000"
         };
 
         var pageFrame = null;
-        var pageFrameSrc = Repository.getHtmlForDesk();
         if(this.state.isLivePreviewMode){
             pageFrame = (
-                <DeskPageFramePreview frameBorder="0" style={iframeStyle} src={pageFrameSrc} />
+                <DeskPageFramePreview frameBorder="0" style={iframeStyle} />
+            );
+        } else if(this.state.isDocumentMode) {
+            var documentStyle = {
+                "height" : "calc(100% - 5px)",
+                "width" : "100%",
+                "minWidth" : "320px",
+                "margin" : "0",
+                "padding" : "0",
+                "border" : "1px solid #000000",
+                "overflow": "auto"
+            };
+            pageFrame = (
+                <DeskPageDocument style={documentStyle} />
             );
         } else {
             pageFrame = (
-                <DeskPageFrame frameBorder="0" style={iframeStyle} src={pageFrameSrc} />
+                <DeskPageFrame frameBorder="0" style={iframeStyle} />
             );
         }
+
+        PopoverComponentVariantActions.hide();
 
         return (
             <div>
                 <ToolbarLeft {...this.state} />
-                <div style={leftPanelStyle}>
+                <SidePanel style={leftPanelStyle}>
                     {leftPanelInner}
-                </div>
+                </SidePanel>
                 {topComponent}
                 {breadcrumbsComponent}
                 <div style={bodyStyle}>
@@ -164,8 +195,10 @@ var Desk = React.createClass({
                 <div style={bottomPanelStyle}>
                     {bottomPanelInner}
                 </div>
-                <ModalComponentEditorTrigger/>
-                <ModalCodeGeneratorTrigger/>
+                <ModalComponentEditor/>
+                <ModalPageInfoEditor/>
+                <ModalComponentGenerator/>
+                <ModalQuickActionComponent/>
             </div>
         )
     }

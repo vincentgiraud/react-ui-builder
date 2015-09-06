@@ -15,7 +15,8 @@ var Input = ReactBootstrap.Input;
 var DropdownButton = ReactBootstrap.DropdownButton;
 var MenuItem = ReactBootstrap.MenuItem;
 
-var WizardIncludeChildren = require('../wizard/WizardIncludeChildren.js');
+//var WizardIncludeChildren = require('../wizard/WizardIncludeChildren.js');
+
 var AceEditor = require('../element/AceEditor.js');
 
 var FormCodeComponentEditorActions = require('../../action/form/FormCodeComponentEditorActions.js');
@@ -23,15 +24,15 @@ var FormCodeComponentEditorStore = require('../../store/form/FormCodeComponentEd
 
 var FormCodeComponentEditor = React.createClass({
 
-    _handleCreateComponentChildren: function (e) {
-        e.stopPropagation();
-        e.preventDefault();
-        if(this.props.isSourceCodeGenerated === true){
-            alert('Please save changes after the source code generation');
-        } else {
-            FormCodeComponentEditorActions.startWizardIncludeChildren(this.getComponentScript());
-        }
-    },
+    //_handleCreateComponentChildren: function (e) {
+    //    e.stopPropagation();
+    //    e.preventDefault();
+    //    if(this.props.isSourceCodeGenerated === true){
+    //        alert('Please save changes after the source code generation');
+    //    } else {
+    //        FormCodeComponentEditorActions.startWizardIncludeChildren(this.getComponentScript());
+    //    }
+    //},
 
     getInitialState: function () {
         return {
@@ -64,8 +65,7 @@ var FormCodeComponentEditor = React.createClass({
         var editorElement = null;
         var toolBarElement = null;
 
-        if (this.state.wizard === 'IncludeChildren') {
-
+        if(!this.state.sourceCode){
             toolBarElement = (
                 <Row style={{marginBottom: '3px'}}>
                     <Col xs={12}>
@@ -74,14 +74,12 @@ var FormCodeComponentEditor = React.createClass({
                 </Row>
             );
             editorElement = (
-                <WizardIncludeChildren
-                    componentName={this.props.componentName}
+                <WizardGenerateComponent
+                    style={{height: '400px', width: '100%'}}
                     selectedUmyId={this.props.selectedUmyId}
-                    style={this.props.editorStyle}
-                    sourceCode={this.state.sourceCode} />
+                    />
             );
-
-        } else {
+        } else if (this.state.sourceCode) {
             toolBarElement = (
                 <Row style={{marginBottom: '3px'}}>
                     <Col xs={12}>
@@ -96,16 +94,16 @@ var FormCodeComponentEditor = React.createClass({
                                         </button>
                                         <ul className="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
                                             <li role="presentation">
-                                                <a role="menuitem" href="#"
+                                                {/*<a role="menuitem" href="#"
                                                    onClick={this._handleCreateComponentChildren}>
                                                     Merge children into source code
-                                                </a>
+                                                </a>*/}
                                             </li>
                                         </ul>
                                     </div>
                                 </td>
-                                <td>
-                                    <p style={{marginLeft: "1em"}}>
+                                <td style={{verticalAlign: 'middle'}}>
+                                    <p style={{marginLeft: '1em', marginBottom: '0', marginTop: '0'}}>
                                         <span>{this.props.sourceFilePath}</span>
                                     </p>
                                 </td>
@@ -116,6 +114,7 @@ var FormCodeComponentEditor = React.createClass({
             );
             editorElement = (
                 <AceEditor ref='editor'
+                           sourceName='componentSource'
                            mode='ace/mode/jsx'
                            style={this.props.editorStyle}
                            sourceCode={this.state.sourceCode}/>
@@ -134,7 +133,11 @@ var FormCodeComponentEditor = React.createClass({
     },
 
     getComponentScript: function () {
-        return this.refs.editor.getSourceCode();
+        if(this.refs.editor){
+            return this.refs.editor.getSourceCode();
+        } else {
+            return null;
+        }
     }
 
 });

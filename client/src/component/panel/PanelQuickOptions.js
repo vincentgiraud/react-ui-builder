@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var React = require('react');
 var ReactBootstrap = require('react-bootstrap');
 
@@ -218,12 +218,12 @@ var PanelQuickOptions = React.createClass({
 
             var propsStyle = this.state.props.style;
             // clear all groups
-            _.mapObject(StyleGroups, function(value, prop){
+            _.forOwn(StyleGroups, function(value, prop){
                 StyleGroups[prop].array = [];
             });
             // setup groups with existing values
 
-            _.mapObject(StyleOptionsGroupMapping, function(value, prop){
+            _.forOwn(StyleOptionsGroupMapping, function(value, prop){
                 var group = StyleGroups[value.group].array;
                 var cssProperty = {
                     name: prop,
@@ -235,9 +235,10 @@ var PanelQuickOptions = React.createClass({
             });
             var stylePanels = [];
             var eventKey = 1;
-            _.mapObject(StyleGroups, function(value, prop){
+            _.forOwn(StyleGroups, function(value, prop){
                 stylePanels.push(
-                    <StylePanel header={StyleGroups[prop].title}
+                    <StylePanel key={'stylePanel' + eventKey}
+                                header={StyleGroups[prop].title}
                                 styleProps={StyleGroups[prop].array}
                                 split={StyleGroups[prop].split}
                                 activeStylePane={this.state.activeStylePane}
@@ -246,6 +247,9 @@ var PanelQuickOptions = React.createClass({
             }.bind(this));
             panelContent = (
                 <div style={style}>
+                    <div style={{width: '100%', maxHeight: '300px', overflow: 'auto'}}>
+                        <pre style={{fontSize: '10px'}}>{JSON.stringify(this.state.satinizedProps, null, 2)}</pre>
+                    </div>
                     <PanelGroup accordion={true}
                                 defaultActiveKey={this.state.activeStylePanel}
                                 onSelect={this._handleStylePanelSelected}>
@@ -254,6 +258,9 @@ var PanelQuickOptions = React.createClass({
                 </div>
             );
         } else {
+            //<div style={{ padding: '0.5em 0.5em 1.5em 0.5em' }}>
+            //
+            //</div>
             panelContent = (
                 <div style={style}>
                     <h4 className='text-center'>Nothing is selected</h4>

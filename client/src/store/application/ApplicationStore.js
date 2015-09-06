@@ -1,9 +1,9 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var Reflux = require('reflux');
 var ApplicationActions = require('../../action/application/ApplicationActions.js');
-var ModalProgressTriggerActions = require('../../action/modal/ModalProgressTriggerActions.js');
+var ModalProgressActions = require('../../action/modal/ModalProgressActions.js');
 var PanelAvailableComponentsActions = require('../../action/panel/PanelAvailableComponentsActions.js');
 var Server = require('../../api/Server.js');
 var docCookie = require('../../api/cookies.js');
@@ -132,54 +132,64 @@ var ApplicationStore = Reflux.createStore({
             dirPath = options.dirPath.trim();
         }
         if(dirPath) {
-            //
-            ModalProgressTriggerActions.showModalProgress('Project is being compiled and loaded. Please wait...', 400);
-            //
-            Server.invoke('prepareLocalProject', {dirPath: dirPath},
+
+            ModalProgressActions.showModalProgress('Project is being compiled and loaded. Please wait...', 400);
+
+            Server.invoke('openLocalProject', { projectDirPath: dirPath },
                 function(errors){
-                    //this.onGoToErrors(errors);
+
                     this.model.errors = errors;
                     this.trigger(this.model);
                 }.bind(this),
                 function(response){
 
-                    //console.log(response);
-
                     Repository.setCurrentProjectModel(response.model);
                     Repository.setHtmlForDesk(response.htmlURLPrefix + '/' + response.htmlForDesk);
                     Repository.setCurrentPageModelByIndex(0);
                     Repository.setComponentsTree(response.componentsTree);
-                    Repository.setCallbackAfterProjectModelRenew(function(){
-                        Server.invoke('saveProjectModel', {
-                            model: Repository.getCurrentProjectModel()
-                        }, function(err){
-                            console.error(JSON.stringify(err));
-                        }, function(response){
-                            //console.log('Project model is saved successfully');
-                        });
-                    });
+                    //Repository.setCallbackAfterProjectModelRenew(function(){
+                    //    Server.invoke('saveProjectModel', {
+                    //        model: Repository.getCurrentProjectModel()
+                    //    }, function(err){
+                    //        console.error(JSON.stringify(err));
+                    //    }, function(response){
+                    //        //console.log('Project model is saved successfully');
+                    //    });
+                    //});
 
                     this.model.errors = null;
-                    //
+
                     this.model.builderConfig.recentProjectDirs = this.model.builderConfig.recentProjectDirs || [];
-                    var found = _.find(this.model.builderConfig.recentProjectDirs, function(item){
-                        return item === dirPath;
+                    var foundIndex = -1;
+                    this.model.builderConfig.recentProjectDirs.map( function(item, index) {
+                        if(item === dirPath){
+                            foundIndex = index;
+                        }
                     });
-                    if(!found){
-                        this.model.builderConfig.recentProjectDirs.push(dirPath);
+                    if(foundIndex >= 0){
+                        this.model.builderConfig.recentProjectDirs.splice(foundIndex, 1);
                     }
+                    this.model.builderConfig.recentProjectDirs.splice(0, 0, dirPath);
+
                     this.onStoreBuilderConfig(this.model.builderConfig);
-                    //
+
                     Server.onSocketEmit('compilerWatcher.success', function(data){
                         Repository.setComponentsTree(data.componentsTree);
                         PanelAvailableComponentsActions.refreshComponentList();
                     });
-                    //
+
                     Server.invoke('setProjectProxy', {}, function(err){}, function(response){});
                     Server.invoke('watchLocalProject', {}, function(err){}, function(response){});
-                    //
+
+                    Server.invoke('readProjectDocument', {},
+                        function(err) { console.log(err); },
+                        function(response){
+                            Repository.setCurrentProjectDocument(response);
+                        }
+                    );
+
                     this.onGoToDeskPage();
-                    //
+
 
                 }.bind(this)
             );
@@ -190,25 +200,8 @@ var ApplicationStore = Reflux.createStore({
     },
 
     onStopAutosaveProjectModel: function(){
-        Repository.setCallbackAfterProjectModelRenew(null);
+        //Repository.setCallbackAfterProjectModelRenew(null);
         Server.invoke('stopWatchLocalProject', function(err){}, function(){});
-    },
-
-    onPreviewProject: function(projectId){
-        ModalProgressTriggerActions.showModalProgress('Preparing preview. Please wait...', 300);
-        Server.invoke('preparePreview', {projectId: projectId},
-            function (errors) {
-                this.onGoToErrors(errors);
-            }.bind(this),
-            function (response) {
-                this.model.previewProjectId = projectId;
-                this.model.previewProjectModel = response.projectModel;
-                this.model.previewHtml = response.htmlForDesk;
-                this.model.errors = null;
-                this.model.stage = 'previewProject';
-                this.trigger(this.model);
-            }.bind(this)
-        );
     },
 
     onStartDownloadProject: function(projectId){
@@ -225,7 +218,7 @@ var ApplicationStore = Reflux.createStore({
         }
         if(dirPath){
             this.model.downloadProjectDirPath = options.dirPath;
-            ModalProgressTriggerActions.showModalProgress('npm modules are being installed. Please wait, it will take some time...', 400);
+            ModalProgressActions.showModalProgress('npm modules are being installed. Please wait, it will take some time...', 400);
             Server.invoke('downloadProject',
                 {
                     dirPath: options.dirPath,

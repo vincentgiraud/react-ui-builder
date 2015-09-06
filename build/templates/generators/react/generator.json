@@ -1,0 +1,9 @@
+{
+  "name": "react",
+  "description": "Generate React component source code including children.",
+  "component": {
+    "destDirPath": "src/components/{groupName}",
+    "fileExtension": "js",
+    "script": "Component.js"
+  }
+}

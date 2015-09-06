@@ -1,10 +1,11 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var Reflux = require('reflux');
 var ToolbarTopActions = require('../../action/toolbar/ToolbarTopActions.js');
 var ApplicationActions = require('../../action/application/ApplicationActions.js');
 var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
+var DeskActions = require('../../action/desk/DeskActions.js');
 var Common = require('../../api/Common.js');
 var Repository = require('../../api/Repository.js');
 var Server = require('../../api/Server.js');
@@ -12,7 +13,8 @@ var Server = require('../../api/Server.js');
 var defaultModel = {
     pageNames:[],
     currentPageName: '',
-    isAddNewComponentMode: false
+    isAddNewComponentMode: false,
+    iframeWidth: '100%'
 };
 
 var ToolbarTopStore = Reflux.createStore({
@@ -45,13 +47,6 @@ var ToolbarTopStore = Reflux.createStore({
             //}
         }).bind(this));
 
-        this.trigger(this.model);
-    },
-
-    onCurrentPageNameChange: function(newPageName){
-        Repository.setCurrentPageName(newPageName);
-        this.model.currentPageName = Repository.getCurrentPageName();
-        this.onRefreshPageList();
         this.trigger(this.model);
     },
 
@@ -101,6 +96,12 @@ var ToolbarTopStore = Reflux.createStore({
         Repository.redoCurrentProjectModel();
         this.onRefreshPageList();
         DeskPageFrameActions.renderPageFrame();
+    },
+
+    onChangeIframeWidth: function(options){
+        this.model.iframeWidth = options.iframeWidth;
+        DeskActions.changeIframeWidth({iframeWidth: this.model.iframeWidth});
+        this.trigger(this.model);
     }
 });
 

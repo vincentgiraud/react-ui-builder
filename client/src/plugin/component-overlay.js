@@ -42,25 +42,32 @@ var ComponentOverlay = {
         }(this._options.onClose)));
 
         for (var i = 0; i < this._options.buttons.length; i++) {
-            var item = $("<button type='button' class='umyproto-button umyproto-button-small umyproto-button-primary'></button>");
+            var item = $("<button type='button' class='umyproto-button umyproto-button-small'></button>");
             if(this._options.buttons[i].menu && this._options.buttons[i].menu.length > 0){
                 var itemGroup = $("<div class='umyproto-button-dropdown' data-umyproto-dropdown='{mode:\"click\"}'></div>");
-                var menu = $("<div class='umyproto-dropdown umyproto-dropdown-small' style='box-shadow: -1px 1px 3px 1px #CCC, 1px 1px 3px 1px #CCC;'></div>");
+                //style='box-shadow: -1px 1px 3px 1px #CCC, 1px 1px 3px 1px #CCC;'
+                var menu = $("<div class='umyproto-dropdown umyproto-dropdown-small' ></div>");
                 var menuList = $("<ul class='umyproto-nav umyproto-nav-dropdown'></ul>");
                 for(var x = 0; x < this._options.buttons[i].menu.length; x++){
-                    var menuItemWrapper = $("<li></li>");
-                    var menuItem = $("<a class='umyproto-text-bold' href='#'>" + this._options.buttons[i].menu[x].label + "</a>");
-                    menuItem.on("click.umyOverlayMenuItem", (function (callback, _this) {
-                        return function (e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            if (callback) {
-                                callback(e, _this);
+                    var menuItemWrapper = null;
+                    if(this._options.buttons[i].menu[x].label === '_divider'){
+                        menuItemWrapper = $("<li class='umyproto-nav-divider'></li>");
+                        menuItemWrapper.appendTo(menuList);
+                    } else {
+                        menuItemWrapper = $("<li></li>");
+                        var menuItem = $("<a class='umyproto-text-bold' >" + this._options.buttons[i].menu[x].label + "</a>");
+                        menuItem.on("click.umyOverlayMenuItem", (function (callback, _this) {
+                            return function (e) {
+                                //e.preventDefault();
+                                //e.stopPropagation();
+                                if (callback) {
+                                    callback(e, _this);
+                                }
                             }
-                        }
-                    }(this._options.buttons[i].menu[x].onClick, this)));
-                    menuItem.appendTo(menuItemWrapper);
-                    menuItemWrapper.appendTo(menuList);
+                        }(this._options.buttons[i].menu[x].onClick, this)));
+                        menuItem.appendTo(menuItemWrapper);
+                        menuItemWrapper.appendTo(menuList);
+                    }
                 }
                 menuList.appendTo(menu);
                 item.appendTo(itemGroup);
@@ -243,13 +250,13 @@ var ComponentOverlay = {
                 pos = this.$domNode.offset();
                 if (pos) {
                     // check if overlay has to be shown on the topmost component
-                    if ((pos.top - 20) > 0) {
+                    if ((pos.top - 40) > 0) {
                         // overlay can be shown in normal mode
                         this.jElement().css({
                             "top": (pos.top - firstElementMargin) + "px",
                             "left": pos.left + "px"
                         });
-                        if ((pos.left + 300) < clientWidth) {
+                        if ((pos.left + 400) < clientWidth) {
                             this._buttonGroup.css({
                                 "top": "auto",
                                 "bottom": "calc(100% - " + (pos.top - 4 - firstElementMargin) + "px)",
@@ -273,7 +280,7 @@ var ComponentOverlay = {
                                 "top": (pos.top) + "px",
                                 "left": pos.left + "px"
                             });
-                            if ((pos.left + 500) < clientWidth) {
+                            if ((pos.left + 400) < clientWidth) {
                                 this._buttonGroup.css({
                                     "bottom": "auto",
                                     "top": (pos.top + 4 - firstElementMargin) + "px",
@@ -294,7 +301,7 @@ var ComponentOverlay = {
                                 "top": (pos.top) + "px",
                                 "left": pos.left + "px"
                             });
-                            if ((pos.left + 300) < clientWidth) {
+                            if ((pos.left + 400) < clientWidth) {
                                 this._buttonGroup.css({
                                     "bottom": "auto",
                                     "top": (pos.top + height + 4 - firstElementMargin) + "px",

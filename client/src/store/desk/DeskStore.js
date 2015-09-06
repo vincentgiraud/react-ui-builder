@@ -13,8 +13,11 @@ var defaultModel = {
     isComponentsHierarchyButtonActive: false,
 
     isEditMode: true,
-    isTextEditMode: false,
-    LoadUserProfile: false
+    isLivePreviewMode: false,
+    isDocumentMode: false,
+
+    iframeWidth: '100%'
+    //iframeWidth: '340'
 
 };
 
@@ -26,24 +29,20 @@ var DeskStore = Reflux.createStore({
         if(!this.model.isEditMode){
             this.model.isEditMode = true;
             this.model.isLivePreviewMode = false;
-            this.model.isTextEditMode = false;
-            //
-            //this.model.isAvailableComponentsButtonActive = true;
-            //this.model.isComponentOptionsButtonActive = true;
-            //this.model.isStyleOptionsButtonActive = true;
-            //
+            this.model.isDocumentMode = false;
             this.trigger(this.model);
         }
     },
-    onStartTextEditMode: function(){
-        if(!this.model.isTextEditMode){
+    onStartDocumentMode: function(){
+        if(!this.model.isDocumentMode){
             this.model.isEditMode = false;
             this.model.isLivePreviewMode = false;
-            this.model.isTextEditMode = true;
+            this.model.isDocumentMode = true;
             //
             this.model.isAvailableComponentsButtonActive = false;
             this.model.isComponentOptionsButtonActive = false;
             this.model.isStyleOptionsButtonActive = false;
+            this.model.isComponentsHierarchyButtonActive = false;
             //
             this.trigger(this.model);
         }
@@ -52,7 +51,7 @@ var DeskStore = Reflux.createStore({
         if(!this.model.isLivePreviewMode){
             this.model.isEditMode = false;
             this.model.isLivePreviewMode = true;
-            this.model.isTextEditMode = false;
+            this.model.isDocumentMode = false;
             //
             this.model.isAvailableComponentsButtonActive = false;
             this.model.isComponentOptionsButtonActive = false;
@@ -63,37 +62,19 @@ var DeskStore = Reflux.createStore({
         }
     },
     onToggleAvailableComponents: function(){
-        if(!this.model.isAvailableComponentsButtonActive){
-            this.model.isAvailableComponentsButtonActive = true;
-            //this.model.isComponentOptionsButtonActive = false;
-            //this.model.isStyleOptionsButtonActive = false;
-        }  else {
-            this.model.isAvailableComponentsButtonActive = false;
-        }
+        this.model.isAvailableComponentsButtonActive = !this.model.isAvailableComponentsButtonActive;
         this.trigger(this.model);
     },
-    //onToggleComponentOptions: function(){
-    //    if(!this.model.isComponentOptionsButtonActive){
-    //        this.model.isAvailableComponentsButtonActive = false;
-    //        this.model.isComponentOptionsButtonActive = true;
-    //        //this.model.isStyleOptionsButtonActive = false;
-    //    } else {
-    //        this.model.isComponentOptionsButtonActive = false;
-    //    }
-    //    this.trigger(this.model);
-    //},
     onToggleStyleOptions: function(){
-        if(!this.model.isStyleOptionsButtonActive){
-            //this.model.isAvailableComponentsButtonActive = false;
-            //this.model.isComponentOptionsButtonActive = false;
-            this.model.isStyleOptionsButtonActive = true;
-        } else {
-            this.model.isStyleOptionsButtonActive = false;
-        }
+        this.model.isStyleOptionsButtonActive = !this.model.isStyleOptionsButtonActive;
         this.trigger(this.model);
     },
     onToggleComponentsHierarchy: function(){
         this.model.isComponentsHierarchyButtonActive = !this.model.isComponentsHierarchyButtonActive;
+        this.trigger(this.model);
+    },
+    onChangeIframeWidth: function(options){
+        this.model.iframeWidth = options.iframeWidth;
         this.trigger(this.model);
     }
 

@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 
 var Common = require('../../api/Common.js');
 var Server = require('../../api/Server.js');
@@ -14,10 +14,11 @@ var Repository = require('../../api/Repository.js');
 var DeskStore = require('./DeskStore.js');
 var PanelAvailableComponentsStore = require('../panel/PanelAvailableComponentsStore.js');
 var PanelAvailableComponentsActions = require('../../action/panel/PanelAvailableComponentsActions.js');
-var ModalComponentEditorTriggerActions = require('../../action/modal/ModalComponentEditorTriggerActions.js');
+var ModalComponentEditorActions = require('../../action/modal/ModalComponentEditorActions.js');
 var ToolbarTopActions = require('../../action/toolbar/ToolbarTopActions.js');
 var ToolbarBreadcrumbsActions = require('../../action/toolbar/ToolbarBreadcrumbsActions.js');
-var PanelQuickOptionsActions = require('../../action/panel/PanelQuickOptionsActions.js');
+var PanelOptionsActions = require('../../action/panel/PanelOptionsActions.js');
+//var PanelQuickOptionsActions = require('../../action/panel/PanelQuickOptionsActions.js');
 
 var componentOverlay = null;
 var umyIdToCutPaste = null;
@@ -28,14 +29,16 @@ var DeskPageFrameStore = Reflux.createStore({
     listenables: DeskPageFrameActions,
     model: {},
 
-    onRenderPageFrame: function(){
+    onRenderPageFrame: function(selectedUmyId){
         //this.onStopClipboardForOptions();
+        if(selectedUmyId){
+            this.model.selectedUmyId = selectedUmyId;
+        }
         this.trigger();
     },
 
     onReloadPageFrame: function(){
         //this.onStopClipboardForOptions();
-        console.log("Reloading page frame");
         this.trigger({
             src: Repository.getHtmlForDesk()
         });
@@ -43,7 +46,7 @@ var DeskPageFrameStore = Reflux.createStore({
 
     onDidRenderPageFrame: function(){
         // Load all components defaults
-        //ApplicationActions.loadComponentsDefaults();
+
         // workaround for not proper iframe page rerendering
         var window = Repository.getCurrentPageDocument();
         $(window).find('.umy-grid-basic-border-copy').removeClass('umy-grid-basic-border-copy');
@@ -52,15 +55,15 @@ var DeskPageFrameStore = Reflux.createStore({
         //
         if(umyIdToCopy){
             var domNodeInCopyClipboard = Repository.getCurrentPageDomNode(umyIdToCopy);
-            if(domNodeInCopyClipboard){
-                $(domNodeInCopyClipboard).addClass('umy-grid-basic-border-copy');
+            if(domNodeInCopyClipboard && domNodeInCopyClipboard.domElement){
+                $(domNodeInCopyClipboard.domElement).addClass('umy-grid-basic-border-copy');
                 domNodeInCopyClipboard = null;
             }
         }
         if(umyIdToCutPaste){
             var domNodeInCutClipboard = Repository.getCurrentPageDomNode(umyIdToCutPaste);
-            if(domNodeInCutClipboard){
-                $(domNodeInCutClipboard).addClass('umy-grid-basic-border-cut');
+            if(domNodeInCutClipboard && domNodeInCutClipboard.domElement){
+                $(domNodeInCutClipboard.domElement).addClass('umy-grid-basic-border-cut');
                 domNodeInCutClipboard = null;
             }
         }
@@ -78,14 +81,16 @@ var DeskPageFrameStore = Reflux.createStore({
             var frameWindow = Repository.getCurrentPageWindow();
             var domNode = Repository.getCurrentPageDomNode(this.model.selectedUmyId);
             if(frameWindow && domNode && searchResult){
-                if(this.model.clipboardActiveMode){
-                    componentOverlay = Overlays.createCopyPasteOverlay(frameWindow, this.model.selectedUmyId, searchResult);
-                } else {
-                    componentOverlay = Overlays.createComponentOverlay(frameWindow, this.model.selectedUmyId, searchResult);
+                if(domNode.domElement){
+                    if(this.model.clipboardActiveMode){
+                        componentOverlay = Overlays.createCopyPasteOverlay(frameWindow, this.model.selectedUmyId, searchResult);
+                    } else {
+                        componentOverlay = Overlays.createComponentOverlay(frameWindow, this.model.selectedUmyId, searchResult);
+                    }
+                    componentOverlay.append(domNode.domElement);
                 }
-                componentOverlay.append(domNode);
                 ToolbarBreadcrumbsActions.selectItem(searchResult);
-                PanelQuickOptionsActions.selectItem(searchResult, this.model.selectedUmyId);
+                PanelOptionsActions.selectItem(searchResult, this.model.selectedUmyId);
                 PanelComponentsHierarchyActions.selectTreeviewItem(this.model.selectedUmyId, this.model.clipboardActiveMode);
             }
         }
@@ -107,7 +112,7 @@ var DeskPageFrameStore = Reflux.createStore({
         }
         PanelComponentsHierarchyActions.deselectTreeviewItem();
         ToolbarBreadcrumbsActions.deselectItem();
-        PanelQuickOptionsActions.deselectItem();
+        PanelOptionsActions.deselectItem();
     },
 
     onStartClipboardForOptions: function(options){
@@ -118,15 +123,15 @@ var DeskPageFrameStore = Reflux.createStore({
         //
         if(umyIdToCopy){
             var domNodeInCopyClipboard = Repository.getCurrentPageDomNode(umyIdToCopy);
-            if(domNodeInCopyClipboard){
-                $(domNodeInCopyClipboard).removeClass('umy-grid-basic-border-copy');
+            if(domNodeInCopyClipboard && domNodeInCopyClipboard.domElement){
+                $(domNodeInCopyClipboard.domElement).removeClass('umy-grid-basic-border-copy');
                 domNodeInCopyClipboard = null;
             }
         }
         if(umyIdToCutPaste){
             var domNodeInCutClipboard = Repository.getCurrentPageDomNode(umyIdToCutPaste);
-            if(domNodeInCutClipboard){
-                $(domNodeInCutClipboard).removeClass('umy-grid-basic-border-cut');
+            if(domNodeInCutClipboard && domNodeInCutClipboard.domElement){
+                $(domNodeInCutClipboard.domElement).removeClass('umy-grid-basic-border-cut');
                 domNodeInCutClipboard = null;
             }
         }
@@ -166,16 +171,16 @@ var DeskPageFrameStore = Reflux.createStore({
         //
         if(umyIdToCopy){
             var domNodeInCopyClipboard = Repository.getCurrentPageDomNode(umyIdToCopy);
-            if(domNodeInCopyClipboard){
-                $(domNodeInCopyClipboard).removeClass('umy-grid-basic-border-copy');
+            if(domNodeInCopyClipboard && domNodeInCopyClipboard.domElement){
+                $(domNodeInCopyClipboard.domElement).removeClass('umy-grid-basic-border-copy');
                 domNodeInCopyClipboard = null;
             }
         }
         umyIdToCopy = null;
         if(umyIdToCutPaste){
             var domNodeInCutClipboard = Repository.getCurrentPageDomNode(umyIdToCutPaste);
-            if(domNodeInCutClipboard){
-                $(domNodeInCutClipboard).removeClass('umy-grid-basic-border-cut');
+            if(domNodeInCutClipboard && domNodeInCutClipboard.domElement){
+                $(domNodeInCutClipboard.domElement).removeClass('umy-grid-basic-border-cut');
                 domNodeInCutClipboard = null;
             }
         }
@@ -184,51 +189,48 @@ var DeskPageFrameStore = Reflux.createStore({
     },
 
     onDeleteComponent: function(domNodeId){
-        //
+
         Repository.renewCurrentProjectModel(
             Common.deleteFromModel(Repository.getCurrentProjectModel(), domNodeId)
         );
         PanelComponentsHierarchyActions.refreshTreeview();
-        //
+        this.model.selectedUmyId = null;
         this.trigger();
+
     },
 
     onDuplicateComponent: function(domNodeId){
-        Repository.renewCurrentProjectModel(
-            Common.pasteInModelFromUmyId(
-                domNodeId,
-                domNodeId,
-                Repository.getCurrentProjectModel(),
-                'addAfter'
-            )
+        var transformationResult = Common.pasteInModelFromUmyId(
+            domNodeId,
+            domNodeId,
+            Repository.getCurrentProjectModel(),
+            'addAfter'
         );
+        Repository.renewCurrentProjectModel(transformationResult.projectModel);
+        this.model.selectedUmyId = transformationResult.selectedUmyId;
         this.trigger();
     },
 
     onMoveUpComponent: function(domNodeId){
-        //
         Repository.renewCurrentProjectModel(
             Common.moveUpInModel(Repository.getCurrentProjectModel(), domNodeId)
         );
         PanelComponentsHierarchyActions.refreshTreeview();
-        //
         this.trigger();
     },
 
     onMoveDownComponent: function(domNodeId){
-        //
         Repository.renewCurrentProjectModel(
             Common.moveDownInModel(Repository.getCurrentProjectModel(), domNodeId)
         );
         PanelComponentsHierarchyActions.refreshTreeview();
-        //
         this.trigger();
     },
 
     onStartCopyComponent: function(domNodeId){
         var domNode = Repository.getCurrentPageDomNode(domNodeId);
-        if(domNode){
-            $(domNode).addClass('umy-grid-basic-border-copy');
+        if(domNode && domNode.domElement){
+            $(domNode.domElement).addClass('umy-grid-basic-border-copy');
         }
         this.onStartClipboardForOptions({
             umyIdToCopy: domNodeId
@@ -238,8 +240,8 @@ var DeskPageFrameStore = Reflux.createStore({
 
     onStartCutPasteComponent: function(domNodeId){
         var domNode = Repository.getCurrentPageDomNode(domNodeId);
-        if(domNode){
-            $(domNode).addClass('umy-grid-basic-border-cut');
+        if(domNode && domNode.domElement){
+            $(domNode.domElement).addClass('umy-grid-basic-border-cut');
         }
         this.onStartClipboardForOptions({
             umyIdToCutPaste: domNodeId
@@ -248,6 +250,7 @@ var DeskPageFrameStore = Reflux.createStore({
     },
 
     onAddBefore: function(){
+        var transformationResult = null;
         if(umyIdToCutPaste){
             Repository.renewCurrentProjectModel(
                 Common.moveInModel(
@@ -259,31 +262,30 @@ var DeskPageFrameStore = Reflux.createStore({
             );
             this.model.selectedUmyId = umyIdToCutPaste;
         } else if(optionsToPaste) {
-            Repository.renewCurrentProjectModel(
-                Common.pasteInModelFromClipboard(
-                    optionsToPaste,
-                    this.model.selectedUmyId,
-                    Repository.getCurrentProjectModel(),
-                    'addBefore'
-                )
+            transformationResult = Common.pasteInModelFromClipboard(
+                optionsToPaste,
+                this.model.selectedUmyId,
+                Repository.getCurrentProjectModel(),
+                'addBefore'
             );
-            this.model.selectedUmyId = null;
+            Repository.renewCurrentProjectModel(transformationResult.projectModel);
+            this.model.selectedUmyId = transformationResult.selectedUmyId;
         } else {
-            Repository.renewCurrentProjectModel(
-                Common.pasteInModelFromUmyId(
-                    umyIdToCopy,
-                    this.model.selectedUmyId,
-                    Repository.getCurrentProjectModel(),
-                    'addBefore'
-                )
+            transformationResult = Common.pasteInModelFromUmyId(
+                umyIdToCopy,
+                this.model.selectedUmyId,
+                Repository.getCurrentProjectModel(),
+                'addBefore'
             );
-            this.model.selectedUmyId = null;
+            Repository.renewCurrentProjectModel(transformationResult.projectModel);
+            this.model.selectedUmyId = transformationResult.selectedUmyId;
         }
         this.onStopClipboardForOptions();
         this.trigger();
     },
 
     onInsertFirst: function(){
+        var transformationResult = null;
         if (umyIdToCutPaste) {
             Repository.renewCurrentProjectModel(
                 Common.moveInModel(
@@ -295,31 +297,30 @@ var DeskPageFrameStore = Reflux.createStore({
             );
             this.model.selectedUmyId = umyIdToCutPaste;
         } else if(optionsToPaste) {
-            Repository.renewCurrentProjectModel(
-                Common.pasteInModelFromClipboard(
-                    optionsToPaste,
-                    this.model.selectedUmyId,
-                    Repository.getCurrentProjectModel(),
-                    'insertFirst'
-                )
+            transformationResult = Common.pasteInModelFromClipboard(
+                optionsToPaste,
+                this.model.selectedUmyId,
+                Repository.getCurrentProjectModel(),
+                'insertFirst'
             );
-            this.model.selectedUmyId = null;
+            Repository.renewCurrentProjectModel(transformationResult.projectModel);
+            this.model.selectedUmyId = transformationResult.selectedUmyId;
         } else {
-            Repository.renewCurrentProjectModel(
-                Common.pasteInModelFromUmyId(
-                    umyIdToCopy,
-                    this.model.selectedUmyId,
-                    Repository.getCurrentProjectModel(),
-                    'insertFirst'
-                )
+            transformationResult = Common.pasteInModelFromUmyId(
+                umyIdToCopy,
+                this.model.selectedUmyId,
+                Repository.getCurrentProjectModel(),
+                'insertFirst'
             );
-            this.model.selectedUmyId = null;
+            Repository.renewCurrentProjectModel(transformationResult.projectModel);
+            this.model.selectedUmyId = transformationResult.selectedUmyId;
         }
         this.onStopClipboardForOptions();
         this.trigger();
     },
 
     onInsertLast: function(){
+        var transformationResult = null;
         if (umyIdToCutPaste) {
             Repository.renewCurrentProjectModel(
                 Common.moveInModel(
@@ -331,31 +332,30 @@ var DeskPageFrameStore = Reflux.createStore({
             );
             this.model.selectedUmyId = umyIdToCutPaste;
         } else if(optionsToPaste) {
-            Repository.renewCurrentProjectModel(
-                Common.pasteInModelFromClipboard(
-                    optionsToPaste,
-                    this.model.selectedUmyId,
-                    Repository.getCurrentProjectModel(),
-                    'insertLast'
-                )
+            transformationResult = Common.pasteInModelFromClipboard(
+                optionsToPaste,
+                this.model.selectedUmyId,
+                Repository.getCurrentProjectModel(),
+                'insertLast'
             );
-            this.model.selectedUmyId = null;
+            Repository.renewCurrentProjectModel(transformationResult.projectModel);
+            this.model.selectedUmyId = transformationResult.selectedUmyId;
         } else {
-            Repository.renewCurrentProjectModel(
-                Common.pasteInModelFromUmyId(
-                    umyIdToCopy,
-                    this.model.selectedUmyId,
-                    Repository.getCurrentProjectModel(),
-                    'insertLast'
-                )
+            transformationResult = Common.pasteInModelFromUmyId(
+                umyIdToCopy,
+                this.model.selectedUmyId,
+                Repository.getCurrentProjectModel(),
+                'insertLast'
             );
-            this.model.selectedUmyId = null;
+            Repository.renewCurrentProjectModel(transformationResult.projectModel);
+            this.model.selectedUmyId = transformationResult.selectedUmyId;
         }
         this.onStopClipboardForOptions();
         this.trigger();
     },
 
     onAddAfter: function(){
+        var transformationResult = null;
         if (umyIdToCutPaste) {
             Repository.renewCurrentProjectModel(
                 Common.moveInModel(
@@ -367,31 +367,30 @@ var DeskPageFrameStore = Reflux.createStore({
             );
             this.model.selectedUmyId = umyIdToCutPaste;
         } else if(optionsToPaste) {
-            Repository.renewCurrentProjectModel(
-                Common.pasteInModelFromClipboard(
-                    optionsToPaste,
-                    this.model.selectedUmyId,
-                    Repository.getCurrentProjectModel(),
-                    'addAfter'
-                )
+            transformationResult = Common.pasteInModelFromClipboard(
+                optionsToPaste,
+                this.model.selectedUmyId,
+                Repository.getCurrentProjectModel(),
+                'addAfter'
             );
-            this.model.selectedUmyId = null;
+            Repository.renewCurrentProjectModel(transformationResult.projectModel);
+            this.model.selectedUmyId = transformationResult.selectedUmyId;
         } else {
-            Repository.renewCurrentProjectModel(
-                Common.pasteInModelFromUmyId(
-                    umyIdToCopy,
-                    this.model.selectedUmyId,
-                    Repository.getCurrentProjectModel(),
-                    'addAfter'
-                )
+            transformationResult = Common.pasteInModelFromUmyId(
+                umyIdToCopy,
+                this.model.selectedUmyId,
+                Repository.getCurrentProjectModel(),
+                'addAfter'
             );
-            this.model.selectedUmyId = null;
+            Repository.renewCurrentProjectModel(transformationResult.projectModel);
+            this.model.selectedUmyId = transformationResult.selectedUmyId;
         }
         this.onStopClipboardForOptions();
         this.trigger();
     },
 
     onWrap: function(){
+        var transformationResult = null;
         if (umyIdToCutPaste) {
             Repository.renewCurrentProjectModel(
                 Common.moveInModel(
@@ -403,31 +402,30 @@ var DeskPageFrameStore = Reflux.createStore({
             );
             this.model.selectedUmyId = umyIdToCutPaste;
         } else if(optionsToPaste) {
-            Repository.renewCurrentProjectModel(
-                Common.pasteInModelFromClipboard(
-                    optionsToPaste,
-                    this.model.selectedUmyId,
-                    Repository.getCurrentProjectModel(),
-                    'wrap'
-                )
+            transformationResult = Common.pasteInModelFromClipboard(
+                optionsToPaste,
+                this.model.selectedUmyId,
+                Repository.getCurrentProjectModel(),
+                'wrap'
             );
-            this.model.selectedUmyId = null;
+            Repository.renewCurrentProjectModel(transformationResult.projectModel);
+            this.model.selectedUmyId = transformationResult.selectedUmyId;
         } else {
-            Repository.renewCurrentProjectModel(
-                Common.pasteInModelFromUmyId(
-                    umyIdToCopy,
-                    this.model.selectedUmyId,
-                    Repository.getCurrentProjectModel(),
-                    'wrap'
-                )
+            transformationResult = Common.pasteInModelFromUmyId(
+                umyIdToCopy,
+                this.model.selectedUmyId,
+                Repository.getCurrentProjectModel(),
+                'wrap'
             );
-            this.model.selectedUmyId = null;
+            Repository.renewCurrentProjectModel(transformationResult.projectModel);
+            this.model.selectedUmyId = transformationResult.selectedUmyId;
         }
         this.onStopClipboardForOptions();
         this.trigger();
     },
 
     onReplace: function(){
+        var transformationResult = null;
         if (umyIdToCutPaste) {
             Repository.renewCurrentProjectModel(
                 Common.moveInModel(
@@ -439,36 +437,33 @@ var DeskPageFrameStore = Reflux.createStore({
             );
             this.model.selectedUmyId = umyIdToCutPaste;
         } else if(optionsToPaste) {
-            Repository.renewCurrentProjectModel(
-                Common.pasteInModelFromClipboard(
-                    optionsToPaste,
-                    this.model.selectedUmyId,
-                    Repository.getCurrentProjectModel(),
-                    'replace'
-                )
+            transformationResult = Common.pasteInModelFromClipboard(
+                optionsToPaste,
+                this.model.selectedUmyId,
+                Repository.getCurrentProjectModel(),
+                'replace'
             );
-            this.model.selectedUmyId = null;
+            Repository.renewCurrentProjectModel(transformationResult.projectModel);
+            this.model.selectedUmyId = transformationResult.selectedUmyId;
         } else {
-            Repository.renewCurrentProjectModel(
-                Common.pasteInModelFromUmyId(
-                    umyIdToCopy,
-                    this.model.selectedUmyId,
-                    Repository.getCurrentProjectModel(),
-                    'replace'
-                )
+            transformationResult = Common.pasteInModelFromUmyId(
+                umyIdToCopy,
+                this.model.selectedUmyId,
+                Repository.getCurrentProjectModel(),
+                'replace'
             );
-            this.model.selectedUmyId = null;
+            Repository.renewCurrentProjectModel(transformationResult.projectModel);
+            this.model.selectedUmyId = transformationResult.selectedUmyId;
         }
         this.onStopClipboardForOptions();
         this.trigger();
     },
 
     onShowPropertyEditor: function(){
-        ModalComponentEditorTriggerActions.showModal({
+        ModalComponentEditorActions.showModal({
             selectedUmyId: this.model.selectedUmyId
         });
     }
-
 
 });
 

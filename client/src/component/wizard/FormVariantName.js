@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var React = require('react');
 var ReactBootstrap = require('react-bootstrap');
 
@@ -59,6 +59,10 @@ var FormVariantName = React.createClass({
         };
     },
 
+    componentDidMount: function(){
+        React.findDOMNode(this.refs.variantNameInput).focus();
+    },
+
     render: function () {
         return (
             <div style={this.props.formStyle}>
@@ -82,11 +86,8 @@ var FormVariantName = React.createClass({
                         </td>
                         <td style={{width: '20%'}}></td>
                     </tr>
-                    <tr>
-                        <td colspan='3' style={{height: '2em'}}></td>
-                    </tr>
                 </table>
-                <div style={{display: 'table', textAlign: 'center', width: '100%'}}>
+                <div style={{display: 'table', textAlign: 'center', width: '100%', marginTop: '2em'}}>
                     <Button bsStyle='default' onClick={this._handleBackStep}>Cancel</Button>
                     <Button bsStyle='primary' onClick={this._handleSubmitStep}>Commit</Button>
                 </div>

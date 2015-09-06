@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var ReactBootstrap = require('react-bootstrap');
 var Button = ReactBootstrap.Button;
 var React = require('react');
@@ -69,8 +69,9 @@ var PanelComponentsHierarchy = React.createClass({
             //display: this.props.displayStyle,
             padding: '2em 1em 1em 1em',
             height: '100%',
-            overflow: 'auto'
-            //border: '1px solid #ffffff'
+            overflow: 'auto',
+            border: '1px solid #DBDBDB',
+            borderRadius: '3px'
         };
 
         //
@@ -79,7 +80,7 @@ var PanelComponentsHierarchy = React.createClass({
         var listItems = [];
         if(pageModel){
             if (pageModel.props){
-                _.mapObject(pageModel.props, function(value, prop){
+                _.forOwn(pageModel.props, function(value, prop){
                     if(_.isObject(value) && value.type){
                         listItems.push(self._buildNode(value));
                     }
@@ -92,15 +93,25 @@ var PanelComponentsHierarchy = React.createClass({
             }
         }
 
+        var overlay = null;
+        if(this.state.selectedUmyId){
+            if(this.state.clipboardActive){
+                overlay = <OverlayTreeviewItemPaste />
+            } else {
+                overlay = <OverlayTreeviewItem domNodeId={this.state.selectedUmyId} />
+            }
+        }
+
         //
         return (
             <div style={style}>
                 <Button bsSize='xsmall'
                         style={
-                            {padding: '0.2em', position: 'absolute', top: '-1.5em', left: '1em', width: '2em', height: '2em', zIndex: '1050'}
+                            {padding: '0.2em', position: 'absolute', top: '2px', left: '2px', width: '2em', height: '2em', zIndex: '1030'}
                         } onClick={DeskAction.toggleComponentsHierarchy}>
                     <span className='fa fa-times fa-fw'></span>
                 </Button>
+                {overlay}
                 <ul className='umy-treeview-list' style={{border: 0}}>
                     {listItems}
                 </ul>
@@ -124,7 +135,7 @@ var PanelComponentsHierarchy = React.createClass({
         }
         var innerProps = [];
         if (rootItem.props){
-            _.mapObject(rootItem.props, function(value, prop){
+            _.forOwn(rootItem.props, function(value, prop){
                 if(_.isObject(value) && value.type){
                     innerProps.push(self._buildNode(value));
                 }
@@ -148,7 +159,6 @@ var PanelComponentsHierarchy = React.createClass({
         return (
             <PanelComponentHierarchyItem
                 key={'listitem' + rootItem.props['data-umyid']}
-                componentName={rootItem.componentName}
                 selected={this.state.selectedUmyId}
                 umyid={rootItem.props['data-umyid']}
                 copyMark={this.state.copyMarkUmyId}

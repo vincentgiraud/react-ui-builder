@@ -1,0 +1,27 @@
+{
+  "name": "reflux",
+  "description": "Generate React component + Reflux store and actions source code. Component will include children",
+  "component": {
+    "destDirPath": "src/components/{groupName}",
+    "fileExtension": "js",
+    "script": "Component.js"
+  },
+  "modules": [
+    {
+      "id": "action",
+      "destDirPath": "src/actions/{groupName}",
+      "name": "{componentName}Actions",
+      "script": "Actions.js",
+      "validateJS": true
+    },
+    {
+      "id": "store",
+      "destDirPath": "src/stores/{groupName}",
+      "name": "{componentName}Store",
+      "script": "Store.js",
+      "validateJS": true
+    }
+  ]
+}
+
+

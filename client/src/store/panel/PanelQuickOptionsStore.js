@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var Reflux = require('reflux');
 var PanelQuickOptionsActions = require('../../action/panel/PanelQuickOptionsActions.js');
 var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
@@ -8,7 +8,7 @@ var Common = require('../../api/Common.js');
 var Repository = require('../../api/Repository.js');
 
 var defaultModel = {
-    activeStylePanel: 1,
+    activeStylePanel: 0,
     activeStylePane: 1
 };
 
@@ -23,12 +23,15 @@ var PanelQuickOptionsStore = Reflux.createStore({
     onSelectItem: function(modelNode, selectedUmyId){
         this.model.selectedUmyId = selectedUmyId;
         this.model.props = modelNode.found.props;
+        this.model.satinizedProps = _.extend({}, this.model.props);
+        delete this.model.satinizedProps['data-umyid'];
         this.trigger(this.model);
     },
 
     onDeselectItem: function(){
         this.model.selectedUmyId = null;
         this.model.props = null;
+        this.model.satinizedProps = null;
         this.trigger(this.model);
     },
 
@@ -60,7 +63,7 @@ var PanelQuickOptionsStore = Reflux.createStore({
         }
         if(searchResult && searchResult.found.props.style){
             var newStyle = {};
-            _.mapObject(searchResult.found.props.style, function(value, prop){
+            _.forOwn(searchResult.found.props.style, function(value, prop){
                 if(removeStyle !== prop){
                     newStyle[prop] = value;
                 }

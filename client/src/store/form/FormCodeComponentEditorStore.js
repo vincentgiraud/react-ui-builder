@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var Reflux = require('reflux');
 var FormCodeComponentEditorActions = require('../../action/form/FormCodeComponentEditorActions.js');
 
@@ -19,6 +19,12 @@ var FormCodeComponentEditorStore = Reflux.createStore({
         this.model.wizard = 'None';
         this.trigger(this.model);
 
+    },
+
+    onSubmitWizardGenerateComponent: function(componentSourceDataObject){
+        this.model.wizard = 'None';
+        this.model.generatedSourceCode = componentSourceDataObject;
+        this.trigger(this.model);
     },
 
     onStartWizardIncludeChildren: function(sourceCode){

@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 
 var Common = {
 
@@ -43,6 +43,62 @@ var Common = {
             }
         } else {
             obj1 = obj2;
+        }
+        return obj1;
+    },
+    delex: function (obj, path) {
+        var pathArray = path.split('.');
+        if(pathArray.length === 1 && obj[path] !== undefined){
+            delete obj[path];
+        } else {
+            var tempObj = obj;
+            pathArray.map(function(step, index){
+                if(index === pathArray.length - 1 && tempObj[step] !== undefined){
+                    delete tempObj[step];
+                } else {
+                    tempObj = tempObj[step];
+                }
+            });
+        }
+        return obj;
+    },
+    cleanex: function (obj2) {
+        var obj1 = null;
+        var tempObj = null;
+        if (_.isArray(obj2)) {
+            obj1 = [];
+            for (var i = 0; i < obj2.length; i++) {
+                tempObj = this.cleanex(obj2[i]);
+                if(_.isObject(tempObj)){
+                    if(!_.isEmpty(tempObj)){
+                        obj1.push(tempObj);
+                    }
+                } else {
+                    obj1.push(tempObj);
+                }
+            }
+        } else if (_.isObject(obj2)) {
+            obj1 = {};
+            for (var item in obj2) {
+                if (obj2.hasOwnProperty(item)) {
+                    tempObj = this.cleanex(obj2[item]);
+                    if(_.isObject(tempObj)){
+                        if(!_.isEmpty(tempObj)){
+                            obj1[item] = tempObj;
+                        }
+                    } else {
+                        obj1[item] = tempObj;
+                    }
+                }
+            }
+        } else {
+            if(_.isObject(obj2)){
+                if(!_.isEmpty(obj2)){
+                    obj1 = obj2;
+                }
+            } else {
+                obj1 = obj2;
+            }
         }
         return obj1;
     },
@@ -100,7 +156,7 @@ var Common = {
         } else {
             modelItem.props['data-umyid'] = _.uniqueId();
         }
-        _.mapObject(modelItem.props, function(value, prop){
+        _.forOwn(modelItem.props, function(value, prop){
             if(_.isObject(value) && value.type){
                 this.setupPropsUmyId(value, force);
             }
@@ -117,7 +173,7 @@ var Common = {
             modelItem.props['data-umyid'] = undefined;
             delete modelItem.props['data-umyid'];
         }
-        _.mapObject(modelItem.props, function(value, prop){
+        _.forOwn(modelItem.props, function(value, prop){
             if(_.isObject(value) && value.type){
                 this.cleanPropsUmyId(value);
             }
@@ -127,6 +183,24 @@ var Common = {
                 this.cleanPropsUmyId(modelItem.children[i]);
             }
         }
+    },
+
+    deleteInalidTypeItems: function(modelItem, test){
+        //_.forOwn(modelItem.props, function(value, prop){
+        //    if(_.isObject(value) && value.type){
+        //        this.cleanPropsUmyId(value);
+        //    }
+        //}, this);
+        var localArray = [];
+        if(modelItem.children && modelItem.children.length > 0){
+            for(var i = 0; i < modelItem.children.length; i++){
+                this.deleteInalidTypeItems(modelItem.children[i], test);
+                if(modelItem.children[i].type && test(modelItem.children[i].type)){
+                    localArray.push(modelItem.children[i]);
+                }
+            }
+        }
+        modelItem.children = localArray;
     },
 
     /**
@@ -150,7 +224,7 @@ var Common = {
             return true;
         } else {
             if(modelItem.props){
-                _.mapObject(modelItem.props,
+                _.forOwn(modelItem.props,
                     function(propValue, prop){
                         if(_.isObject(propValue) && propValue.type){
                             _parentList.push(propValue);
@@ -187,6 +261,35 @@ var Common = {
     /**
      *
      * @param {object} model
+     * @param {function} visitorCallback
+     */
+    _traverseModel: function(model, visitorCallback){
+        if(model.props){
+            _.forOwn(model.props,
+                function(propValue, prop){
+                    if(_.isObject(propValue) && propValue.type){
+                        visitorCallback({
+                            found: propValue,
+                            foundProp: prop
+                        });
+                        this._traverseModel(propValue, visitorCallback);
+                    }
+                }, this);
+        }
+        if(model.children && model.children.length > 0){
+            for(var i = 0; i < model.children.length; i++){
+                visitorCallback({
+                    found: model.children[i],
+                    foundProp: '/!#child'
+                });
+                this._traverseModel(model.children[i], visitorCallback);
+            }
+        }
+    },
+
+    /**
+     *
+     * @param {object} model
      * @param {string} umyId
      * @returns {object}
      */
@@ -201,112 +304,27 @@ var Common = {
         } else if(items.length > 1){
             console.error('There are multiple components with the same id: ' + umyId);
         } else {
-            console.error('Component with id: ' + umyId + ' was not found');
+            // do nothing
+            //console.error('Component with id: ' + umyId + ' was not found');
         }
         return searchResult;
     },
 
     /**
      *
-     * @param modelItem
-     * @param resultArray
-     * @returns {*|Array}
+     * @param model
+     * @returns {{}}
      */
-    findAllWithComponentName: function(modelItem, resultArray){
-        var result = resultArray || [];
-        if(modelItem.componentName && modelItem.componentName.length > 0){
-            result.push(modelItem);
-        }
-        if(modelItem.props){
-            _.mapObject(modelItem.props,
-                function(propValue, prop){
-                    if(_.isObject(propValue) && propValue.type){
-                        this.findAllWithComponentName(propValue, result);
-                    }
-                }, this);
-        }
-        if(modelItem.children && modelItem.children.length > 0){
-            for(var i = 0; i < modelItem.children.length; i++){
-                this.findAllWithComponentName(modelItem.children[i], result);
+    getFlatUmyIdModel: function(model){
+        var flatModel = {};
+        Common._traverseModel(model, function(item){
+            if(item.found.props && item.found.props['data-umyid']){
+                flatModel[item.found.props['data-umyid']] = {};
             }
-        }
-        return result;
+        });
+        return flatModel;
     },
 
-    findByComponentName: function(modelItem, componentName, resultArray){
-        var result = resultArray || [];
-        if(modelItem.componentName
-            && modelItem.componentName.length > 0
-            && modelItem.componentName === componentName){
-            result.push(modelItem);
-        }
-        if(modelItem.props){
-            _.mapObject(modelItem.props,
-                function(propValue, prop){
-                    if(_.isObject(propValue) && propValue.type){
-                        this.findByComponentName(propValue, componentName, result);
-                    }
-                }, this);
-        }
-        if(modelItem.children && modelItem.children.length > 0){
-            for(var i = 0; i < modelItem.children.length; i++){
-                this.findByComponentName(modelItem.children[i], componentName, result);
-            }
-        }
-        return result;
-    },
-
-    setupAllWithComponentName: function(modelItem, sourceModelItem, componentName){
-        var byName = componentName || sourceModelItem.componentName;
-        var projectComponents = this.findByComponentName(modelItem, byName, null);
-        if(projectComponents && projectComponents.length > 0){
-            _.forEach(projectComponents, function(component){
-                if(component != sourceModelItem){
-                    var newItem = Common.fulex(sourceModelItem);
-                    // create new ids for children
-                    Common.setupPropsUmyId(newItem, true);
-                    // but save found component id
-                    newItem.props['data-umyid'] = component.props['data-umyid'];
-                    //
-                    component.props = newItem.props;
-                    component.children = newItem.children;
-                    component.text = newItem.text;
-                    component.componentName = newItem.componentName;
-                    newItem = null;
-                }
-            });
-        }
-
-    },
-
-    //setupAllWithComponentName: function(modelItem, sourceModelItem){
-    //    if(modelItem.componentName && modelItem.componentName.length > 0
-    //        && modelItem.componentName === sourceModelItem.componentName
-    //        && modelItem != sourceModelItem){
-    //        //
-    //        var newItem = Common.fulex(sourceModelItem);
-    //        Common.setupPropsUmyId(newItem, true);
-    //        modelItem.props = newItem.props;
-    //        modelItem.children = newItem.children;
-    //        modelItem.text = newItem.text;
-    //        newItem = null;
-    //        //
-    //    }
-    //    if(modelItem.props){
-    //        _.mapObject(modelItem.props,
-    //            function(propValue, prop){
-    //                if(_.isObject(propValue) && propValue.type){
-    //                    this.setupAllWithComponentName(propValue, sourceModelItem);
-    //                }
-    //            }, this);
-    //    }
-    //    if(modelItem.children && modelItem.children.length > 0){
-    //        for(var i = 0; i < modelItem.children.length; i++){
-    //            this.setupAllWithComponentName(modelItem.children[i], sourceModelItem);
-    //        }
-    //    }
-    //},
-    //
     /**
      *
      * @param srcUmyId
@@ -320,6 +338,7 @@ var Common = {
             //
             var srcSearchResult = null;
             var searchResult = null;
+            var resultUmyId = null;
             for(var i = 0; i < projectModel.pages.length; i++){
                 if(!srcSearchResult){
                     srcSearchResult = Common.findByUmyId(projectModel.pages[i], srcUmyId);
@@ -331,6 +350,7 @@ var Common = {
             if (searchResult && srcSearchResult) {
                 var clipboard = Common.fulex(srcSearchResult.found);
                 Common.setupPropsUmyId(clipboard, true);
+                resultUmyId = clipboard.props['data-umyid'];
                 var modelItem = null;
                 var modelIndex = null;
                 switch (modifyMode) {
@@ -395,7 +415,10 @@ var Common = {
                 searchResult = null;
                 modelItem = null;
             }
-            return projectModel;
+            return {
+                projectModel: projectModel,
+                selectedUmyId: resultUmyId
+            };
         } else {
             throw new Error('Some parameters are not set');
         }
@@ -413,6 +436,7 @@ var Common = {
         if(clipboard && destUmyId && projectModel && modifyMode){
             //
             var searchResult = null;
+            var resultUmyId = null;
             for(var i = 0; i < projectModel.pages.length; i++){
                 if(!searchResult){
                     searchResult = Common.findByUmyId(projectModel.pages[i], destUmyId);
@@ -422,6 +446,7 @@ var Common = {
             if (searchResult) {
                 var options = Common.fulex(clipboard);
                 Common.setupPropsUmyId(options, true);
+                resultUmyId = options.props['data-umyid'];
                 var modelItem = null;
                 var modelIndex = null;
                 switch (modifyMode) {
@@ -482,7 +507,10 @@ var Common = {
                 searchResult = null;
                 modelItem = null;
             }
-            return projectModel;
+            return {
+                projectModel: projectModel,
+                selectedUmyId: resultUmyId
+            };
         } else {
             throw new Error('Some parameters are not set');
         }

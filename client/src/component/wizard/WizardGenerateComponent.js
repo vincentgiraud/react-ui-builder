@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var React = require('react');
 var ReactBootstrap = require('react-bootstrap');
 var Modal = ReactBootstrap.Modal;
@@ -10,7 +10,8 @@ var WizardGenerateComponentStore = require('../../store/wizard/WizardGenerateCom
 var WizardGenerateComponentActions = require('../../action/wizard/WizardGenerateComponentActions.js');
 
 var FormComponentName = require('./FormComponentName.js');
-var FormComponentContent = require('./FormComponentContent.js');
+var FormGeneratorList = require('./FormGeneratorList.js');
+var FormGeneratedSourceCode = require('./FormGeneratedSourceCode.js');
 
 var WizardGenerateComponent = React.createClass({
 
@@ -49,32 +50,40 @@ var WizardGenerateComponent = React.createClass({
 
         var stepComponent = null;
         var formStyle={
-            marginTop: '1em'
+            marginTop: '2em'
         };
         switch(this.state.step) {
             case 0:
                 stepComponent = (
                     <FormComponentName
-                        formStyle={formStyle} {...this.state}
-                        onBackStep={WizardGenerateComponentActions.cancelWizard}
-                        onSubmitStep={WizardGenerateComponentActions.submitStep0}
-                        />
+                        formStyle={formStyle}
+                        {...this.state}
+                        onSubmitStep={WizardGenerateComponentActions.submitStep0}/>
                 );
                 break;
             case 1:
                 stepComponent = (
-                    <FormComponentContent
+                    <FormGeneratorList
                         formStyle={formStyle}
+                        {...this.state}
                         onBackStep={WizardGenerateComponentActions.startStep0}
-                        onSubmitStep={WizardGenerateComponentActions.submitStep1}
-                        {...this.state}/>
+                        onSubmitStep={WizardGenerateComponentActions.submitStep1}/>
+                );
+                break;
+            case 2:
+                stepComponent = (
+                    <FormGeneratedSourceCode
+                        formStyle={formStyle}
+                        {...this.state}
+                        onBackStep={WizardGenerateComponentActions.startStep1}
+                        onSubmitStep={WizardGenerateComponentActions.submitStep2}/>
                 );
                 break;
             default:
 
         }
         return (
-            <div style={this.props.style}>
+            <div style={{width: '100%'}}>
                 {alert}
                 <h4 className='text-center'>Generate Component's source code</h4>
                 {stepComponent}

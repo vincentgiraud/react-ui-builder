@@ -1,0 +1,25 @@
+{
+  "name": "${projectName}",
+  "pages": [
+    {
+      "pageName": "UnnamedPage",
+      "children": [
+        {
+          "type": "h3",
+          "props": {
+            "style": {
+              "padding": "1em",
+              "textAlign": "center"
+            }
+          },
+          "children": [
+            {
+              "type": "span",
+              "text": "This is an empty page. To add new component select needed element on left-side panel and click on an element on the page where you want to put new component."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

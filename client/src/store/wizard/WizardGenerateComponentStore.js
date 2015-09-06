@@ -1,20 +1,18 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var validator = require('validator');
 var Reflux = require('reflux');
 
 var Server = require('../../api/Server.js');
 var Repository = require('../../api/Repository.js');
 var Common = require('../../api/Common.js');
-
+var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
 var WizardGenerateComponentActions = require('../../action/wizard/WizardGenerateComponentActions.js');
-var ModalComponentEditorTriggerActions = require('../../action/modal/ModalComponentEditorTriggerActions.js');
+var ModalComponentGeneratorActions = require('../../action/modal/ModalComponentGeneratorActions.js');
 
 var defaultModel = {
     step: 0,
-    includeChildren: true,
-    includeFlux: false,
     errors: []
 };
 
@@ -28,10 +26,6 @@ var WizardGenerateComponentStore = Reflux.createStore({
 
     onSetInitialOptions: function(options){
         this.model.selectedUmyId = options.selectedUmyId;
-    },
-
-    onCancelWizard: function(){
-        ModalPropsEditorTriggerActions.cancelWizard();
     },
 
     onStartStep0: function(){
@@ -49,15 +43,32 @@ var WizardGenerateComponentStore = Reflux.createStore({
         if(!componentName || componentName.length <= 0 || !validator.isAlphanumeric(componentName)){
             this.model.errors.push('Please enter alphanumeric value for component name');
         }
+
+        if(componentGroup === componentName){
+            this.model.errors.push('Component name is equal to group name.');
+        }
+
         var testComponent = Repository.getComponentFromTree(componentName);
         if(testComponent.value){
             this.model.errors.push(
-                'There is already a component with name: ' + componentName + '. Please specify another component name.'
+                'There is already a component with name: ' + componentName + '.'
             );
         }
+
+        var pageNames = Repository.getCurrentProjectPageNames();
+        if(_.includes(pageNames, componentName)){
+            this.model.errors.push('Entered component name is equal to the name of the existing page.');
+        }
+
         if(this.model.errors.length === 0){
+            var _componentName = options.componentName;
+            if (_componentName && _componentName.length > 0) {
+                var firstChar = _componentName.charAt(0).toUpperCase();
+                _componentName = firstChar + _componentName.substr(1);
+            }
             this.model.componentGroup = componentGroup;
-            this.model.componentName = componentName;
+            this.model.componentName = _componentName;
+
             this.onStartStep1();
         } else {
             this.trigger(this.model);
@@ -65,41 +76,40 @@ var WizardGenerateComponentStore = Reflux.createStore({
     },
 
     onStartStep1: function(){
-        this.model.step = 1;
-        this.trigger(this.model);
+
+        Server.invoke('getGeneratorList', {},
+
+            function(errors){
+                this.model.errors = errors;
+                this.trigger(this.model);
+            }.bind(this),
+
+            function(data){
+
+                this.model.generatorList = data;
+
+                this.model.step = 1;
+                this.trigger(this.model);
+            }.bind(this)
+
+        );
+
     },
 
     onSubmitStep1: function(options) {
 
-        this.model.includeChildren = options.includeChildren;
-        this.model.includeFlux = options.includeFlux;
+        var searchResult = Repository.findInCurrentPageModelByUmyId(this.model.selectedUmyId);
+        var copy = searchResult.found;
+        Common.cleanPropsUmyId(copy);
+        copy.props = copy.props || {};
 
-        var _componentName = this.model.componentName;
-        if (_componentName && _componentName.length > 0) {
-            var firstChar = _componentName.charAt(0).toUpperCase();
-            _componentName = firstChar + _componentName.substr(1);
-        }
-        this.model.componentName = _componentName;
-
-        var projectModel = Repository.getCurrentProjectModel();
-        var searchResult = null;
-        for (var i = 0; i < projectModel.pages.length; i++) {
-            if (!searchResult) {
-                searchResult = Common.findByUmyId(projectModel.pages[i], this.model.selectedUmyId);
-            }
-        }
-
-        var sourceCode = null;
-        var actionsSourceCode = null;
-        var storeSourceCode = null;
 
         Server.invoke('generateComponentCode',
             {
                 componentGroup: this.model.componentGroup,
                 componentName: this.model.componentName,
-                componentModel: searchResult.found,
-                includeChildren: this.model.includeChildren,
-                includeFlux: this.model.includeFlux
+                componentModel: copy,
+                generatorName: options.generatorName
             },
 
             function (errors) {
@@ -109,48 +119,51 @@ var WizardGenerateComponentStore = Reflux.createStore({
 
             function (data) {
 
-                sourceCode = data;
+                this.model.componentSourceDataObject = data;
+                this.model.componentModel = copy;
+                this.onStartStep2();
 
-                if (options.includeFlux) {
-                    Server.invoke('generateFluxCode',
-                        {
-                            componentGroup: this.model.componentGroup,
-                            componentName: this.model.componentName
-                        },
-                        function (errors) {
-                            this.model.errors = errors;
-                            this.trigger(this.model);
-                        }.bind(this),
-                        function (response) {
+            }.bind(this)
+        );
+    },
 
-                            actionsSourceCode = response.actionsSourceCode;
-                            storeSourceCode = response.storeSourceCode;
+    onStartStep2: function(){
+        this.model.step = 2;
+        this.trigger(this.model);
+    },
 
-                            ModalPropsEditorTriggerActions.submitWizardGenerateComponent(
-                                {
-                                    componentGroup: this.model.componentGroup,
-                                    componentName: this.model.componentName,
-                                    sourceCode: sourceCode,
-                                    actionsSourceCode: actionsSourceCode,
-                                    storeSourceCode: storeSourceCode
-                                }
-                            );
+    onSubmitStep2: function(options){
+        //if(options.sourceCode){
+        //    this.model.componentSourceDataObject.component.sourceCode = options.sourceCode;
+        //}
 
+        Server.invoke('commitComponentCode', this.model.componentSourceDataObject,
+            function(errors){
+                this.model.errors = errors;
+                this.trigger(this.model);
+            }.bind(this),
+            function(response){
 
-                        }.bind(this)
-                    );
-                } else {
+                var isChildrenAcceptable = options.sourceCode.indexOf('this.props.children') >= 0;
 
-                    ModalComponentEditorTriggerActions.submitWizardGenerateComponent(
-                        {
-                            componentGroup: this.model.componentGroup,
-                            componentName: this.model.componentName,
-                            sourceCode: sourceCode
-                        }
-                    );
-
+                var projectModel = Repository.getCurrentProjectModel();
+                var searchResult = null;
+                for(var i = 0; i < projectModel.pages.length; i++){
+                    if(!searchResult){
+                        searchResult = Common.findByUmyId(projectModel.pages[i], this.model.selectedUmyId);
+                    }
+                }
+                if(searchResult){
+                    searchResult.found.type = this.model.componentName;
+                    if(!isChildrenAcceptable){
+                        searchResult.found.children = [];
+                    }
+                    searchResult.found.text = null;
+                    Repository.renewCurrentProjectModel(projectModel);
+                    DeskPageFrameActions.renderPageFrame();
                 }
 
+                ModalComponentGeneratorActions.hideModal();
             }.bind(this)
         );
     }

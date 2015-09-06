@@ -4,6 +4,7 @@ var Reflux = require('reflux');
 
 var FormCodeComponentEditorActions = Reflux.createActions([
     'cancelWizard',
+    'submitWizardGenerateComponent',
     'startWizardIncludeChildren',
     'submitWizardIncludeChildren'
 

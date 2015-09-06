@@ -1,614 +1,513 @@
-'use strict';
 
-var _ = require('underscore');
-var express = require("express");
-var path = require('path');
-var bodyParser = require('body-parser');
-var httpProxy = require('http-proxy');
+import _ from 'lodash';
+import express from 'express';
+import path from 'path';
+import bodyParser from 'body-parser';
+import httpProxy from 'http-proxy';
 
-var app = null;
-var socket = null;
-var server = null;
-var io = null;
-var proxy = null;
+//let app = null;
+//let socket = null;
+//let server = null;
+//let io = null;
+//let proxy = null;
+//
+//
+//let socketClient = null;
+//let proxyURL = null;
+const builderPackFileName = 'builder.tar.gz';
+const appPackFileName = '__app.tar.gz';
+const modelFileName = 'model.json';
+const servicePath = '/.service';
 
-var Client = require('./Client.js');
-var Compiler = require('./Compiler.js');
-var StorageManager = require('./StorageManager.js');
-var ComponentGenerator = require('./ComponentGenerator.js');
-var ComponentCodeRewriter = require('./ComponentCodeRewriter.js');
+import IndexManager from './IndexManager.js';
+import GeneratorManager from './GeneratorManager.js';
+import StorageManager from './StorageManager.js';
+import ClientManager from './ClientManager.js';
+import Validator from './Validator.js';
+import StaticSiteManager from './StaticSiteManager.js';
+import LivePreviewManager from './LivePreviewManager.js';
 
-var FacadeProjectLocal = require('./FacadeProjectLocal.js');
-var FacadeGallery = require('./FacadeGallery.js');
-var TestRepository = require('./TestRepository.js');
+class Api {
 
-var systemEnv = {
-    builderDir: './',
-    fileConfigPath: './react-builder.json',
+    constructor(systemEnv){
 
-    templateDirPath: './template',
-    serviceDirUrl: '/.data'
-};
+        this.systemEnv = systemEnv;
 
-var socketClient = null;
-var proxyURL = null;
+        this.storageManager = new StorageManager(this.systemEnv.serverDir);
+        this.staticSiteManager = new StaticSiteManager(this.systemEnv.serverDir);
+        this.livePreviewManager = new LivePreviewManager(this.systemEnv.serverDir);
+        this.clientManager = new ClientManager();
+        this.validator = new Validator();
 
-module.exports = {
+        this.app = express();
+        // use middleware body parsers only for certain routes, because of the proxying post request is hanging
+        this.app.use('/builder', bodyParser.json({limit: '50mb'}), express.static(path.join(this.systemEnv.serverDir, 'html')));
+        this.app.use('/.data', bodyParser.json({limit: '50mb'}), express.static(path.join(this.systemEnv.serverDir, '.data')));
+        this.app.post('/invoke', bodyParser.json({limit: '50mb'}), (req, res) => {
+            let methodName = req.body.methodName;
+            let data = req.body.data || {};
+            this[methodName](data)
+                .then( response => {
+                    res.send({ data: response });
+                })
+                .catch( err => {
+                    let errorMessage = err.message ? err.message : err;
+                    res.send({ error: true, errors: [errorMessage] });
+                });
+        });
 
-    initServer: function(options){
-        //
-        if(options.dirname){
-            systemEnv.builderDir = options.dirname;
-            systemEnv.fileConfigPath = path.join(options.dirname, 'react-builder.json');
-            systemEnv.templateDirPath = path.join(options.dirname, 'template');
-        }
-        //
-        app = express();
-        app.use(bodyParser.json());
-        //
-        app.use('/builder', express.static(path.join(systemEnv.builderDir, 'html')));
-        app.use('/.data', express.static(path.join(systemEnv.builderDir, '.data')));
-        app.post('/invoke', function(req, res){
-            var methodName = req.body.methodName;
-            var data = req.body.data;
-            this[methodName](data, function(response){
-                res.send(response);
-            });
-        }.bind(this));
-        //
-        server = app.listen(2222, function() {
+        this.server = this.app.listen(2222, () => {
             console.log(
                 'React UI Builder started successfully.\nPlease go to http://localhost:%d/builder',
-                server.address().port
+                this.server.address().port
             );
-            if(options.io) {
-                io = options.io;
-            }
-            if(io){
-                socket = io(server);
-                socket.on('connection', function(socket){
-                    socketClient = socket;
+            if(this.systemEnv.io){
+                this.socket = this.systemEnv.io(this.server);
+                this.socket.on('connection', socket => {
+                    this.socketClient = socket;
                 });
             }
         });
-        //
-    },
 
-    addProjectStaticRoute: function(htmlUrlPrefix, htmlDirPath){
-        app.use(htmlUrlPrefix, express.static(htmlDirPath));
-    },
+    }
 
-    setProjectProxy: function (options, callback) {
-        FacadeProjectLocal.loadProjectProxyUrl(options, function(err, url){
-            if(err){
-                callback({
-                    error: true,
-                    errors: [ err ]
-                });
+    static initServer(options){
+        let systemConfig = {
+            serverDir: options.dirname,
+            io: options.io
+        };
+        return new Api(systemConfig);
+    }
+
+    test(options){
+        return new Promise( (resolve, reject) => {
+            if(options){
+                resolve(options);
             } else {
-                proxyURL = url;
-                //
-                if(!proxy){
-                    proxy = httpProxy.createProxyServer();
-                    proxy.on('error', function (err, req, res) {
-                        console.log('Proxy server error connecting to ' + proxyURL + req.url);
+                reject('Data was not specified.');
+            }
+        });
+    }
+
+    initUserCredentials(options){
+        return this.clientManager.initUserCredentials(options);
+    }
+
+    removeUserCredentials(options){
+        return this.clientManager.removeUserCredentials();
+    }
+
+    loadUserProfile(options){
+        return this.clientManager.loadUserProfile();
+    }
+
+    createUserProfile(options){
+        return this.clientManager.createUserProfile(options);
+    }
+
+    readConfiguration(options){
+        return this.storageManager.readServerConfig();
+    }
+
+    storeConfiguration(options){
+        return this.storageManager.writeServerConfig(options);
+    }
+
+    readLocalConfiguration(options){
+        return this.storageManager.readProjectConfig();
+    }
+
+    storeLocalConfiguration(options){
+        return this.storageManager.writeProjectConfig(options);
+    }
+
+    getPackageConfig(options){
+        return this.storageManager.readPackageConfig();
+    }
+
+    setupProject(options){
+        return this.validator.validateOptions(options, 'projectDirPath')
+            .then( () => {
+                if(this.indexManager){
+                    delete this.indexManager;
+                }
+                this.indexManager = new IndexManager(options.projectDirPath);
+                if(this.generatorManager){
+                    delete this.generatorManager;
+                }
+                this.generatorManager = new GeneratorManager(options.projectDirPath);
+
+                this.storageManager.setProjectDirPath(options.projectDirPath);
+                this.staticSiteManager.setProjectDirPath(options.projectDirPath);
+                this.livePreviewManager.setProjectDirPath(options.projectDirPath);
+
+                return 'OK';
+            });
+    }
+
+    setProjectProxy(options){
+        return this.storageManager.loadProxyURL(options)
+            .then( proxyURL => {
+
+                this.proxyURL = proxyURL;
+
+                if(!this.proxy){
+                    this.proxy = httpProxy.createProxyServer({});
+                    this.proxy.on('error', (err, req, res) => {
+                        console.log('Proxy server error connecting to ' + this.proxyURL + req.url);
                     });
                     //
-                    app.all('/*', function (req, res, next) {
-                        if (req.url.indexOf(systemEnv.serviceDirUrl) === 0) {
+                    this.app.all('/*', (req, res, next) => {
+                        if (req.url.indexOf(servicePath) === 0) {
                             next('route');
                         } else {
-                            if(proxyURL && proxyURL.length > 0){
-                                proxy.web(req, res, {target: proxyURL});
+                            if(this.proxyURL && this.proxyURL.length > 0){
+                                this.proxy.web(req, res, { target: this.proxyURL });
                             } else {
                                 next('route');
                             }
                         }
                     });
+                    //this.app.get('/*', (req, res, next) => {
+                    //    if (req.url.indexOf(servicePath) === 0) {
+                    //        next('route');
+                    //    } else {
+                    //        if(this.proxyURL && this.proxyURL.length > 0){
+                    //            this.proxy.web(req, res, { target: this.proxyURL });
+                    //        } else {
+                    //            next('route');
+                    //        }
+                    //    }
+                    //});
                 }
-                callback({data: {
-                    proxyURL: url
-                }});
-            }
-        });
-    },
-
-
-    readConfiguration: function(options, callback){
-        StorageManager.readObject(systemEnv.fileConfigPath, function(err, data){
-            if(err){
-                callback({
-                    error: true,
-                    errors: [ err ]
-                });
-            } else {
-                callback({data: data});
-            }
-        });
-    },
-
-    storeConfiguration: function(options, callback){
-        StorageManager.writeObject(systemEnv.fileConfigPath, options, function(err){
-            if(err){
-                callback({error: true, errors:[err]});
-            } else {
-                callback(options);
-            }
-        });
-    },
-
-    readLocalConfiguration: function(options, callback){
-        FacadeProjectLocal.readLocalConfig(function(err, data){
-            if(err){
-                callback({
-                    error: true,
-                    errors: [ err ]
-                });
-            } else {
-                callback({data: data});
-            }
-        });
-    },
-
-    storeLocalConfiguration: function(options, callback){
-        FacadeProjectLocal.storeLocalConfig(options, function(err){
-            if(err){
-                callback({error: true, errors:[err]});
-            } else {
-                callback(options);
-            }
-        });
-    },
-
-    getPackageConfig: function(options, callback){
-        StorageManager.readObject(path.join(systemEnv.builderDir, 'package.json'), function(err, data){
-            if(err){
-                callback({
-                    error: true,
-                    errors: [ err ]
-                });
-            } else {
-                callback({data: data});
-            }
-        });
-    },
-
-    createProject: function(options, callback){
-        var projectGallery = {
-            projectName: options.projectName,
-            description: options.projectDescription,
-            license: options.projectLicense
-        };
-        var entries = [];
-        if(options.files && options.files.length > 0){
-            options.files.map(function(file){
-                if(file.checked === true){
-                    entries.push(file.name);
-                }
+                return { proxyURL: this.proxyURL };
             });
-        }
-        Client.post("/secure/createProject", projectGallery, function(data){
-            if(data.error === true){
-                callback(data);
-            } else {
-                    if(data.data){
-                        FacadeProjectLocal.uploadFilesToGallery(
-                            {
-                                entries: entries,
-                                projectId: data.data.id
-                            },
-                            function(err){
-                                if(err){
-                                    callback({
-                                        error: true,
-                                        errors: [ err ]
-                                    });
-                                } else {
-                                    callback(data);
-                                }
-                            }
-                        );
-                    } else {
-                        callback(data);
-                    }
-            }
-        }, true);
-    },
+    }
 
-    getProjectGallery: function(options, callback){
-        Client.post('/getProjectGalleryList', options, callback);
-    },
+    addProjectStaticRoute(htmlUrlPrefix, htmlDirPath){
+        this.app.use(htmlUrlPrefix, express.static(htmlDirPath));
+    }
 
-    preparePreview: function(options, callback){
-        var storagePath = path.join(systemEnv.builderDir, '.data');
-        FacadeGallery.preparePreview(
-            {
-                storageDir: storagePath,
-                projectId: options.projectId
-            },
-            function(err, data){
-                if(err){
-                    callback({ error: true, errors:[err] });
-                } else {
-                    callback({data: data});
-                }
-            }
-        );
-    },
+    getProjectGallery(options){
+        return this.clientManager.getAllProjects(options);
+    }
 
-    downloadProject: function(options, callback){
-        FacadeGallery.downloadProject(
-            {
-                dirPath: options.dirPath,
-                projectId: options.projectId
-            },
-            function(err){
-                if(err){
-                    callback({ error: true, errors:[err] });
-                } else {
-                    callback({data: 'OK'});
-                }
-            }
-        );
-    },
-
-    prepareLocalProject: function (options, callback) {
-        var response = {};
-        if (options.dirPath && options.dirPath.length > 0) {
-            //
-            var htmlDirPath = path.join(options.dirPath, '.builder', 'build');
-            var htmlURLPrefix = systemEnv.serviceDirUrl +'/' + path.basename(options.dirPath);
-            response.htmlURLPrefix = htmlURLPrefix;
-            this.addProjectStaticRoute(htmlURLPrefix, htmlDirPath);
-            //
-            FacadeProjectLocal.loadProjectModel(options,
-                function (err, data) {
-                    if (err) {
-                        //console.error(err);
-                        callback({error: true, errors: [err]});
-                    } else {
-                        response = _.extend(response, data);
-                        FacadeProjectLocal.loadComponentIndex(
-                            function (err, data) {
-                                if (err) {
-                                    callback({
-                                        error: true,
-                                        errors: ['Project has broken components-index.js file', err]
-                                    });
-                                } else {
-                                    response = _.extend(response, data);
-                                    var templateDir = path.join(systemEnv.builderDir, 'templates');
-                                    FacadeProjectLocal.generateProjectResources({templateDir: templateDir},
-                                        function (err, data) {
-                                            if (err) {
-                                                //console.error(err);
-                                                callback({error: true, errors: [err]});
-                                            } else {
-                                                response = _.extend(response, data);
-                                                FacadeProjectLocal.compileProjectResourcesWithInstall(
-                                                    {
-                                                        builderDirPath: systemEnv.builderDir
-                                                    },
-                                                    function (err) {
-                                                        if (err) {
-                                                            //console.error(err);
-                                                            callback({error: true, errors: [err]});
-                                                        } else {
-                                                            callback({data: response});
-                                                        }
-                                                    }
-                                                );
-                                            }
-                                        }
-                                    );
-                                }
-                            }
-                        );
-                    }
-                }
-            );
-        }
-    },
-
-    /**
-     *
-     * @param {object} options
-     * @param {string} options.name
-     * @param {string} options.model
-     * @param callback
-     */
-    saveProjectModel: function(options, callback){
-        FacadeProjectLocal.saveProjectModel(options, function(err){
-            if(err){
-                callback({ error: true, errors:[err] });
-            } else {
-                callback({data: 'OK'});
-            }
-        });
-    },
-
-    watchLocalProject: function(options, callback){
-        FacadeProjectLocal.startWatchProjectResources({builderDirPath: systemEnv.builderDir}, (function(){
-            var response = {};
-            return function(err, data) {
-                if (err) {
-                    socketClient.emit('compilerWatcher.errors', err);
-                } else {
-                    response = _.extend(response, data);
-                    FacadeProjectLocal.loadComponentIndex(
-                        function (err, data) {
-                            if (err) {
-                                //console.error(err);
-                                setTimeout(function () {
-                                    socketClient.emit('compilerWatcher.errors', err);
-                                }, 100);
-                            } else {
-                                response = _.extend(response, data);
-                                setTimeout(function () {
-                                    socketClient.emit('compilerWatcher.success', response);
-                                    response = {};
-                                }, 100);
-                            }
-                        }
-                    );
-                }
-            }
-        }()));
-        callback({data: 'OK'});
-    },
-
-    readJSFile: function(options, callback){
-        StorageManager.readJSFile({filePath: options.filePath}, function(err, data){
-            if(err){
-                callback({error: true, errors:[err]});
-            } else {
-                callback({data: data});
-            }
-        })
-    },
-
-    loadFluxFiles: function(options, callback){
-        FacadeProjectLocal.loadFluxFiles(
-            {
-                componentName: options.componentName
-            },
-            function(err, data){
-                if(err){
-                    callback({error: true, errors:[err]});
-                } else {
-                    callback({data: data});
-                }
-            }
-        );
-    },
-
-    stopWatchLocalProject: function(options, callback){
-        //console.log('api.stopWatchLocalProject is invoked...');
-        FacadeProjectLocal.stopWatchProjectResources(function(){
-            //console.log('Compiler is stopped');
-            callback({data: 'OK'});
-        });
-    },
-
-    loadComponentDefaults: function(options, callback){
-        FacadeProjectLocal.loadComponentDefaults(options, function(err, data){
-            if (err) {
-                //console.error(err);
-                callback({error: true, errors: [err]});
-            } else {
-                callback({data: data});
-            }
-        });
-    },
-
-    saveComponentDefaults: function(options, callback){
-        FacadeProjectLocal.saveComponentsDefaults(options,
-            function(err){
-                if (err) {
-                    //console.error(err);
-                    callback({error: true, errors: [err]});
-                } else {
-                    callback({data: 'OK'});
-                }
-            }
-        );
-    },
-
-    saveAllComponentDefaults: function(options, callback){
-        FacadeProjectLocal.saveAllComponentsDefaults(options,
-            function(err){
-                if (err) {
-                    //console.error(err);
-                    callback({error: true, errors: [err]});
-                } else {
-                    callback({data: 'OK'});
-                }
-            }
-        );
-    },
-
-    generateComponentCode: function(options, callback){
-        FacadeProjectLocal.loadComponentIndex(
-            function(err, data) {
-                if (err) {
-                    callback({error: true, errors: ['Project has broken components-index.js file', err]});
-                } else {
-                    ComponentGenerator.generateComponentCode(
-                        {
-                            templateDir: path.join(systemEnv.builderDir, 'templates'),
-                            indexFilePath: data.indexFilePath,
-                            componentsArray: data.componentsArray,
-                            variables: data.variables,
-                            componentName: options.componentName,
-                            componentGroup: options.componentGroup,
-                            componentModel: options.componentModel,
-                            includeChildren: options.includeChildren,
-                            includeAllReferences: options.includeAllReferences,
-                            includeFlux: options.includeFlux
-                        },
-                        function(err, data){
-                            if (err) {
-                                //console.error(err);
-                                callback({error: true, errors: [err]});
-                            } else {
-                                callback({data: data});
-                            }
-                        }
-                    );
-                }
-            }
-        );
-    },
-
-    generateFluxCode: function(options, callback){
-        ComponentGenerator.generateFluxCode(
-            {
-                templateDir: path.join(systemEnv.builderDir, 'templates'),
-                componentName: options.componentName,
-                componentGroup: options.componentGroup
-            },
-            function(err, data){
-                if (err) {
-                    //console.error(err);
-                    callback({error: true, errors: [err]});
-                } else {
-                    callback({data: data});
-                }
-            }
-        )
-    },
-
-    isChildrenAcceptable: function(options, callback){
-        if(options.sourceCode
-            && options.sourceCode.indexOf('this.props.children') >= 0){
-            callback({data: {isChildrenAcceptable: true}});
-        } else {
-            callback({data: {isChildrenAcceptable: false}});
-        }
-    },
-
-    generateComponentChildrenCode: function(options, callback){
-        FacadeProjectLocal.generateComponentChildrenCode(
-            {
-                templateDir: path.join(systemEnv.builderDir, 'templates'),
-                componentModel: options.componentModel,
-                sourceCode: options.sourceCode,
-                componentGroup: options.componentGroup
-            },
-            function(err, data){
-                if(err){
-                    callback({error: true, errors: [err]});
-                } else {
-                    callback({data: data});
-                }
-            }
-        );
-    },
-
-    rewriteComponentSourceCode: function(options, callback){
-        var result = FacadeProjectLocal.checkSourceCode(options);
-        if(!result){
-            FacadeProjectLocal.rewriteComponentSourceCode(options,
-                function(err){
-                    if(err){
-                        //console.error(err);
-                        callback({error: true, errors: [err]});
-                    } else {
-                        callback({data: 'OK'});
-                    }
-                }
-            );
-        } else {
-            callback({error: true, errors: [result]});
-        }
-    },
-
-    writeNewComponentSourceCode: function(options, callback){
-        var result = FacadeProjectLocal.checkSourceCode(options);
-        if(!result){
-            FacadeProjectLocal.writeNewComponentSourceCode(options,
-                function(err){
-                    if(err){
-                        //console.error(err);
-                        callback({error: true, errors: [err]});
-                    } else {
-                        callback({data: 'OK'});
-                    }
-                }
-            );
-        } else {
-            callback({error: true, errors: [result]});
-        }
-    },
-
-    /**
-     *
-     * @param {object} options
-     * @param {string} options.user
-     * @param {string} options.pass
-     * @param {function} callback
-     */
-    initUserCredentials: function(options, callback){
-        Client.configModel.user = options.user;
-        Client.configModel.pass = options.pass;
-        callback({});
-    },
-
-    /**
-     *
-     * @param {object} options
-     * @param {function} callback
-     */
-    removeUserCredentials: function(options, callback){
-        Client.configModel.user = null;
-        Client.configModel.pass = null;
-        callback({});
-    },
-
-    /**
-     *
-     * @param {object} options
-     * @param {string} options.user
-     * @param {string} options.pass
-     * @param {string} options.email
-     * @param {function} callback
-     */
-    createUserProfile: function(options, callback){
-        var userProfile = {
-            login: options.user,
-            pwd: options.pass,
-            email: options.email
+    downloadProject(options) {
+        let _options = {
+            id: options.projectId,
+            projectDirPath: options.dirPath,
+            projectId: options.projectId,
+            packageFileName: appPackFileName
         };
-        Client.post("/addUser", userProfile, callback, false);
-    },
+        return this.validator.validateEmptyDir(_options.projectDirPath)
+            .then(() => {
+                return this.setupProject(_options);
+            })
+            .then( result => {
+                return this.clientManager.downloadGalleryFile(_options);
+            })
+            .then( fileBody => {
+                return this.storageManager.writeProjectBinaryFile(appPackFileName, fileBody);
+            })
+            .then( () => {
+                return this.storageManager.unpackProjectFile(appPackFileName);
+            })
+            .then( () => {
+                return 'OK';
+            });
 
-    /**
-     *
-     * @param {object} options
-     * @param {function} callback
-     */
-    loadUserProfile: function(options, callback){
-        var userProfile = {
-            login: Client.configModel.user
+    }
+
+    openLocalProject(options){
+        let response = {};
+        return this.setupProject(options)
+            .then( () => {
+                let htmlDirPath = this.storageManager.getProjectBuildDirPath();
+                let refinedDirPath = htmlDirPath.replace(/\\/g, '/').substr(0, 250);
+                let htmlURLPrefix = servicePath + refinedDirPath;
+                this.htmlURLPrefix = htmlURLPrefix;
+                response.htmlURLPrefix = htmlURLPrefix;
+                response.htmlForDesk = 'PageForDesk.html';
+                this.addProjectStaticRoute(htmlURLPrefix, htmlDirPath);
+            })
+            .then( () => {
+                return this.storageManager.readProjectJsonModel()
+                    .then(jsonModel => {
+                        response.model = jsonModel;
+                    });
+            })
+            .then( () => {
+                return this.indexManager.getComponentsTree()
+                    .then( componentsTree => {
+                        response.componentsTree = componentsTree;
+                    });
+            })
+            .then( () => {
+                return this.storageManager.compileProjectResources();
+            })
+            .then( () => {
+                return response;
+            });
+    }
+
+    prepareLocalProject(options){
+        let response = {};
+        let _options = {
+            projectDirPath: options.dirPath
         };
-        Client.post("/secure/getUserProfile", userProfile, function(data){
-            if(data.error === true){
-                callback(data);
-            } else {
-                callback({data:{userName: Client.configModel.user}});
-            }
-        }, true);
-    },
+        return this.validator.validateEmptyDir(_options.projectDirPath)
+            .then( () => {
+                return this.setupProject(_options);
+            })
+            .then( () => {
+                return this.storageManager.copyProjectResources();
+            })
+            .then( () => {
+                let htmlDirPath = this.storageManager.getProjectBuildDirPath();
+                let htmlURLPrefix = servicePath + htmlDirPath.substr(0, 30);
+                response.htmlURLPrefix = htmlURLPrefix;
+                response.htmlForDesk = 'PageForDesk.html';
+                this.addProjectStaticRoute(htmlURLPrefix, htmlDirPath);
+            })
+            .then( () => {
+                return this.storageManager.readProjectJsonModel()
+                    .then(jsonModel => {
+                        response.model = jsonModel;
+                    });
+            })
+            .then( () => {
+                return this.indexManager.getComponentsTree()
+                    .then( componentsTree => {
+                        response.componentsTree = componentsTree;
+                    });
+            })
+            .then( () => {
+                return this.storageManager.compileProjectResources();
+            })
+            .then( () => {
+                return response;
+            });
+    }
 
-    readProjectFiles: function(options, callback){
-        FacadeProjectLocal.readFilesInProjectDir({}, function(err, data){
+    readProjectFiles(options){
+        return this.storageManager.readProjectDir();
+    }
+
+    checkCreateProject(options){
+        return this.validator.validateOptions(options, ['projectName'])
+            .then( () => {
+                return this.clientManager.checkCreateProject({ projectName: options.projectName });
+            });
+    }
+
+    createProject(options){
+        return this.validator.validateOptions(options,
+            ['projectName', 'projectDescription', 'projectLicense', 'files', 'pageContents', 'projectModel'])
+            .then( () => {
+                let projectGallery = {
+                    projectName: options.projectName,
+                    description: options.projectDescription,
+                    license: options.projectLicense
+                };
+                let entries = [];
+                if(options.files && options.files.length > 0){
+                    options.files.map(file => {
+                        if(file.checked === true){
+                            entries.push(file.name);
+                        }
+                    });
+                }
+
+                const staticContentDirName = '__static_preview_content';
+                const appDestFileName = '__app.tar.gz';
+                const staticDestFileName = '__preview.tar.gz';
+                let projectData = null;
+                let applicationPackageFilePath = null;
+                let previewPackageFilePath = null;
+
+                return this.clientManager.createProject(projectGallery)
+                    .then( projectObj => {
+                        projectData = projectObj;
+                        return this.indexManager.initIndex()
+                            .then( indexObj => {
+                                return this.staticSiteManager.doGeneration(
+                                    options.projectModel, staticContentDirName, indexObj, options.pageContents)
+                                    .then( generatedObj => {
+                                        return this.staticSiteManager.commitGeneration(generatedObj);
+                                    });
+                            })
+                    })
+                    .then( () => {
+                        return this.storageManager.copyProjectReadmeToStaticContent(staticContentDirName);
+                    })
+                    .then( () => {
+                        return this.storageManager.packProjectFiles(entries, appDestFileName);
+                    })
+                    .then( filePath => {
+                        applicationPackageFilePath = filePath;
+                        return this.storageManager.packProjectFiles([staticContentDirName], staticDestFileName);
+                    })
+                    .then( filePath => {
+                        previewPackageFilePath = filePath;
+                        return this.clientManager.uploadProjectFiles({
+                            projectId: projectData.id,
+                            filePaths: [applicationPackageFilePath, previewPackageFilePath]
+                        });
+                    })
+                    .then( () => {
+                        return this.storageManager.removeProjectFile(staticContentDirName)
+                            .then( () => {
+                                return this.storageManager.removeProjectFile(appDestFileName);
+                            })
+                            .then( () => {
+                                return this.storageManager.removeProjectFile(staticDestFileName);
+                            });
+                    })
+                    .catch( err => {
+                        return this.storageManager.removeProjectFile(staticContentDirName)
+                            .then( () => {
+                                return this.storageManager.removeProjectFile(appDestFileName);
+                            })
+                            .then( () => {
+                                return this.storageManager.removeProjectFile(staticDestFileName);
+                            })
+                            .then( () => {
+                                throw Error(err);
+                            });
+                    });
+            });
+    }
+
+    saveProjectModel(options){
+        return this.storageManager.writeProjectJsonModel(options.model);
+    }
+
+    watchLocalProject(options) {
+        return this.storageManager.watchProjectResources((err, data) => {
+            let response = {};
             if (err) {
-                //console.error(err);
-                callback({error: true, errors: [err]});
+                this.socketClient.emit('compilerWatcher.errors', err);
             } else {
-                callback({data: data});
+                response = _.extend(response, data);
+                this.indexManager.getComponentsTree()
+                    .then(componentsTree => {
+                        response.componentsTree = componentsTree;
+                        setTimeout( () => {
+                            this.socketClient.emit('compilerWatcher.success', response);
+                        }, 100);
+
+                    })
+                    .catch(err => {
+                        setTimeout( () => {
+                            this.socketClient.emit('compilerWatcher.errors', err);
+                        }, 100);
+                    });
             }
         });
     }
 
-};
+    stopWatchLocalProject(options){
+        return this.storageManager.stopWatchProjectResources();
+    }
+
+    loadComponentDefaults(options){
+        return this.storageManager.readDefaults(options.componentName);
+    }
+
+    saveComponentDefaults(options){
+        return this.storageManager.writeDefaults(options.componentName, options.componentOptions);
+    }
+
+    saveAllComponentDefaults(options){
+        return this.storageManager.writeAllDefaults(options.componentName, options.defaults);
+    }
+
+    getGeneratorList(options){
+        return this.generatorManager.getGeneratorList();
+    }
+
+    generateComponentCode(options){
+        return this.validator.validateOptions(options, ['componentName', 'componentGroup', 'componentModel', 'generatorName'])
+            .then( () => {
+                return this.generatorManager.doGeneration(
+                    options.componentModel, options.generatorName,
+                    { componentName: options.componentName, groupName: options.componentGroup }
+                )
+                    .then( generatedObj => {
+                        return generatedObj;
+                    });
+            });
+    }
+
+    commitComponentCode(options){
+        return this.generatorManager.commitGeneration(options);
+    }
+
+    rewriteComponentCode(options){
+        return this.validator.validateOptions(options, ['filePath', 'sourceCode'])
+            .then( () => {
+                return this.storageManager.writeSourceFile(options.filePath, options.sourceCode);
+            });
+    }
+
+    readComponentCode(options){
+        return this.validator.validateOptions(options, ['filePath'])
+            .then( () => {
+                return this.storageManager.readSourceFile(options.filePath);
+            });
+
+    }
+
+    readComponentDocument(options){
+        return this.validator.validateOptions(options, ['componentName'])
+            .then( () => {
+                return this.storageManager.readComponentDocument(options.componentName);
+            });
+    }
+
+    readProjectDocument(options){
+        return this.indexManager.getComponentsNames()
+            .then( componentsNames => {
+                return this.storageManager.readProjectDocument(componentsNames);
+            });
+    }
+
+    writeProjectDocument(options){
+        return this.validator.validateOptions(options, ['projectDocument'])
+            .then( () => {
+                return this.storageManager.writeProjectDocument(options.projectDocument);
+            });
+    }
+
+    generateStaticSite(options){
+        return this.validator.validateOptions(options, ['projectModel', 'pageContents', 'destDirName'])
+            .then( () => {
+                return this.indexManager.initIndex()
+                    .then( indexObj => {
+                        return this.staticSiteManager.doGeneration(
+                            options.projectModel, options.destDirName, indexObj, options.pageContents
+                        )
+                            .then( generatedObj => {
+                                //console.log(JSON.stringify(generatedObj, null, 4));
+
+                                return this.staticSiteManager.commitGeneration(generatedObj);
+
+                            });
+                    });
+            });
+    }
+
+    generateLivePreview(options){
+        return this.validator.validateOptions(options, ['projectModel'])
+            .then( () => {
+                return this.livePreviewManager.doGeneration(options.projectModel);
+            }).then( () => {
+                return this.htmlURLPrefix + '/live-preview';
+            });
+    }
+
+
+
+}
+
+export default Api;

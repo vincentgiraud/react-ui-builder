@@ -4,6 +4,8 @@ var socket = null;
 var io = null;
 var serverHost = 'localhost';
 
+var GlobalOverlayActions = require('../action/element/GlobalOverlayActions.js');
+
 var Server = {
 
     init: function(options){
@@ -16,6 +18,7 @@ var Server = {
     },
 
     invoke:function(methodName, options, onError, onSuccess){
+        GlobalOverlayActions.show();
         $.ajax({
             type: 'POST',
             contentType: "application/json; charset=utf-8",
@@ -27,6 +30,7 @@ var Server = {
             url: "http://" + serverHost + ":2222/invoke"
         }).always(function(response, textStatus){
             //console.log("%o, %o, %o", response, textStatus, response.result);
+            GlobalOverlayActions.hide();
             if(textStatus === 'success'){
                 if(response.error == true){
                     if(onError){

@@ -1,33 +1,25 @@
 'use strict';
 
-var classNames = require('classnames');
 var React = require('react');
 
 var ReactBootstrap = require('react-bootstrap');
-var CollapsibleMixin = ReactBootstrap.CollapsibleMixin;
-
+var Collapse = ReactBootstrap.Collapse;
 
 var CollapsibleHorizontalDivider = React.createClass({
 
-    mixins: [CollapsibleMixin],
-
-    getCollapsibleDOMNode(){
-        return React.findDOMNode(this.refs.panel);
-    },
-
-    getCollapsibleDimensionValue(){
-        return React.findDOMNode(this.refs.panel).scrollHeight;
-    },
-
-    _onHandleToggle(e){
+    _handleToggle(e){
         e.preventDefault();
-        this.setState({expanded:!this.state.expanded});
+        e.stopPropagation();
+        this.setState({open: !this.state.open});
+    },
+
+    getInitialState: function(){
+        return {};
     },
 
     render(){
-        var styles = this.getCollapsibleClassSet();
         var caretClassName = 'fa fa-fw text-muted';
-        if(this.isExpanded()){
+        if(this.state.open === true){
             caretClassName += ' fa-caret-down';
         } else {
             caretClassName += ' fa-caret-right';
@@ -36,18 +28,20 @@ var CollapsibleHorizontalDivider = React.createClass({
             <div {...this.props}>
                 <div style={{position: 'relative', width: '100%', height: '0', borderBottom: '1px solid #dddddd', margin: '1em 0 1em 0'}}>
                     <span
-                        style={{position: 'absolute', top: '-0.5em', left: '0', backgroundColor: '#ffffff'}}
+                        style={{position: 'absolute', top: '-0.5em', left: '0'}}
                         className={caretClassName}>
                     </span>
                     <span
-                        style={{position: 'absolute', top: '-0.7em', left: '1.3em', padding: '0 .5em 0 0', backgroundColor: '#ffffff', cursor: 'pointer'}}
-                        className='text-muted' onClick={this._onHandleToggle}>
+                        style={{position: 'absolute', top: '-0.7em', left: '1.3em', padding: '0 .5em 0 0', cursor: 'pointer'}}
+                        className='text-muted' onClick={this._handleToggle}>
                         {this.props.title}
                     </span>
                 </div>
-                <div ref='panel' style={{padding: '0', marginTop: '0'}} className={classNames(styles)}>
-                    {this.props.children}
-                </div>
+                <Collapse in={this.state.open}>
+                    <div ref='panel' style={{padding: '0', marginTop: '0'}}>
+                        {this.props.children}
+                    </div>
+                </Collapse>
             </div>
         );
     }

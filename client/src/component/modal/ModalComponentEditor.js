@@ -2,6 +2,7 @@
 
 var validator = require('validator');
 var React = require('react');
+var marked = require('marked');
 var ReactBootstrap = require('react-bootstrap');
 var Modal = ReactBootstrap.Modal;
 var Button = ReactBootstrap.Button;
@@ -18,24 +19,21 @@ var MenuItem = ReactBootstrap.MenuItem;
 var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
 var FormCodeComponentEditor = require('../form/FormCodeComponentEditor.js');
 var FormPropsComponentEditor = require('../form/FormPropsComponentEditor.js');
-var FormActionsComponentEditor = require('../form/FormActionsComponentEditor.js');
-var FormStoreComponentEditor = require('../form/FormStoreComponentEditor.js');
-var ModalComponentEditorTriggerActions = require('../../action/modal/ModalComponentEditorTriggerActions.js');
-
-var WizardGenerateComponent = require('../wizard/WizardGenerateComponent.js');
+var ModalComponentEditorStore = require('../../store/modal/ModalComponentEditorStore.js');
+var ModalComponentEditorActions = require('../../action/modal/ModalComponentEditorActions.js');
 
 var ModalComponentEditor = React.createClass({
 
     _handleClose: function(e){
         e.stopPropagation();
         e.preventDefault();
-        ModalComponentEditorTriggerActions.hideModal();
+        ModalComponentEditorActions.hideModal();
     },
 
     _handleSave: function(e){
         e.stopPropagation();
         e.preventDefault();
-        ModalComponentEditorTriggerActions.saveProperties(
+        ModalComponentEditorActions.saveProperties(
             {
                 propsScript: this.refs.componentPropsEditor ? this.refs.componentPropsEditor.getPropsScript() : null,
                 componentText: this.refs.componentTextInput ? this.refs.componentTextInput.getValue() : null,
@@ -44,16 +42,6 @@ var ModalComponentEditor = React.createClass({
                 storeSourceCode: this.refs.storeSourceCodeEditor ? this.refs.storeSourceCodeEditor.getStoreScript() : null
             }
         );
-    },
-
-    _handleSaveOptionsVariant: function(e){
-        e.stopPropagation();
-        e.preventDefault();
-        var options = {
-            propsScript: this.refs.componentPropsEditor.getPropsScript(),
-            componentText: this.refs.componentTextInput ? this.refs.componentTextInput.getValue() : null
-        };
-        ModalComponentEditorTriggerActions.saveOptionsVariant(options);
     },
 
     _validationStateComponentText: function(){
@@ -73,29 +61,31 @@ var ModalComponentEditor = React.createClass({
     _handleCreateComponent: function (e) {
         e.stopPropagation();
         e.preventDefault();
-        ModalComponentEditorTriggerActions.startWizardGenerateComponent();
+        ModalComponentEditorActions.startWizardGenerateComponent(
+            { selectedUmyId: this.state.selectedUmyId }
+        );
+    },
+
+    getInitialState: function () {
+        return ModalComponentEditorStore.model;
+    },
+
+    onModelChange: function(model) {
+        this.setState(model);
+    },
+
+    componentDidMount: function() {
+        this.unsubscribe = ModalComponentEditorStore.listen(this.onModelChange);
+    },
+
+    componentWillUnmount: function() {
+        this.unsubscribe();
     },
 
     getDefaultProps: function () {
         return {
-            onRequestHide: this._handleClose
+            onHide: ModalComponentEditorActions.hideModal
         };
-    },
-
-    getInitialState: function(){
-        return {
-            componentText: this.props.componentText,
-            showTextEditor: !!this.props.componentText
-        }
-    },
-
-    componentDidMount: function(){
-        var $domNode = $(React.findDOMNode(this));
-        $domNode.css({
-            'z-index': 1060
-        });
-        $domNode.find('.modal-dialog').addClass('modal-lg');
-        $domNode.find('.panel-body').remove();
     },
 
     render: function(){
@@ -114,13 +104,6 @@ var ModalComponentEditor = React.createClass({
                 );
             }
         }
-        if(this.props.errors && this.props.errors.length > 0){
-            for(i = 0; i < this.props.errors.length; i++){
-                alerts.push(
-                    <p className='text-danger' key={'perror' + i}><strong>{JSON.stringify(this.props.errors[i])}</strong></p>
-                );
-            }
-        }
 
         if(this.state.showTextEditor){
             tabPanes.push(
@@ -128,17 +111,15 @@ var ModalComponentEditor = React.createClass({
                     <div className='container-fluid' style={containerStyle}>
                         <div className='row'>
                             <div className='col-xs-12'>
-                                <p>
-                                    <Input
-                                        type="textarea"
-                                        placeholder="Enter text"
-                                        hasFeedback
-                                        bsStyle={this._validationStateComponentText()}
-                                        value={this.state.componentText}
-                                        onChange={this._handleChangeState}
-                                        ref="componentTextInput"
-                                        style={{width: '100%', height: '400px'}}/>
-                                </p>
+                                <Input
+                                    type="textarea"
+                                    placeholder="Enter text"
+                                    hasFeedback
+                                    bsStyle={this._validationStateComponentText()}
+                                    value={this.state.componentText}
+                                    onChange={this._handleChangeState}
+                                    ref="componentTextInput"
+                                    style={{width: '100%', height: '400px'}}/>
                             </div>
                         </div>
                     </div>
@@ -151,94 +132,88 @@ var ModalComponentEditor = React.createClass({
                 <FormPropsComponentEditor
                     ref='componentPropsEditor'
                     style={containerStyle}
-                    componentName={this.props.componentName}
-                    selectedUmyId={this.props.selectedUmyId}
-                    propsScript={this.props.propsScript}
+                    componentName={this.state.componentName}
+                    selectedUmyId={this.state.selectedUmyId}
+                    propsScript={this.state.propsScript}
                     editorStyle={{height: '400px', width: '100%'}}/>
             </TabPane>
         );
 
-        if(this.props.wizard === 'GenerateComponent'){
+        if(!this.state.errorReadingSourceFile){
+            if(this.state.sourceCode){
+                tabPanes.push(
+                    <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Component'>
+                        <FormCodeComponentEditor
+                            componentName={this.state.componentName}
+                            selectedUmyId={this.state.selectedUmyId}
+                            sourceCode={this.state.sourceCode}
+                            ref='componentSourceCodeEditor'
+                            style={containerStyle}
+                            sourceFilePath={this.state.sourceFilePath}
+                            editorStyle={{height: '400px', width: '100%'}}
+                            />
+                    </TabPane>
+                );
+            } else {
+                tabPanes.push(
+                    <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Component'>
+                        <div style={{height: '400px', width: '100%'}}>
+                            <div style={{height: '100%', width: '100%', marginTop: '1em'}}>
+                                <table style={{ width: '100%'}}>
+                                    <tr>
+                                        <td style={{width: '20%'}}></td>
+                                        <td style={{height: '300px', textAlign: 'center', verticalAlign: 'middle'}}>
+                                            <p>
+                                                <Button block={false}
+                                                        onClick={this._handleCreateComponent}>
+                                                    <span>Generate Component's source code</span>
+                                                </Button>
+                                            </p>
+                                        </td>
+                                        <td style={{width: '20%'}}></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </TabPane>
+                );
+            }
+        }
+        if(this.state.documentMarkdown){
             tabPanes.push(
-                <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Component'>
-                    <WizardGenerateComponent
-                        style={{height: '400px', width: '100%'}}
-                        selectedUmyId={this.props.selectedUmyId}
-                        />
-                </TabPane>
-            );
-        } else if(this.props.sourceCode){
-            tabPanes.push(
-                <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Component'>
-                    <FormCodeComponentEditor
-                        isSourceCodeGenerated={this.props.isSourceCodeGenerated}
-                        componentName={this.props.componentName}
-                        selectedUmyId={this.props.selectedUmyId}
-                        sourceCode={this.props.sourceCode}
-                        ref='componentSourceCodeEditor'
-                        style={containerStyle}
-                        sourceFilePath={this.props.sourceFilePath}
-                        editorStyle={{height: '400px', width: '100%'}}
-                        />
-                </TabPane>
-            );
-        } else {
-            tabPanes.push(
-                <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Component'>
-                    <div style={{height: '400px', width: '100%'}}>
-                        <div style={{height: '100%', width: '100%', marginTop: '1em'}}>
-                            <table style={{ width: '100%'}}>
-                                <tr>
-                                    <td style={{width: '20%'}}></td>
-                                    <td style={{height: '100%', textAlign: 'center', verticalAlign: 'middle'}}>
-                                        <Button block={false}
-                                                onClick={this._handleCreateComponent}>
-                                            <span>Generate Component's source code</span>
-                                        </Button>
-                                    </td>
-                                    <td style={{width: '20%'}}></td>
-                                </tr>
-                            </table>
+                <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Read Me'>
+                    <div style={{height: '400px', marginTop: '1em', width: '100%', overflow: 'auto'}}>
+                        <div style={{width: '100%', padding: '0 2em 0 2em'}}>
+                            <div dangerouslySetInnerHTML={{__html: marked(this.state.documentMarkdown)}} >
+                            </div>
                         </div>
                     </div>
                 </TabPane>
             );
         }
 
-        if(this.props.storeSourceCode){
-            tabPanes.push(
-                <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Store'>
-                    <FormStoreComponentEditor
-                        ref='storeSourceCodeEditor'
-                        storeSourceCode={this.props.storeSourceCode}
-                        />
-                </TabPane>
-            );
-        }
-
-        if(this.props.actionsSourceCode){
-            tabPanes.push(
-                <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Actions'>
-                    <FormActionsComponentEditor
-                        ref='actionsSourceCodeEditor'
-                        actionsSourceCode={this.props.actionsSourceCode}
-                        />
-                </TabPane>
-            );
-        }
-
         return (
-            <Modal onRequestHide={this.props.onRequestHide} title={false} animation={true} backdrop={false} keyboard={true}>
-                <div className='modal-body'>
+            <Modal show={this.state.isModalOpen}
+                   onHide={this.props.onHide}
+                   dialogClassName='umy-modal-overlay'
+                   backdrop={true}
+                   keyboard={true}
+                   bsSize='large'
+                   ref='dialog'
+                   animation={true}>
+                {/*<Modal.Header closeButton={false} aria-labelledby='contained-modal-title'>
+                 <Modal.Title id='contained-modal-title'></Modal.Title>
+                 </Modal.Header>*/}
+                <Modal.Body>
                     {alerts}
                     <TabbedArea defaultActiveKey={1}>
                         {tabPanes}
                     </TabbedArea>
-                </div>
-                <div className="modal-footer">
+                </Modal.Body>
+                <Modal.Footer>
                     <Button onClick={this._handleClose}>Cancel</Button>
                     <Button onClick={this._handleSave} bsStyle="primary">Save changes</Button>
-                </div>
+                </Modal.Footer>
             </Modal>
         );
     }

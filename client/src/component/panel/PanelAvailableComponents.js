@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var React = require('react');
 var ReactBootstrap = require('react-bootstrap');
 var Button = ReactBootstrap.Button;
@@ -9,15 +9,42 @@ var ListGroup = ReactBootstrap.ListGroup;
 var ListGroupItem = ReactBootstrap.ListGroupItem;
 var Badge = ReactBootstrap.Badge;
 var PanelGroup = ReactBootstrap.PanelGroup;
+var Input = ReactBootstrap.Input;
 
 var DeskPageFrameActions = require('../../action/desk/DeskPageFrameActions.js');
 var PanelAvailableComponentsActions = require('../../action/panel/PanelAvailableComponentsActions.js');
 var PanelAvailableComponentsStore = require('../../store/panel/PanelAvailableComponentsStore.js');
-var ModalVariantsTriggerActions = require('../../action/modal/ModalVariantsTriggerActions.js');
 var Repository = require('../../api/Repository.js');
 var PanelAvailableComponentItem = require('./PanelAvailableComponentItem.js');
+var PopoverComponentVariantActions = require('../../action/element/PopoverComponentVariantActions.js');
 
 var PanelAvailableComponents = React.createClass({
+
+
+    _handleChangeFind: function(e){
+        var value = this.refs.inputElement.getValue();
+        var newState = {
+            filter: value
+        };
+        this.setState(newState);
+    },
+
+    _handleClearFind: function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        this.setState({ filter: '' });
+    },
+
+    _getGroupItem: function(options){
+        return (
+            <PanelAvailableComponentItem key={'item' + options.componentId + options.counter}
+                                         defaultsIndex={this.state.defaultsIndex}
+                                         defaults={this.state.componentDefaults}
+                                         componentId={options.componentId}
+                                         selected={this.state.selectedComponentId === options.componentId}
+                                         componentName={options.componentId}/>
+        );
+    },
 
     getInitialState: function () {
         return PanelAvailableComponentsStore.getModel();
@@ -36,59 +63,86 @@ var PanelAvailableComponents = React.createClass({
         $(React.findDOMNode(this)).find('.panel-body').remove();
     },
 
+    componentWillUpdate: function(nextProps, nextState){
+        PopoverComponentVariantActions.hide();
+    },
+
     componentWillUnmount: function () {
         this.unsubscribe();
     },
 
     render: function(){
         var style = {
-            paddingTop: '5px',
-            //display: this.props.displayStyle,
-            width: '100%',
-            overflowY: 'auto',
-            overflowX: 'hidden'
+            position: 'relative',
+            width: '100%'
         };
 
-        var self = this;
         var componentTreeModel = this.state.itemsTree;
         var libGroups = [];
         var groupHeaderKey = 0;
         var componentsWithNoGroup = [];
         var counter = 0;
-        _.mapObject(componentTreeModel, function(group, groupName){
+        var _filter = this.state.filter ? this.state.filter.toUpperCase() : null;
+        _.forOwn(componentTreeModel, function(group, groupName){
             if(_.isObject(group)){
                 var components = [];
-                _.mapObject(group, function(componentTypeValue, componentId){
-                    components.push(
-                        <PanelAvailableComponentItem key={'item' + componentId + counter}
-                            defaultsIndex={self.state.defaultsIndex}
-                            defaults={self.state.componentDefaults}
-                            componentId={componentId}
-                            selected={self.state.selectedComponentId === componentId}
-                            componentName={componentId}/>
-                    );
-                });
+                _.forOwn(group, function(componentTypeValue, componentId){
+                    if(_filter){
+                        if(componentId.toUpperCase().indexOf(_filter) >= 0){
+                            components.push(
+                                this._getGroupItem({
+                                    counter: counter,
+                                    componentId: componentId
+                                })
+                            );
+                        }
+                    } else {
+                        components.push(
+                            this._getGroupItem({
+                                counter: counter,
+                                componentId: componentId
+                            })
+                        );
+                    }
+
+                }.bind(this));
                 var key = '' + ++groupHeaderKey;
-                libGroups.push(
-                    <Panel collapsable header={groupName} eventKey={key} key={'group' + groupName + counter}>
-                        <ListGroup fill>
-                            {components}
-                        </ListGroup>
-                        <div style={{height: '0'}}></div>
-                    </Panel>
-                );
+                if(components.length > 0){
+                    var keySuffix = _filter ? '12' : '0';
+                    libGroups.push(
+                        <Panel collapsible={!_filter}
+                               header={groupName}
+                               eventKey={key}
+                               key={'group' + groupName + counter + keySuffix}>
+                            <ListGroup fill>
+                                {components}
+                            </ListGroup>
+                            <div style={{height: '0'}}></div>
+                        </Panel>
+                    );
+                }
             } else {
-                componentsWithNoGroup.push(
-                    <PanelAvailableComponentItem key={'item' + groupName + counter}
-                        defaultsIndex={self.state.defaultsIndex}
-                        defaults={self.state.componentDefaults}
-                        componentId={groupName}
-                        selected={self.state.selectedComponentId === groupName}
-                        componentName={groupName}/>
-                );
+                //console.log("This filter state: " + this.state.filter);
+                if(_filter){
+                    if(groupName.toUpperCase().indexOf(_filter) >= 0){
+                        componentsWithNoGroup.push(
+                            this._getGroupItem({
+                                counter: counter,
+                                componentId: groupName
+                            })
+                        );
+                    }
+                } else {
+                    componentsWithNoGroup.push(
+                        this._getGroupItem({
+                            counter: counter,
+                            componentId: groupName
+                        })
+                    );
+                }
             }
             counter++;
-        });
+        }.bind(this));
         if(componentsWithNoGroup.length > 0){
             libGroups.push(
                 <div style={{marginTop: '0.3em'}} key={'groupWithNoGroup' + counter}>
@@ -99,11 +153,25 @@ var PanelAvailableComponents = React.createClass({
             );
         }
 
+
         return (
-            <div style={style}>
-                <PanelGroup>
-                    {libGroups}
-                </PanelGroup>
+            <div style={{overflow: 'hidden', paddingTop: '5px'}}>
+                <Input
+                    ref='inputElement'
+                    type={ 'text'}
+                    placeholder={ 'Find...'}
+                    value={this.state.filter}
+                    onChange={this._handleChangeFind}
+                    buttonAfter={ <Button onClick={this._handleClearFind}
+                                          bsStyle={ 'default'}>
+                                    <span className={ 'fa fa-times'}></span>
+                                  </Button>
+                                }/>
+                <div ref='container' style={style}>
+                    <PanelGroup ref='panelGroup'>
+                        {libGroups}
+                    </PanelGroup>
+                </div>
             </div>
         );
     }

@@ -4,14 +4,12 @@ var Reflux = require('reflux');
 
 var DeskActions = Reflux.createActions([
     'startEditMode',
-    'startTextEditMode',
+    'startDocumentMode',
     'startLivePreviewMode',
     'toggleAvailableComponents',
-    'toggleComponentOptions',
     'toggleStyleOptions',
     'toggleComponentsHierarchy',
-    'startAddNewComponentMode',
-    'stopAddNewComponentMode'
+    'changeIframeWidth'
 ]);
 
 module.exports = DeskActions;

@@ -14,6 +14,12 @@ var InputValue = React.createClass({
         }
     },
 
+    componentWillReceiveProps: function(nextProps){
+        this.setState({
+            value: nextProps.value
+        });
+    },
+
     _handleChange: function(){
         var value = this.refs.input.getValue();
         var newState = {

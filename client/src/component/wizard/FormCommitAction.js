@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var React = require('react');
 var ReactBootstrap = require('react-bootstrap');
 
@@ -61,7 +61,7 @@ var FormCommitAction = React.createClass({
                         <td style={{width: '10%'}}></td>
                     </tr>
                     <tr>
-                        <td colspan='3' style={{height: '2em'}}></td>
+                        <td colSpan='3' style={{height: '2em'}}></td>
                     </tr>
                 </table>
                 <div style={{display: 'table', textAlign: 'center', width: '100%'}}>

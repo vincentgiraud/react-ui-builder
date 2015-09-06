@@ -1,4 +1,5 @@
 var webpack = require("webpack");
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = [
     {
@@ -12,37 +13,41 @@ module.exports = [
         },
         module: {
             loaders: [
-                //{ test: /\.js$/, exclude: /node_modules/, loader: 'jsx-loader?harmony' },
-                { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader' },
-                { test: /\.css$/, exclude: /node_modules/, loader: "style-loader!css-loader" },
-                //{ test: /\.(eot|woff|ttf|svg|png|jpg)([\?]?.*)$/, loader: 'url-loader?limit=8000&name=[name]-[hash].[ext]' }
-                { test: /\.(eot|woff|ttf|svg|png|jpg)([\?]?.*)$/, exclude: /node_modules/, loader: 'url-loader' }
-                //{ test: /\.(eot|woff|ttf)([\?]?.*)$/, loader: "file-loader" }
+                { test: /\.js$/, exclude: /node_modules/, loader: 'babel?cacheDirectory' },
+                { test: /\.css$/, exclude: /node_modules/, loader: ExtractTextPlugin.extract("style-loader", "css-loader") },
+                { test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)([\?]?.*)$/, exclude: /node_modules/, loader: 'url-loader' }
             ]
         },
         plugins: [
-            new webpack.optimize.UglifyJsPlugin()
+            new ExtractTextPlugin("styles.css"),
+            new webpack.optimize.DedupePlugin(),
+            new webpack.optimize.UglifyJsPlugin({
+                compress: {
+                    warnings: false
+                }
+            })
         ],
         externals: {
             // require("jquery") is external and available
             //  on the global var jQuery
             "jquery": "jQuery"
         }
-    },
-    {
-        name: "server",
-        entry: {
-            api: './server/src/api.js'
-        },
-        output: {
-            path: './build/lib',
-            filename: '[name].js',
-            libraryTarget: 'commonjs2'
-        },
-        externals: /^[a-z\-0-9_]+$/,
-        plugins: [
-            new webpack.optimize.UglifyJsPlugin()
-        ]
     }
+    //,
+    //{
+    //    name: "server",
+    //    entry: {
+    //        api: './server/src/api.js'
+    //    },
+    //    output: {
+    //        path: './build/lib',
+    //        filename: '[name].js',
+    //        libraryTarget: 'commonjs2'
+    //    },
+    //    externals: /^[a-z\-0-9_]+$/,
+    //    plugins: [
+    //        new webpack.optimize.UglifyJsPlugin()
+    //    ]
+    //}
 ];
 

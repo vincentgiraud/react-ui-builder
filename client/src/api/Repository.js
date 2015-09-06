@@ -1,7 +1,8 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var Common = require('./Common.js');
+var Server = require('./Server.js');
 var HtmlComponents = require('./HtmlComponents.js');
 //var userProfile = null;
 //var currentProject = null;
@@ -15,6 +16,7 @@ var currentPageWindow = null;
 var currentPageDocument = null;
 var componentsTree = null;
 //var currentPageComponentDefaults = null;
+var currentProjectDocument = null;
 
 var htmlForDesk = null;
 
@@ -28,7 +30,7 @@ function findComponent(index, componentName, level, result){
     var _result = result || {};
     if(index && _.isObject(index) && level <= 1){
         level++;
-        _.mapObject(index, function(value, key){
+        _.forOwn(index, function(value, key){
             if(!_result.value){
                 if(key === componentName){
                     _result.value = value;
@@ -46,6 +48,15 @@ function findComponent(index, componentName, level, result){
 
 var Repository = {
 
+    saveProjectModel: function(callback){
+        Server.invoke('saveProjectModel', {
+            model: currentProjectModel
+        }, function(err){
+            console.error(JSON.stringify(err));
+        }, function(response){
+        });
+    },
+
     setCurrentProjectModel: function(projectModel){
         undoPool = [];
         currentProjectModel = projectModel;
@@ -61,10 +72,6 @@ var Repository = {
 
     getCurrentProjectName: function(){
         return currentProjectName;
-    },
-
-    setCallbackAfterProjectModelRenew: function(callback){
-        callbackAfterProjectModelRenew = callback;
     },
 
     setCurrentPageModel: function(pageName){
@@ -91,7 +98,11 @@ var Repository = {
         }
     },
 
-    deleteCurrentPageModel: function(){
+    getCurrentPageIndex: function(){
+        return currentPageIndex;
+    },
+
+    deleteCurrentPageModel: function(callback){
         if(currentProjectModel.pages && currentProjectModel.pages.length > 1){
             this._appendUndoState();
             //
@@ -108,9 +119,7 @@ var Repository = {
             }
             currentPageModel = currentProjectModel.pages[currentPageIndex];
             //
-            if(callbackAfterProjectModelRenew){
-                callbackAfterProjectModelRenew(currentProjectModel);
-            }
+            this.saveProjectModel(callback);
         }
     },
 
@@ -134,12 +143,13 @@ var Repository = {
     //    });
     //},
     //
-    undoCurrentProjectModel: function(){
+    undoCurrentProjectModel: function(callback){
         if(undoPool.length > 0){
             var undoState = _.last(undoPool);
             currentProjectModel = undoState.projectModel;
             this.setCurrentPageModelByIndex(undoState.pageIndex);
             undoPool = _.initial(undoPool);
+            this.saveProjectModel(callback);
         }
     },
     //
@@ -157,24 +167,56 @@ var Repository = {
         return undoPool.length;
     },
 
-    setCurrentPageName: function(pageName){
-        currentPageModel.pageName = pageName;
-    },
-
-    renewCurrentProjectModel: function(projectModel){
+    renewCurrentProjectModel: function(projectModel, callback){
         this._appendUndoState();
         currentProjectModel = projectModel;
         _.each(currentProjectModel.pages, function(page){
             Common.setupPropsUmyId(page);
         });
         this.setCurrentPageModelByIndex(currentPageIndex);
-        if(callbackAfterProjectModelRenew){
-            callbackAfterProjectModelRenew(currentProjectModel);
+
+        this.saveProjectModel(callback);
+    },
+
+    cleanProjectModel: function(projectModel){
+        var test = function(type){
+            var testComponent = findComponent(componentsTree, type, 0);
+            return !!testComponent.value;
+        };
+        if(projectModel && projectModel.pages){
+            _.each(projectModel.pages, function(page){
+                Common.deleteInalidTypeItems(page, test);
+            });
         }
     },
 
     getCurrentPageModel: function(){
         return Common.fulex(currentPageModel);
+    },
+
+    getCurrentPageName: function(){
+        return currentPageModel.pageName;
+    },
+
+    setCurrentPageName: function(pageName){
+        currentPageModel.pageName = pageName;
+    },
+
+    getCurrentPageTitle:function(){
+        return currentPageModel.pageTitle;
+    },
+
+    setCurrentPageTitle:function(pageTitle){
+        currentPageModel.pageTitle = pageTitle;
+    },
+
+    getCurrentPageMetaInfo: function(){
+        var result = currentPageModel.pageMetaInfo || [];
+        return _.clone(result);
+    },
+
+    setCurrentPageMetaInfo: function(metaInfo){
+        currentPageModel.pageMetaInfo = _.clone(metaInfo);
     },
 
     getTemplatePageModel: function(){
@@ -202,21 +244,19 @@ var Repository = {
         };
     },
 
-    getCurrentPageName: function(){
-        return currentPageModel.pageName;
-    },
-
     findInCurrentPageModelByUmyId: function(umyId){
         var searchResult = Common.findByUmyId(currentPageModel, umyId);
         return Common.fulex(searchResult);
     },
 
     resetCurrentPageDomNodes: function(){
-        currentPageDomNodes = {};
+        currentPageDomNodes = Common.getFlatUmyIdModel(currentPageModel);
     },
 
     setCurrentPageDomNode: function(key, domNode){
-        currentPageDomNodes[key] = domNode;
+        if(currentPageDomNodes[key]){
+            currentPageDomNodes[key].domElement = domNode;
+        }
     },
 
     getCurrentPageDomNode: function(key){
@@ -248,7 +288,7 @@ var Repository = {
         //
         var components = {};
         //
-        _.mapObject(HtmlComponents, function(component, componentName){
+        _.forOwn(HtmlComponents, function(component, componentName){
             components[componentName] = {
                 type: 'Reference'
             };
@@ -270,45 +310,21 @@ var Repository = {
         return _.keys(componentsTree);
     },
 
-    getCurrentProjectFramework: function(){
-        return currentProjectModel.lib_components[0];
-    },
-
-    //setCurrentPageComponentDefaults: function(type, defaults){
-    //    var currentPageComponentDefaults = defaults;
-    //    flatDefaults = flatDefaults || {};
-    //    flatDefaults[type] =
-    //    _.mapObject(currentPageComponentDefaults, function(lib, libName){
-    //        _.mapObject(lib, function(group, groupName){
-    //            _.mapObject(group, function(componentDefaults, componentName){
-    //                flatDefaults[libName + ':' + groupName + ':' + componentName] = componentDefaults;
-    //            });
-    //        });
-    //    });
-    //},
-    //
-    getFlatDefaults: function(){
-      return flatDefaults;
-    },
-
-    setFlatDefaults: function(defaults){
-      flatDefaults = defaults;
-    },
-
-    getCurrentProjectExportDirPath: function(){
-        return currentProjectModel.exportDirPath;
-    },
-
-    setCurrentProjectExportDirPath: function(dirPath){
-        currentProjectModel.exportDirPath = dirPath;
-    },
-
     setHtmlForDesk: function(path){
         htmlForDesk = path;
     },
 
     getHtmlForDesk: function(){
         return htmlForDesk;
+    },
+
+    setCurrentProjectDocument: function(documentObj){
+        currentProjectDocument = documentObj;
+    },
+
+    getCurrentProjectDocument: function(){
+
+        return currentProjectDocument;
     }
 
 

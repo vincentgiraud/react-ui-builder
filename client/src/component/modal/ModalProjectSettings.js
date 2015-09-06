@@ -1,32 +1,54 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var React = require('react');
 var ReactBootstrap = require('react-bootstrap');
 var Modal = ReactBootstrap.Modal;
 var Button = ReactBootstrap.Button;
 var ProxyInput = require('../element/ProxyInput.js');
-var ModalProjectSettingsTriggerActions = require('../../action/modal/ModalProjectSettingsTriggerActions.js');
+var ModalProjectSettingsStore = require('../../store/modal/ModalProjectSettingsStore.js');
+var ModalProjectSettingsActions = require('../../action/modal/ModalProjectSettingsActions.js');
 
 var ModalProjectSettings = React.createClass({
 
+    getInitialState: function () {
+        return ModalProjectSettingsStore.model;
+    },
+
+    onModelChange: function(model) {
+        this.setState(model);
+    },
+    componentDidMount: function() {
+        this.unsubscribe = ModalProjectSettingsStore.listen(this.onModelChange);
+    },
+    componentWillUnmount: function() {
+        this.unsubscribe();
+    },
+
     getDefaultProps: function () {
         return {
-            onRequestHide: null,
-            text: 'Loading...'
+            onHide: ModalProjectSettingsActions.hideModal
         };
     },
 
     render: function(){
         return (
-            <Modal {...this.props} title='Project Settings' animation={true} backdrop={false}>
-                <div className="modal-body">
-                    <ProxyInput ref='urlInputElement' label='Setup proxy:' urlValue={this.props.urlValue}/>
-                </div>
-                <div className="modal-footer">
-                    <Button onClick={this._handleSave} bsStyle="primary">Save changes</Button>
+            <Modal show={this.state.isModalOpen}
+                   onHide={this.props.onHide}
+                   dialogClassName='umy-modal-overlay'
+                   backdrop={true}
+                   bsSize='medium'
+                   animation={true}>
+                <Modal.Header closeButton={true} aria-labelledby='contained-modal-title'>
+                    <Modal.Title id='contained-modal-title'>Project Settings</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <ProxyInput ref='urlInputElement' label='Setup proxy:' urlValue={this.state.urlValue}/>
+                </Modal.Body>
+                <Modal.Footer>
                     <Button onClick={this._handleClose}>Cancel</Button>
-                </div>
+                    <Button onClick={this._handleSave} bsStyle="primary">Save changes</Button>
+                </Modal.Footer>
             </Modal>
         );
     },
@@ -34,13 +56,13 @@ var ModalProjectSettings = React.createClass({
     _handleClose: function(e){
         e.stopPropagation();
         e.preventDefault();
-        ModalProjectSettingsTriggerActions.hideModal();
+        ModalProjectSettingsActions.hideModal();
     },
 
     _handleSave: function(e){
         e.stopPropagation();
         e.preventDefault();
-        ModalProjectSettingsTriggerActions.saveSettings({
+        ModalProjectSettingsActions.saveSettings({
             urlValue: this.refs.urlInputElement.getUrlValue()
         });
     }

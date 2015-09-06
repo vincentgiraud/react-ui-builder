@@ -1,6 +1,6 @@
 'use strict';
 
-var _ = require('underscore');
+var _ = require('lodash');
 var validator = require('validator');
 var React = require('react');
 var ReactBootstrap = require('react-bootstrap');
@@ -22,6 +22,13 @@ var Repository = require('../../api/Repository.js');
 
 var FormComponentName = React.createClass({
 
+    _handleClickGroupName: function(){
+        React.findDOMNode(this.refs.groupNameInput).focus();
+    },
+
+    _handleClickComponentName: function(){
+        React.findDOMNode(this.refs.componentNameInput).focus();
+    },
 
     _handleGroupNameChange: function () {
         var groupName = React.findDOMNode(this.refs.groupNameInput).value;
@@ -68,6 +75,7 @@ var FormComponentName = React.createClass({
         this.setState(newState);
     },
 
+
     _handleBackStep: function (e) {
         e.preventDefault();
         e.stopPropagation();
@@ -106,6 +114,7 @@ var FormComponentName = React.createClass({
     },
 
     componentDidMount: function () {
+        React.findDOMNode(this.refs.groupNameInput).focus();
     },
 
     componentWillUnmount: function () {
@@ -129,59 +138,60 @@ var FormComponentName = React.createClass({
         }
         return (
             <div style={this.props.formStyle}>
-                    <table style={{width: '100%'}}>
-                        <tr>
-                            <td style={{width: '20%'}}></td>
-                            <td style={{height: '100%', verticalAlign: 'middle'}}>
-                                <form>
-                                    <div className={'form-group ' + this._validationStateGroupName()}>
-                                        <label htmlFor='groupNameElement'>Group:</label>
+                <h5 className='text-center'>Enter group and name</h5>
+                <table style={{width: '100%'}}>
+                    <tr>
+                        <td style={{width: '20%'}}></td>
+                        <td style={{height: '100%', verticalAlign: 'middle'}}>
+                            <div className={'form-group ' + this._validationStateGroupName()}>
+                                <label htmlFor='groupNameElement'>Group:</label>
 
-                                        <div className="input-group input-group-sm">
-                                            <input id='groupNameElement'
-                                                   ref='groupNameInput'
-                                                   type="text"
-                                                   className="form-control"
-                                                   placeholder='Group name'
-                                                   value={this.state.componentGroup}
-                                                   onChange={this._handleGroupNameChange}
-                                                />
+                                <div className="input-group input-group-sm">
+                                    <input id='groupNameElement'
+                                           ref='groupNameInput'
+                                           type="text"
+                                           className="form-control"
+                                           placeholder='Group name'
+                                           value={this.state.componentGroup}
+                                           onChange={this._handleGroupNameChange}
+                                           onClick={this._handleClickGroupName}
+                                        />
 
-                                            <div className="input-group-btn">
-                                                <button type="button"
-                                                        className="btn dropdown-toggle" data-toggle="dropdown"
-                                                        aria-expanded="false">
-                                                    <span className="caret"></span>
-                                                </button>
-                                                <ul className="dropdown-menu dropdown-menu-right" role="menu">
-                                                    {groupItems}
-                                                </ul>
-                                            </div>
-                                        </div>
+                                    <div className="input-group-btn">
+                                        <button type="button"
+                                                className="btn dropdown-toggle" data-toggle="dropdown"
+                                                aria-expanded="false">
+                                            <span className="caret"></span>
+                                        </button>
+                                        <ul className="dropdown-menu dropdown-menu-right" role="menu">
+                                            {groupItems}
+                                        </ul>
                                     </div>
-                                    <div className={'form-group ' + this._validationStateComponentName()}>
-                                        <label htmlFor='componentNameElement'>Component:</label>
-                                        <input id='componentNameElement'
-                                               ref='componentNameInput'
-                                               className="form-control input-sm"
-                                               type="text"
-                                               placeholder='Component name'
-                                               value={this.state.componentName}
-                                               onChange={this._handleComponentNameChange}
-                                            />
-                                    </div>
-                                </form>
-                            </td>
-                            <td style={{width: '20%'}}></td>
-                        </tr>
-                        <tr>
-                            <td colspan='3' style={{height: '2em'}}></td>
-                        </tr>
-                    </table>
-                    <div style={{display: 'table', textAlign: 'center', width: '100%'}}>
-                        <Button bsStyle='default' onClick={this._handleBackStep}>Back</Button>
-                        <Button bsStyle='primary' onClick={this._handleSubmitStep}>Next</Button>
-                    </div>
+                                </div>
+                            </div>
+                            <div className={'form-group ' + this._validationStateComponentName()}>
+                                <label htmlFor='componentNameElement'>Component:</label>
+                                <input id='componentNameElement'
+                                       ref='componentNameInput'
+                                       className="form-control input-sm"
+                                       type="text"
+                                       placeholder='Component name'
+                                       value={this.state.componentName}
+                                       onChange={this._handleComponentNameChange}
+                                       onClick={this._handleClickComponentName}
+                                    />
+                            </div>
+                        </td>
+                        <td style={{width: '20%'}}></td>
+                    </tr>
+                    <tr>
+                        <td colSpan='3'></td>
+                    </tr>
+                </table>
+                <div style={{display: 'table', textAlign: 'center', width: '100%', marginTop: '2em'}}>
+                    {/*<Button bsStyle='default' onClick={this._handleBackStep}>Back</Button>*/}
+                    <Button bsStyle='primary' onClick={this._handleSubmitStep}>Next</Button>
+                </div>
             </div>
         );
     }
