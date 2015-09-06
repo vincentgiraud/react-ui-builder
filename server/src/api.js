@@ -41,9 +41,9 @@ class Api {
 
         this.app = express();
         // use middleware body parsers only for certain routes, because of the proxying post request is hanging
-        this.app.use('/builder', bodyParser.json(), express.static(path.join(this.systemEnv.serverDir, 'html')));
-        this.app.use('/.data', bodyParser.json(), express.static(path.join(this.systemEnv.serverDir, '.data')));
-        this.app.post('/invoke', bodyParser.json(), (req, res) => {
+        this.app.use('/builder', bodyParser.json({limit: '50mb'}), express.static(path.join(this.systemEnv.serverDir, 'html')));
+        this.app.use('/.data', bodyParser.json({limit: '50mb'}), express.static(path.join(this.systemEnv.serverDir, '.data')));
+        this.app.post('/invoke', bodyParser.json({limit: '50mb'}), (req, res) => {
             let methodName = req.body.methodName;
             let data = req.body.data || {};
             this[methodName](data)

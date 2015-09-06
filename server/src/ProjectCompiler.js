@@ -17,7 +17,7 @@ class ProjectCompiler {
                 debug: true,
                 module: {
                     loaders: [
-                        { test: /\.(js|jsx)$/, exclude: /node_modules/, loader: 'babel?cacheDirectory' },
+                        { test: /\.(js|jsx)$/, exclude: /node_modules/, loader: 'babel?cacheDirectory&stage=0' },
                         { test: /\.css$/, exclude: /node_modules/, loader: "style-loader!css-loader" },
                         { test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)([\?]?.*)$/, exclude: /node_modules/, loader: 'url-loader' }
                     ]
@@ -90,7 +90,7 @@ class ProjectCompiler {
                     loaders: [
                         {test: /\.css$/, exclude: /node_modules/, loader: ExtractTextPlugin.extract("style-loader", "css-loader?-autoprefixer") },
                         {test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)([\?]?.*)$/, exclude: /node_modules/, loader: 'url-loader'},
-                        {test: /\.(js|jsx)$/, exclude: /node_modules/, loader: 'babel?cacheDirectory'}
+                        {test: /\.(js|jsx)$/, exclude: /node_modules/, loader: 'babel?cacheDirectory&stage=0'}
                     ]
                 },
                 plugins: plugins,
@@ -148,7 +148,7 @@ class ProjectCompiler {
                 debug: true,
                 module: {
                     loaders: [
-                        { test: /\.(js|jsx)$/, exclude: /node_modules/, loader: 'babel?cacheDirectory' },
+                        { test: /\.(js|jsx)$/, exclude: /node_modules/, loader: 'babel?cacheDirectory&stage=0' },
                         { test: /\.css$/, exclude: /node_modules/, loader: "style-loader!css-loader" },
                         { test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)([\?]?.*)$/, exclude: /node_modules/, loader: 'url-loader' }
                     ]
@@ -209,7 +209,7 @@ class ProjectCompiler {
                     loaders: [
                         {test: /\.css$/, exclude: /node_modules/, loader: "style-loader!css-loader"},
                         {test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)([\?]?.*)$/, exclude: /node_modules/, loader: 'url-loader'},
-                        {test: /\.(js|jsx)$/, exclude: /node_modules/, loader: 'babel?cacheDirectory'}
+                        {test: /\.(js|jsx)$/, exclude: /node_modules/, loader: 'babel?cacheDirectory&stage=0'}
                     ]
                 },
                 //resolveLoader: { root: path.join(__dirname, "node_modules") },
