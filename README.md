@@ -52,7 +52,7 @@ Most time will be spent by npm installer, builder starts the installation of dep
   5. Now you can compose components on page, consider page as a desk where you combine components with each other. 
 
 
-Migration projects for React UI Builder v0.2.11 to v.0.3.0
+Migration projects for React UI Builder from v0.2.11 to v0.3.0
 ----------------------------------------------------------
 Please write a letter to support(at)helmetrex.com
 For every project you will get a support.
