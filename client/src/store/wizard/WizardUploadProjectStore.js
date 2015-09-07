@@ -62,7 +62,9 @@ var WizardUploadProjectStore = Reflux.createStore({
         if(!options.projectName || options.projectName.trim().length < 5) {
             this.model.errors.push('Project name is empty or less than 5 characters.');
         } else if(options.projectName.trim().length > 50) {
-            this.model.errors.push('Project license should be less than 50 characters.');
+            this.model.errors.push('Project name should be less than 50 characters.');
+        } else if(!validator.isAlphanumeric(options.projectName.trim())){
+            this.model.errors.push('Project name should be alphanumeric value.');
         }
         if(!options.projectLicense || options.projectLicense.trim().length <= 0){
             this.model.errors.push('Project license is empty.');

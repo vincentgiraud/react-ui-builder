@@ -3,8 +3,8 @@ import request from 'request';
 import FileManager from './FileManager.js';
 
 const defaultConfiguration = {
-    //serviceURL: 'http://umyproto.com/react-builder-service'
-    serviceURL: 'http://localhost/rbs'
+    serviceURL: 'http://helmetrex.com/rbs'
+    //serviceURL: 'http://localhost/rbs'
 };
 
 class Client {

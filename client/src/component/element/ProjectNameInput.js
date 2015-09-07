@@ -34,7 +34,8 @@ var ProjectNameInput = React.createClass({
     _validationStateValue: function(){
         if(this.state.value
             && this.state.value.length >= 5
-            && this.state.value.length <= 50){
+            && this.state.value.length <= 50
+            && validator.isAlphanumeric(this.state.value)){
             //
             return 'success';
         }

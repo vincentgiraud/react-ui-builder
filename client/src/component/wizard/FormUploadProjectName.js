@@ -56,7 +56,7 @@ var FormUploadProjectName = React.createClass({
                                     label='License:' placeholder='License'/>
                                 <div style={{padding: '0.5em'}}>
                                     <p>Any data published to the React Component Exchange (including user account information)
-                                        may be removed or modified at the sole discretion of the Helmet administration.</p>
+                                        may be removed or modified at the sole discretion of the React Component Exchange administration.</p>
                                 </div>
                             </div>
                         </td>

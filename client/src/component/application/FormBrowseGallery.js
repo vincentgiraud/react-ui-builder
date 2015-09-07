@@ -71,15 +71,15 @@ var FormStart = React.createClass({
             <Grid fluent={true} style={{marginTop: '70px'}}>
                 <CollapsibleLabel style={{margin: '0.3em 0 0.3em 0'}} title='Legal stuff'>
                     <div style={{padding: '1em'}}>
-                        <p>Data published to the React UI Builder gallery is not part of React UI Builder itself,
+                        <p>Data published to the React Component Exchange is not part of React Component Exchange itself,
                             and is the sole property of the publisher. While every effort is made to ensure accountability,
                             there is absolutely no guarantee, warranty, or assertion expressed or implied as to the quality,
                             fitness for a specific purpose, or lack of malice in any given project in the gallery.</p>
-                        <p>If you have a complaint about a project in the React UI Builder gallery,
-                            please email&nbsp;&nbsp;<a href='mailto:umyprotoservice@gmail.com'>umyprotoservice(at)gmail.com</a>
+                        <p>If you have a complaint about a project in the gallery,
+                            please email&nbsp;&nbsp;<a href='mailto:support@helmetrex.com'>support(at)helmetrex.com</a>
                             &nbsp;&nbsp;and explain the situation.</p>
-                        <p>Any data published to the React UI Builder gallery (including user account information)
-                            may be removed or modified at the sole discretion of the UMyProto Team administration.</p>
+                        <p>Any data published to the React Component Exchange (including user account information)
+                            may be removed or modified at the sole discretion of the React Component Exchange administration.</p>
                         <p className='lead'>Users can publish Bad Stuff. It will be removed promptly if reported.
                             But there is no vetting process for published projects, and you use them at your own risk.
                             Please inspect the source.

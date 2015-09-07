@@ -41,7 +41,7 @@ var ProjectThumbnail = React.createClass({
                                 </h4>
                             </div>
                             <div style={{display: 'table-cell', width: '50%', verticalAlign: 'top', textAlign: "right", paddingLeft: '0.5em', paddingRight: '0.5em', paddingTop: '0.5em', paddingBottom: '0.5em'} }>
-                                <a href={'http://localhost/helmet/Preview.html?projectId=' + this.props.id + '&projectName=' +  this.props.projectName}
+                                <a href={'http://helmetrex.com/Preview.html?projectId=' + this.props.id + '&projectName=' +  this.props.projectName}
                                    target="blank"
                                    style={{marginLeft: '1em'}}>
                                     <span className='fa fa-external-link fa-fw'></span>&nbsp;Preview

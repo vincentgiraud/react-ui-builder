@@ -73,7 +73,7 @@ var Application = React.createClass({
         if(this.state.stage !== 'start'){
             linkToHome = (
                 <NavItem href="#" onClick={this._handleGoHome}>
-                    Back to home
+                    Home
                 </NavItem>
             );
         }
