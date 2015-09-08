@@ -55,7 +55,7 @@ var ComponentOverlay = {
                         menuItemWrapper.appendTo(menuList);
                     } else {
                         menuItemWrapper = $("<li></li>");
-                        var menuItem = $("<a class='umyproto-text-bold' >" + this._options.buttons[i].menu[x].label + "</a>");
+                        var menuItem = $("<a href='#' class='umyproto-text-bold' >" + this._options.buttons[i].menu[x].label + "</a>");
                         menuItem.on("click.umyOverlayMenuItem", (function (callback, _this) {
                             return function (e) {
                                 //e.preventDefault();

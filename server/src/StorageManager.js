@@ -305,10 +305,13 @@ class StorageManager {
             });
     }
 
-    copyProjectReadmeToStaticContent(destDirName){
-        let overviewFilePath = path.join(this.docsDirPath, 'Readme.md');
-        let destFilePath = path.join(this.projectDirPath, destDirName, 'public', 'Readme.md');
-        return this.fileManager.copyFile(overviewFilePath, destFilePath);
+    copyProjectDocsToStaticContent(destDirName){
+        //let overviewFilePath = path.join(this.docsDirPath, 'Readme.md');
+        let destFilePath = path.join(this.projectDirPath, destDirName, 'public', 'docs');
+        return this.fileManager.ensureDirPath(destFilePath)
+            .then( () => {
+                return this.fileManager.copyFile(this.docsDirPath, destFilePath);
+            });
     }
 
     writeProjectDocument(documentObj){

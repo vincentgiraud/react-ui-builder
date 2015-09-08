@@ -1,6 +1,6 @@
 {
   "name": "umyproto-react-builder",
-  "version": "0.3.0",
+  "version": "0.3.2",
   "description": "Visual tool for creating React components",
   "scripts": {
     "build-client": "webpack --config webpack.config.js --progress --colors",

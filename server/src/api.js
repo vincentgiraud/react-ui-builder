@@ -338,7 +338,7 @@ class Api {
                             })
                     })
                     .then( () => {
-                        return this.storageManager.copyProjectReadmeToStaticContent(staticContentDirName);
+                        return this.storageManager.copyProjectDocsToStaticContent(staticContentDirName);
                     })
                     .then( () => {
                         return this.storageManager.packProjectFiles(entries, appDestFileName);
