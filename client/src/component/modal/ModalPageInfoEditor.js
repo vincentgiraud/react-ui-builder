@@ -35,7 +35,8 @@ var ModalPageInfoEditor = React.createClass({
             {
                 propsScript: this.refs.pagePropsEditor ? this.refs.pagePropsEditor.getSourceCode() : null,
                 pageName: this.state.pageName,
-                pageTitle: this.state.pageTitle
+                pageTitle: this.state.pageTitle,
+                scriptBody: this.refs.pageScriptBodyEditor ? this.refs.pageScriptBodyEditor.getSourceCode() : null
             }
         );
     },
@@ -140,6 +141,17 @@ var ModalPageInfoEditor = React.createClass({
                 <AceEditor
                     ref='pagePropsEditor'
                     sourceCode={this.state.propsScript}
+                    style={{marginTop: '1em', height: '400px', width: '100%'}}/>
+
+            </TabPane>
+        );
+
+        tabPanes.push(
+            <TabPane key={tabPanes.length + 1} eventKey={tabPanes.length + 1} tab='Script (analytics, etc.)'>
+                <AceEditor
+                    ref='pageScriptBodyEditor'
+                    sourceCode={this.state.scriptBody}
+                    mode="ace/mode/html"
                     style={{marginTop: '1em', height: '400px', width: '100%'}}/>
 
             </TabPane>

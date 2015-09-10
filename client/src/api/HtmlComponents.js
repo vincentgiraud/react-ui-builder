@@ -306,6 +306,16 @@ var HtmlComponents = {
         children: [
             {type: 'span', text: 'Description text line'}
         ]
+    },
+    'pre': {
+        children: [
+            {type: 'span', text: 'Preformatted text line'}
+        ]
+    },
+    'code': {
+        children: [
+            {type: 'span', text: 'Code text line'}
+        ]
     }
 
 };

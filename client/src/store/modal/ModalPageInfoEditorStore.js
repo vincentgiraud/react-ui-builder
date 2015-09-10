@@ -24,12 +24,15 @@ var ModalPageInfoEditorStore = Reflux.createStore({
             this.model.isModalOpen = true;
             this.model.pageName = Repository.getCurrentPageName();
             this.model.pageTitle = Repository.getCurrentPageTitle();
+            this.model.scriptBody = Repository.getCurrentPageScriptBody();
             this.model.propsScript = JSON.stringify(Repository.getCurrentPageMetaInfo(), null, '\t');
 
             this.model.documentMarkdown = '#### Meta info\n\nMeta info is an array of values.\n\n ' +
-                '**Example:**\n\n ```\n[\n\t{ name: \'some name\', property: \'some property value\'},\n\t' +
-                '{ name: \'some name\', property: \'some property value\'}\n]\n```\n\nPage\'s meta info will be placed ' +
-                'into meta tags in HTML file after generation of static content of the page.';
+                '**Example:**\n\n ```\n[\n\t{ "name": \"some name\", "content": \"some property value\" },\n\t' +
+                '{ "property": \"some name\", "content": \"some property value\" }\n]\n```\n\nPage\'s meta info will be placed ' +
+                'into meta tags in HTML file after generation of static content of the page.\n\n ' +
+                '#### Script\n\nIf you need to include into HTML body some script, for example, ' +
+                'Google analytics, this code will be included as first child in HTML body.';
 
             this.trigger(this.model);
 
@@ -89,6 +92,7 @@ var ModalPageInfoEditorStore = Reflux.createStore({
             Repository.setCurrentPageName(pageName);
             Repository.setCurrentPageTitle(options.pageTitle);
             Repository.setCurrentPageMetaInfo(metaInfo);
+            Repository.setCurrentPageScriptBody(options.scriptBody);
 
             var projectModel = Repository.getCurrentProjectModel();
             Repository.renewCurrentProjectModel(projectModel);

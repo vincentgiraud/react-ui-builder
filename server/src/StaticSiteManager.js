@@ -57,6 +57,7 @@ class StaticSiteManager {
             pageName: pageModel.pageName,
             pageTitle: pageModel.pageTitle,
             pageMetaInfo: pageModel.pageMetaInfo,
+            bodyScript: pageModel.bodyScript,
             imports: []
         };
 

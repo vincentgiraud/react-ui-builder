@@ -219,6 +219,14 @@ var Repository = {
         currentPageModel.pageMetaInfo = _.clone(metaInfo);
     },
 
+    getCurrentPageScriptBody: function(){
+        return currentPageModel.bodyScript || "";
+    },
+
+    setCurrentPageScriptBody: function(scriptText){
+        currentPageModel.bodyScript = scriptText;
+    },
+
     getTemplatePageModel: function(){
         return {
             pageName: 'UnnamedPage',
@@ -288,11 +296,17 @@ var Repository = {
         //
         var components = {};
         //
-        _.forOwn(HtmlComponents, function(component, componentName){
+        var componentNames = _.sortBy(_.keys(HtmlComponents), function(name){ return name; });
+        componentNames.map(function(componentName){
             components[componentName] = {
                 type: 'Reference'
             };
         });
+        //_.forOwn(HtmlComponents, function(component, componentName){
+        //    components[componentName] = {
+        //        type: 'Reference'
+        //    };
+        //});
         componentsTree['Html'] = components;
     },
 
