@@ -68,5 +68,5 @@ React UI Builder needs support
 If you think that it's worth to pledge small amount of money to development of the builder,
 please become our patron, visit: [the page on Patreon](https://www.patreon.com/ipselon?ty=h)
 
-Find our patrons [here](https://github.com/ipselon/react-ui-builder/blob/master/PATRONS.md) (3)
+Find our patrons [here](https://github.com/ipselon/react-ui-builder/blob/master/PATRONS.md) (4)
 
