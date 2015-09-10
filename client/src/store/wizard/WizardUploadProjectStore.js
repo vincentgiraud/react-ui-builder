@@ -102,7 +102,7 @@ var WizardUploadProjectStore = Reflux.createStore({
         this.model.projectDescription = options.projectDescription;
         if(!options.projectDescription || options.projectDescription.trim().length <= 0){
             this.model.errors.push('Project description is empty.');
-        } else if(options.projectDescription.trim().length > 400) {
+        } else if(options.projectDescription.trim().length > 1500) {
             this.model.errors.push('Project description should be less than 400 characters.');
         }
 

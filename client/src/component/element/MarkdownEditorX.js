@@ -65,7 +65,8 @@ var MarkdownEditorX = React.createClass({
             width: '100%'
         };
         var previewStyle = {
-            height: this.props.previewHeight || '100%'
+            height: this.props.previewHeight || '100%',
+            overflow: 'auto'
         };
 
         return (

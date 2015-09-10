@@ -461,7 +461,12 @@ class Api {
     readComponentDocument(options){
         return this.validator.validateOptions(options, ['componentName'])
             .then( () => {
-                return this.storageManager.readComponentDocument(options.componentName);
+                return this.indexManager.getComponentsNames();
+            })
+            .then( componentsNames => {
+                if(_.includes(componentsNames, options.componentName)){
+                    return this.storageManager.readComponentDocument(options.componentName);
+                }
             });
     }
 
