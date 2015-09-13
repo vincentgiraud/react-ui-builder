@@ -1,4 +1,5 @@
-<%  function processChild(model){
+<%
+    function processChild(model){
         var result = '<' + model.type + ' ' + processProps(model.props) + '>';
         if(model.children && model.children.length > 0) {
             _.forEach(model.children, function(child) {
@@ -9,7 +10,7 @@
         }
         result += '</' + model.type + '>';
         return result;
-    };
+    }
 
     function processStyle(styleObject){
         var result = '';
@@ -45,7 +46,7 @@
             });
         }
         return result;
-    };
+    }
 
     function processDefaultProps(props){
         var result = '';
@@ -67,17 +68,18 @@
                 }
             });
         }
-    return result;
-};%>
+        return result;
+    }
+%>
 'use strict';
 <% _.forEach(resources.requires, function(item, index) { %>
-require('<%=item.relativeSource%>');
+require('<%= item.relativeSource %>');
 <% }); %>
 var React = require('react');
 <% _.forEach(imports, function(item, index) { %>
-var <%=item.name%> = require('<%=item.relativeSource%>')<%if(item.member){%>.<%=item.member%><%}%>;
+var <%= item.name %> = require('<%= item.relativeSource %>')<%if(item.member){%>.<%= item.member %><%}%>;
 <% }); %>
-var <%=pageName%> = React.createClass({
+var <%= pageName %> = React.createClass({
 
     render: function(){
         return (
@@ -92,4 +94,4 @@ var <%=pageName%> = React.createClass({
     }
 });
 
-React.render(<<%=pageName%>/>, document.getElementById('content'));
+React.render(<<%= pageName %> />, document.getElementById('content'));

@@ -38,7 +38,9 @@ var DeskPageFrame = React.createClass({
 
         Server.onSocketEmit('compilerWatcher.success', function(data){
             if(data.compiledProcessCount >= 1){
-                if(domNode.contentDocument && domNode.contentDocument.documentElement){
+                if(domNode.contentWindow && domNode.contentWindow.document && domNode.contentWindow.document.body){
+                    this.contentScrollTop = domNode.contentWindow.document.body.scrollTop;
+                } else if(domNode.contentDocument && domNode.contentDocument.documentElement){
                     this.contentScrollTop = domNode.contentDocument.documentElement.scrollTop;
                 }
                 domNode.src = Repository.getHtmlForDesk();
@@ -81,8 +83,10 @@ var DeskPageFrame = React.createClass({
 
             this._hideModalProgress();
 
-            if(this.contentScrollTop){
-                doc.documentElement.scrollTop = this.contentScrollTop;
+            if(domNode.contentWindow && domNode.contentWindow.document && domNode.contentWindow.document.body){
+                domNode.contentWindow.document.body.scrollTop = this.contentScrollTop;
+            } else if(domNode.contentDocument && domNode.contentDocument.documentElement){
+                domNode.contentDocument.documentElement.scrollTop = this.contentScrollTop;
             }
         }
     },

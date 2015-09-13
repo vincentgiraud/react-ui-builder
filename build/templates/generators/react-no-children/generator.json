@@ -1,6 +1,6 @@
 {
-  "name": "react-no-children",
-  "description": "Generate React component source code excluding children.",
+  "name": "04-react",
+  "description": "04 | Syntax: ES5 | File extension: js | Children: no | Additional modules: no",
   "component": {
     "destDirPath": "src/components/{groupName}",
     "fileExtension": "js",

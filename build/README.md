@@ -3,22 +3,20 @@ Description
 
 [![Join the chat at https://gitter.im/ipselon/react-ui-builder](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ipselon/react-ui-builder?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-This tool is a visual builder of React JS components for your web application. 
-In builder you can easily combine available components with each other, and see how they look and feel right on a web page.
-Then you can generate a source code of new component from the combination. 
-Moreover, you can generate any additional modules with code generation plugins.
+The visual tool for prototyping UI for ReactJS components and Web applications. 
+In the builder you can easily combine available components with each other, and see how they look and feel right on a Web page.
+Then you can generate a source code of new ReactJS component from the combination. 
  
-Tightly integrated with React Component Exchange. Visit [the project gallery](http://helmetrex.com/Gallery.html) for more information.
+Tightly integrated with ReactJS Component Exchange. Visit [the project gallery](http://helmetrex.com/Gallery.html) for more information.
 
 Features
 --------
-* Easily compose UI of any complexity with available React components.
-* Generate source code for new React component from any combination of other components.
-* Generate any additional files or modules through the code generation plugins.
-* Edit source code of the project in other IDEs, changes automatically will be reloaded automatically.
-* Include and use third-party components in builder.
-* Publish own projects into the React Component Exchange.
-* Create static site with prepared HTML.
+* Easily prototype UI of any complexity with available ReactJS components.
+* Generate source code for new ReactJS component from any combination of other components.
+* Edit source code in other IDEs, the changes automatically will be reflected in the builder workspace.
+* Include and use any third-party components or even jQuery plugins in the builder.
+* Publish own projects on ReactJS Component Exchange site.
+* Create static site with prepared HTML which allows to deploy static content into Web hosting immediately.
 
 Installation
 ------------
@@ -60,12 +58,12 @@ For every project you will get a support.
 Documentation
 -------------
 
-To get familiar with the builder's interface and how it works please visit [React Component Exchange project gallery](http://helmetrex.com/Gallery.html)
+To get familiar with the builder's interface and how it works please visit [ReactJS Component Exchange project gallery](http://helmetrex.com/Gallery.html)
 
 React UI Builder needs support
 ------------------------------
 If you think that it's worth to pledge small amount of money to development of the builder,
 please become our patron, visit: [the page on Patreon](https://www.patreon.com/ipselon?ty=h)
 
-Find our patrons [here](https://github.com/ipselon/react-ui-builder/blob/master/PATRONS.md) (3)
+Find our patrons [here](https://github.com/ipselon/react-ui-builder/blob/master/PATRONS.md)
 

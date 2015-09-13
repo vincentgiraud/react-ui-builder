@@ -1,4 +1,5 @@
-<%  function processChild(model){
+<%
+    function processChild(model){
         var result = '<' + model.type + ' ' + processProps(model.props) + '>';
         if(model.children && model.children.length > 0) {
             _.forEach(model.children, function(child) {
@@ -9,7 +10,7 @@
         }
         result += '</' + model.type + '>';
         return result;
-    };
+    }
 
     function processStyle(styleObject){
         var result = '';
@@ -32,7 +33,7 @@
         if(props && !_.isEmpty(props)){
             _.forOwn(props, function(value, prop){
                 if(_.isString(value) && value.length > 0){
-                    result += prop + "={'" + value + "'} ";
+                    result += prop + "=\"" + value + "\" ";
                 } else if(_.isBoolean(value) || _.isNumber(value)){
                     result += prop + "={" + value + "} ";
                 } else if(_.isObject(value)){
@@ -45,7 +46,7 @@
             });
         }
         return result;
-    };
+    }
 
     function processDefaultProps(props){
         var result = '';
@@ -67,15 +68,15 @@
                 }
             });
         }
-    return result;
-};%>
+        return result;
+    }
+%>
 'use strict';
 
 var React = require('react');
-<% _.forEach(component.imports, function(item, index) { %>
-var <%=item.name%> = require('<%=item.relativeSource%>')<%if(item.member){%>.<%=item.member%><%}%>;
-<% }); %>
-var <%=component.componentName%> = React.createClass({
+<% _.forEach(component.imports, function(item, index) { %><%= '\n' %>var <%= item.name %> = require('<%= item.relativeSource %>')<%if(item.member){ %>.<%= item.member %><%}%>;<% }); %>
+
+var <%= component.componentName %> = React.createClass({
 
     getDefaultProps: function () {
         return {<%= processDefaultProps(component.model.props) %>};
@@ -83,10 +84,10 @@ var <%=component.componentName%> = React.createClass({
 
     render: function(){
         return (
-            <<%=component.model.type%> {...this.props} >
+            <<%= component.model.type %> {...this.props} >
 <%         if(component.model.children && component.model.children.length > 0) {
                 _.forEach(component.model.children, function(child) { %>
-                    <%=processChild(child)%>
+                    <%= processChild(child) %>
 <%              });
            } else { %>
                 {this.props.children}
@@ -99,4 +100,4 @@ var <%=component.componentName%> = React.createClass({
     }
 });
 
-module.exports = <%=component.componentName%>;
+module.exports = <%= component.componentName %>;

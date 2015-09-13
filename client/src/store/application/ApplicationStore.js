@@ -89,41 +89,53 @@ var ApplicationStore = Reflux.createStore({
     },
 
     onRefreshServerInfo: function(options){
-        var self = this;
         Server.invoke("getPackageConfig",
             {},
             function(errors){
-                self.onGoToErrors(errors);
-            },
+                this.onGoToErrors(errors);
+            }.bind(this),
             function(response){
                 if(response){
-                    self.model.packageVersion = response.version;
+                    this.model.packageVersion = response.version;
                 }
-                Server.invoke('readConfiguration', {},
-                    function(errors){
-                        //self.onGoToErrors(errors);
-                        self.onStoreBuilderConfig(self.model.builderConfig);
-                        self.onInitUserCredentials(options);
-                    },
-                    function(response){
-                        self.model.builderConfig = response;
-                        self.onInitUserCredentials(options);
-                    }
-                );
-            }
+                this.onReadBuilderConfig();
+                this.onInitUserCredentials(options);
+                //Server.invoke('readConfiguration', {},
+                //    function(errors){
+                //        //self.onGoToErrors(errors);
+                //        self.onStoreBuilderConfig(self.model.builderConfig);
+                //        self.onInitUserCredentials(options);
+                //    },
+                //    function(response){
+                //        self.model.builderConfig = response;
+                //        self.onInitUserCredentials(options);
+                //    }
+                //);
+            }.bind(this)
         )
     },
 
+    onReadBuilderConfig: function(){
+        var configObj = null;
+        try{
+            configObj = JSON.parse(docCookie.getItem("helmet-react-ui-builder-config"));
+        } catch(e){
+            // do nothing
+        }
+        this.model.builderConfig = configObj || {};
+    },
+
     onStoreBuilderConfig: function(config){
-        var self = this;
-        Server.invoke('storeConfiguration', config,
-            function(errors){
-                self.onGoToErrors(errors);
-            },
-            function(response){
-                ;
-            }
-        );
+        //var self = this;
+        docCookie.setItem("helmet-react-ui-builder-config", JSON.stringify(config), 31536e3, "/");
+        //Server.invoke('storeConfiguration', config,
+        //    function(errors){
+        //        self.onGoToErrors(errors);
+        //    },
+        //    function(response){
+        //        ;
+        //    }
+        //);
     },
 
     onOpenLocalProject: function(options){
@@ -175,6 +187,7 @@ var ApplicationStore = Reflux.createStore({
 
                     Server.onSocketEmit('compilerWatcher.success', function(data){
                         Repository.setComponentsTree(data.componentsTree);
+                        Repository.setCurrentProjectDocument(data.projectDocument);
                         PanelAvailableComponentsActions.refreshComponentList();
                     });
 
@@ -267,8 +280,8 @@ var ApplicationStore = Reflux.createStore({
             function(err){},
             function(response){
                 if(options.remember === true){
-                    docCookie.setItem("umyproto-react-builder-user", options.user, 31536e3, "/");
-                    docCookie.setItem("umyproto-react-builder-pass", options.pass, 31536e3, "/");
+                    docCookie.setItem("helmet-react-ui-builder-user", options.user, 31536e3, "/");
+                    docCookie.setItem("helmet-react-ui-builder-pass", options.pass, 31536e3, "/");
                 }
                 this.onLoadUserProfile(options.showError);
             }.bind(this));
@@ -278,8 +291,8 @@ var ApplicationStore = Reflux.createStore({
         Server.invoke("removeUserCredentials", {},
             function(err){},
             function(response){
-                docCookie.removeItem("umyproto-react-builder-user", "/");
-                docCookie.removeItem("umyproto-react-builder-pass", "/");
+                docCookie.removeItem("helmet-react-ui-builder-user", "/");
+                docCookie.removeItem("helmet-react-ui-builder-pass", "/");
                 this.onLoadUserProfile();
             }.bind(this));
     },

@@ -47,6 +47,8 @@ class LivePreviewManager {
         this.sourceDirPath = path.join(this.builderDirPath, sourceDirName);
         this.indexFilePath = path.join(this.sourceDirPath, indexFileName);
         this.docsDirPath = path.join(this.builderDirPath, docsDirName);
+        this.projectTemplateDirPath = path.join(this.builderDirPath, templateDirName);
+        this.projectPreviewTemplateDirPath = path.join(this.projectTemplateDirPath, previewTemplateDirName);
         this.scriptsDirName = scriptsDirName;
         this.configFilePath = path.join(this.builderDirPath, fileConfigName);
     }
@@ -56,6 +58,7 @@ class LivePreviewManager {
         var outputDirPath = path.join(this.buildDirPath, 'live-preview');
 
 
+        let projectHtmlTemplateFilePath = path.join(this.projectPreviewTemplateDirPath, 'Html.tpl');
         let htmlTemplateFilePath = path.join(this.previewTemplateDirPath, 'Html.tpl');
         let htmlTemplate = null;
 
@@ -66,9 +69,15 @@ class LivePreviewManager {
         });
 
         sequence = sequence.then(() => {
-            return this.fileManager.readFile(htmlTemplateFilePath)
+            return this.fileManager.readFile(projectHtmlTemplateFilePath)
                 .then(fileData => {
                     htmlTemplate = _.template(fileData);
+                })
+                .catch( () => {
+                    return this.fileManager.readFile(htmlTemplateFilePath)
+                        .then(fileData => {
+                            htmlTemplate = _.template(fileData);
+                        });
                 });
         });
 

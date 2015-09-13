@@ -47,6 +47,8 @@ class StaticSiteManager {
         this.sourceDirPath = path.join(this.builderDirPath, sourceDirName);
         this.indexFilePath = path.join(this.sourceDirPath, indexFileName);
         this.docsDirPath = path.join(this.builderDirPath, docsDirName);
+        this.projectTemplateDirPath = path.join(this.builderDirPath, templateDirName);
+        this.projectSiteTemplateDirPath = path.join(this.projectTemplateDirPath, siteTemplateDirName);
         this.scriptsDirName = scriptsDirName;
         this.configFilePath = path.join(this.builderDirPath, fileConfigName);
     }
@@ -130,19 +132,32 @@ class StaticSiteManager {
         };
 
         let projectDataObj = this.createProjectDataObject(projectModel, destDirPath, indexObj, pageContents);
-
+        let projectPageTemplateFilePath = path.join(this.projectSiteTemplateDirPath, 'Page.tpl');
+        let projectHtmlTemplateFilePath = path.join(this.projectSiteTemplateDirPath, 'Html.tpl');
         let pageTemplateFilePath = path.join(this.siteTemplateDirPath, 'Page.tpl');
         let htmlTemplateFilePath = path.join(this.siteTemplateDirPath, 'Html.tpl');
         let pageTemplate = null;
         let htmlTemplate = null;
-        return this.fileManager.readFile(pageTemplateFilePath)
+        return this.fileManager.readFile(projectPageTemplateFilePath)
             .then( fileData => {
                 pageTemplate = _.template(fileData);
             })
+            .catch( () => {
+                return this.fileManager.readFile(pageTemplateFilePath)
+                    .then( fileData => {
+                        pageTemplate = _.template(fileData);
+                    });
+            })
             .then( () => {
-                return this.fileManager.readFile(htmlTemplateFilePath)
+                return this.fileManager.readFile(projectHtmlTemplateFilePath)
                     .then( fileData => {
                         htmlTemplate = _.template(fileData);
+                    })
+                    .catch( () => {
+                        return this.fileManager.readFile(htmlTemplateFilePath)
+                            .then( fileData => {
+                                htmlTemplate = _.template(fileData);
+                            });
                     });
             })
             .then( () => {

@@ -1,4 +1,5 @@
-<%  function processChild(model){
+<%
+    function processChild(model){
         var result = '<' + model.type + ' ' + processProps(model.props) + '>';
         if(model.children && model.children.length > 0) {
             _.forEach(model.children, function(child) {
@@ -9,16 +10,16 @@
         }
         result += '</' + model.type + '>';
         return result;
-    };
+    }
 
     function processStyle(styleObject){
         var result = '';
         if(styleObject && !_.isEmpty(styleObject)){
             _.forOwn(styleObject, function(value, prop){
                 if(_.isString(value) && value.length > 0){
-                    result += prop + ": '" + value + "',";
+                    result += ' ' + prop + ": '" + value + "',";
                 } else if(_.isBoolean(value) || _.isNumber(value)){
-                    result += prop + ": " + value + ",";
+                    result += ' ' + prop + ": " + value + ",";
                 }
             });
             result = result.substr(0, result.length - 1);
@@ -32,20 +33,20 @@
         if(props && !_.isEmpty(props)){
             _.forOwn(props, function(value, prop){
                 if(_.isString(value) && value.length > 0){
-                    result += prop + "={'" + value + "'} ";
+                    result += prop + "=\"" + value + "\" ";
                 } else if(_.isBoolean(value) || _.isNumber(value)){
                     result += prop + "={" + value + "} ";
                 } else if(_.isObject(value)){
                     if(prop === 'style'){
-                        result += prop + "={{" + processStyle(value) + "}} ";
+                        result += prop + "={{ " + processStyle(value) + " }} ";
                     } else if(value['type']){
-                        result += prop +"={" + processChild(value) + "}";
+                        result += prop +"={ " + processChild(value) + " }";
                     }
                 }
             });
         }
         return result;
-    };
+    }
 
     function processDefaultProps(props){
         var result = '';
@@ -60,33 +61,34 @@
                     result += prop + ": " + value;
                 } else if(_.isObject(value)){
                     if(prop === 'style'){
-                        result += prop + ": {" + processStyle(value) + "}";
+                        result += prop + ": { " + processStyle(value) + " }";
                     } else if(value['type']){
-                        result += prop +": (" + processChild(value) + ")";
+                        result += prop +": ( " + processChild(value) + " )";
                     }
                 }
             });
         }
-    return result;
-};%>
+        return result;
+    }
+%>
 'use strict';
 
 var React = require('react');
-<% _.forEach(component.imports, function(item, index) { %>var <%=item.name%> = require('<%=item.relativeSource%>')<%if(item.member){%>.<%=item.member%><%}%>;<% }); %>
-<% _.forOwn(modules, function(module, name) { %>var <%=module.name%> = require('<%=module.relativeFilePath%>');<% });%>
+<% _.forEach(component.imports, function(item, index) { %><%= '\n' %>var <%= item.name %> = require('<%= item.relativeSource %>')<%if(item.member){ %>.<%= item.member %><%}%>;<% }); %>
+<% _.forOwn(modules, function(module, name) { %><%= '\n' %>var <%= module.name %> = require('<%= module.relativeFilePath %>');<% });%>
 
-var <%=component.componentName%> = React.createClass({
+var <%= component.componentName %> = React.createClass({
 
     getDefaultProps: function () {
         return {<%= processDefaultProps(component.model.props) %>};
     },
 
     getInitialState: function () {
-        return <%=modules.store.name%>.model;
+        return <%= modules.store.name %>.model;
     },
 
     componentDidMount(){
-        this.unsubscribe = <%=modules.store.name%>.listen(this.onModelChange);
+        this.unsubscribe = <%= modules.store.name %>.listen(this.onModelChange);
     },
 
     componentWillUnmount() {
@@ -99,10 +101,10 @@ var <%=component.componentName%> = React.createClass({
 
     render: function(){
         return (
-            <<%=component.model.type%> {...this.props} >
+            <<%= component.model.type %> {...this.props} >
 <%         if(component.model.children && component.model.children.length > 0) {
                 _.forEach(component.model.children, function(child) { %>
-                    <%=processChild(child)%>
+                    <%= processChild(child) %>
 <%              });
            } else { %>
                 {this.props.children}
@@ -115,4 +117,4 @@ var <%=component.componentName%> = React.createClass({
     }
 });
 
-module.exports = <%=component.componentName%>;
+module.exports = <%= component.componentName %>;

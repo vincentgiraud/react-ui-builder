@@ -88,6 +88,10 @@ var DeskPageFrameStore = Reflux.createStore({
                         componentOverlay = Overlays.createComponentOverlay(frameWindow, this.model.selectedUmyId, searchResult);
                     }
                     componentOverlay.append(domNode.domElement);
+                    //umy.workspace._pageFrame.contents().find("html").animate(
+                    //    { scrollTop: (parseInt(_element.jElement().offset().top) - 150) },
+                    //    400
+                    //);
                 }
                 ToolbarBreadcrumbsActions.selectItem(searchResult);
                 PanelOptionsActions.selectItem(searchResult, this.model.selectedUmyId);

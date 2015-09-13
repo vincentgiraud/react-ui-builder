@@ -392,15 +392,19 @@ class Api {
                 this.indexManager.getComponentsTree()
                     .then(componentsTree => {
                         response.componentsTree = componentsTree;
-                        setTimeout( () => {
-                            this.socketClient.emit('compilerWatcher.success', response);
-                        }, 100);
-
+                    })
+                    .then( () => {
+                        var componentsNames = this.indexManager.getComponentsNamesFromTree(response.componentsTree);
+                        return this.storageManager.readProjectDocument(componentsNames)
+                            .then( documentObj => {
+                                response.projectDocument = documentObj;
+                            });
+                    })
+                    .then( () => {
+                        this.socketClient.emit('compilerWatcher.success', response);
                     })
                     .catch(err => {
-                        setTimeout( () => {
-                            this.socketClient.emit('compilerWatcher.errors', err);
-                        }, 100);
+                        this.socketClient.emit('compilerWatcher.errors', err);
                     });
             }
         });

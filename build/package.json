@@ -1,7 +1,7 @@
 {
   "name": "react-ui-builder",
-  "version": "0.3.3",
-  "description": "The visual building and generating code for React components",
+  "version": "0.3.4",
+  "description": "The visual tool for prototyping UI for ReactJS components and Web applications.",
   "main": "react-ui-builder.js",
   "scripts": {
     "start": "node react-ui-builder.js"
@@ -16,12 +16,14 @@
     "url": "https://github.com/ipselon/react-ui-builder/issues"
   },
   "keywords": [
-    "react",
+    "reactjs",
     "UI",
-    "builder",
-    "generator",
+    "web",
+    "prototyping",
+    "generating",
     "visual",
-    "editor"
+    "editor",
+    "builder"
   ],
   "dependencies": {
     "babel-core": "5.8.3",

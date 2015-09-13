@@ -8,6 +8,7 @@ var ApplicationActions = Reflux.createActions([
     'goToStartPage',
     'goToGallery',
     'refreshServerInfo',
+    'readBuilderConfig',
     'storeBuilderConfig',
     'openLocalProject',
     'stopAutosaveProjectModel',

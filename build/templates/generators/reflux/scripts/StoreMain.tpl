@@ -1,14 +1,14 @@
 'use strict';
 
 var Reflux = require('reflux');
-var <%=modules.action.name%> = require('<%=modules.action.relativeFilePath%>');
+var <%= modules.action.name %> = require('<%= modules.action.relativeFilePath %>');
 
 var defaultModel = {
 };
 
-var <%=modules.store.name%> = Reflux.createStore({
+var <%= modules.store.name %> = Reflux.createStore({
     model: defaultModel,
-    listenables: <%=modules.action.name%>,
+    listenables: <%= modules.action.name %>,
 
     onTestAction: function() {
         this.trigger(this.model);
@@ -16,4 +16,4 @@ var <%=modules.store.name%> = Reflux.createStore({
 
 });
 
-module.exports = <%=modules.store.name%>;
+module.exports = <%= modules.store.name %>;

@@ -91,9 +91,7 @@ var HtmlComponents = {
     },
     'img': {
         props: {
-            width: 200,
-            height: 100,
-            src: 'http://placehold.it/200x100'
+            src: 'http://lorempixel.com/600/337/nature/'
         }
     },
     'form': {

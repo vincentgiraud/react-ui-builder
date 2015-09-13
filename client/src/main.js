@@ -22,8 +22,8 @@ var Server = require('./api/Server.js');
 var Application = require('./component/application/Application.js');
 var ApplicationActions = require('./action/application/ApplicationActions.js');
 
-var user = docCookie.getItem("umyproto-react-builder-user");
-var pass = docCookie.getItem("umyproto-react-builder-pass");
+var user = docCookie.getItem("helmet-react-ui-builder-user");
+var pass = docCookie.getItem("helmet-react-ui-builder-pass");
 
 plugins.init();
 

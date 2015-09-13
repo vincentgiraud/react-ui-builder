@@ -23,6 +23,10 @@ var GlobalOverlayStore = Reflux.createStore({
                 timeoutPid = null;
             }.bind(this), 300);
         }
+        //if (!this.model.isShown) {
+        //    this.model.isShown = true;
+        //    this.trigger(this.model);
+        //}
     },
 
     onHide: function(){
