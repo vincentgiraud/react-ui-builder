@@ -33,14 +33,28 @@
         if(props && !_.isEmpty(props)){
             _.forOwn(props, function(value, prop){
                 if(_.isString(value) && value.length > 0){
-                    result += prop + "={'" + value + "'} ";
+                    result += prop + "=\"" + value + "\"";
                 } else if(_.isBoolean(value) || _.isNumber(value)){
                     result += prop + "={" + value + "} ";
+                } else if(_.isArray(value)){
+                    var arrayString = '';
+                    _.forEach(value, function(item){
+                        if(_.isObject(item)){
+                            arrayString += '{ ' + processStyle(item) + ' },';
+                        } else {
+                            if(_.isString(item) && item.length > 0){
+                                arrayString += "\'" + item + "\',";
+                            } else if(_.isBoolean(item) || _.isNumber(item)){
+                                arrayString += item + ',';
+                            }
+                        }
+                    });
+                    result += prop + '={[ ' + arrayString.substr(0, arrayString.length - 1) + ']}';
                 } else if(_.isObject(value)){
-                    if(prop === 'style'){
-                        result += prop + "={{ " + processStyle(value) + " }} ";
-                    } else if(value['type']){
+                    if(value['type']){
                         result += prop +"={ " + processChild(value) + " }";
+                    } else {
+                        result += prop + "={{ " + processStyle(value) + " }} ";
                     }
                 }
             });
@@ -48,28 +62,6 @@
         return result;
     }
 
-    function processDefaultProps(props){
-        var result = '';
-        if(props && !_.isEmpty(props)){
-            _.forOwn(props, function(value, prop){
-                if(result.length > 0){
-                    result += ", ";
-                }
-                if(_.isString(value) && value.length > 0){
-                    result += prop + ": '" + value + "'";
-                } else if(_.isBoolean(value) || _.isNumber(value)){
-                    result += prop + ": " + value;
-                } else if(_.isObject(value)){
-                    if(prop === 'style'){
-                        result += prop + ": { " + processStyle(value) + " }";
-                    } else if(value['type']){
-                        result += prop +": ( " + processChild(value) + " )";
-                    }
-                }
-            });
-        }
-        return result;
-    }
 %>
 'use strict';
 <% _.forEach(resources.requires, function(item, index) { %>

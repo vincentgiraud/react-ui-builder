@@ -33,13 +33,42 @@
         if(props && !_.isEmpty(props)){
             _.forOwn(props, function(value, prop){
                 if(_.isString(value) && value.length > 0){
-                    result += prop + "=\"" + value + "\" ";
+                    result += prop + "=\"" + value + "\"";
                 } else if(_.isBoolean(value) || _.isNumber(value)){
                     result += prop + "={" + value + "} ";
+                } else if(_.isArray(value)){
+                    var arrayString = '';
+                    _.forEach(value, function(item){
+                        if(_.isObject(item)){
+                            arrayString += '{ ' + processStyle(item) + ' },';
+                        } else {
+                            if(_.isString(item) && item.length > 0){
+                                arrayString += "\'" + item + "\',";
+                            } else if(_.isBoolean(item) || _.isNumber(item)){
+                                arrayString += item + ',';
+                            }
+                        }
+                    });
+                    result += prop + '={[ ' + arrayString.substr(0, arrayString.length - 1) + ']}';
                 } else if(_.isObject(value)){
-                    if(prop === 'style'){
+                    if(value['type']){
+                        result += prop +"={ " + processChild(value) + " }";
+                    } else {
                         result += prop + "={{ " + processStyle(value) + " }} ";
-                    } else if(value['type']){
+                    }
+                }
+            });
+        }
+        return result;
+    }
+
+    function processElementProps(props){
+
+        var result = '';
+        if(props && !_.isEmpty(props)){
+            _.forOwn(props, function(value, prop){
+                if(_.isObject(value)){
+                    if(value['type']){
                         result += prop +"={ " + processChild(value) + " }";
                     }
                 }
@@ -48,28 +77,37 @@
         return result;
     }
 
-    function processDefaultProps(props){
+    function processDefaultProps(props) {
         var result = '';
-        if(props && !_.isEmpty(props)){
-            _.forOwn(props, function(value, prop){
-                if(result.length > 0){
-                    result += ", ";
-                }
-                if(_.isString(value) && value.length > 0){
-                    result += prop + ": '" + value + "'";
-                } else if(_.isBoolean(value) || _.isNumber(value)){
-                    result += prop + ": " + value;
-                } else if(_.isObject(value)){
-                    if(prop === 'style'){
-                        result += prop + ": { " + processStyle(value) + " }";
-                    } else if(value['type']){
-                        result += prop +": ( " + processChild(value) + " )";
-                    }
+        if (props && !_.isEmpty(props)) {
+            _.forOwn(props, function (value, prop) {
+                if (_.isString(value) && value.length > 0) {
+                    result += prop + ": '" + value + "', ";
+                } else if (_.isBoolean(value) || _.isNumber(value)) {
+                    result += prop + ": " + value + ", ";
+                } else if(_.isArray(value)){
+                    var arrayString = '';
+                    _.forEach(value, function(item){
+                        if(_.isObject(item)){
+                            arrayString += '{ ' + processStyle(item) + ' },';
+                        } else {
+                            if(_.isString(item) && item.length > 0){
+                                arrayString += "\'" + item + "\',";
+                            } else if(_.isBoolean(item) || _.isNumber(item)){
+                                arrayString += item + ',';
+                            }
+                        }
+                    });
+                    result += prop + ': [ ' + arrayString.substr(0, arrayString.length - 1) + '], ';
+                } else if (_.isObject(value)) {
+                    result += prop + ": { " + processStyle(value) + " }, ";
                 }
             });
+            result = result.length > 2 ? result.substr(0, result.length - 2) : result;
         }
         return result;
     }
+
 %>
 'use strict';
 
@@ -101,7 +139,7 @@ var <%= component.componentName %> = React.createClass({
 
     render: function(){
         return (
-            <<%= component.model.type %> {...this.props} >
+            <<%= component.model.type %> {...this.props} <%= processElementProps(component.model.props) %> >
 <%         if(component.model.children && component.model.children.length > 0) {
                 _.forEach(component.model.children, function(child) { %>
                     <%= processChild(child) %>

@@ -2,7 +2,6 @@ var _ = require('lodash');
 var React = require('react/addons');
 var components = require('./index.js');
 
-
 function get(onError, onSuccess){
     $.ajax({
         type: 'GET',
@@ -98,7 +97,7 @@ var PageForDesk = React.createClass({
     render: function(){
         var elementTree = !_.isEmpty(this.state) ?
             this.createElements(this.state) :
-            (<h4 style={{textAlign: 'center'}}>There are runtime errors during rendering of the page. Please see console output. React doesn't handle runtime errors.</h4>);
+            (<h4 style={{textAlign: 'center'}}>There are runtime errors during rendering of the page. Please see console output.</h4>);
         return (
             <div>
                 {elementTree}
@@ -154,8 +153,34 @@ var PageForDesk = React.createClass({
         var result = null;
         try{
             result = React.createElement(type, props, nestedElements);
+            if(result.type.prototype && result.type.prototype.render){
+                result.type.prototype.render = (function(fn){
+                    return function render(){
+                        try {
+                            return fn.apply(this, arguments);
+                        } catch (err) {
+                            console.error(err);
+                            return React.createElement('div', {
+                                style: {
+                                    width: '100%',
+                                    height: '100%',
+                                    backgroundColor: '#c62828',
+                                    color: 'white',
+                                    padding: '3px',
+                                    display: 'table'
+                                }
+                            }, React.createElement('span', {
+                                style: {
+                                    display: 'table-cell',
+                                    verticalAlign: 'middle'
+                                }
+                            }, '\`' + options.type + '\` ' + err.toString()));
+                        }
+                    }
+                }(result.type.prototype.render));
+            }
         } catch(e){
-            console.error('Element type: ' + options.type + ' is not valid React Element. Please check your index.js file');
+            console.error('Element type: ' + options.type + ' is not valid React Element. Please check your index.js file. ' + e);
         }
         return result;
     },
