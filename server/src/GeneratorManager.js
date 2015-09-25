@@ -2,31 +2,30 @@
 import _ from 'lodash';
 import path from 'path';
 import FileManager from './FileManager.js';
-import IndexManager from './IndexManager.js';
 import * as modelParser from './ModelParser.js';
 import * as pathResolver from './PathResolver.js';
 import * as formatter from './FileFormatter.js';
 
 class GeneratorManager {
 
-    constructor(projectDirPath,
-                builderDirName = '.builder',
-                generatorsDirName = 'generators',
-                sourceDirName = 'src',
-                scriptsDirName = 'scripts'){
+    constructor(sm, im){
 
-        this.projectDirPath = projectDirPath;
-        this.builderDirPath = path.join(projectDirPath, builderDirName);
-        this.generatorsDirPath = path.join(this.builderDirPath, generatorsDirName);
-        this.sourceDirPath = path.join(this.builderDirPath, sourceDirName);
-        this.indexFilePath = path.join(this.sourceDirPath, 'index.js');
-        this.scriptsDirName = scriptsDirName;
+        this.sm = sm;
+
+        //
+        //this.projectDirPath = projectDirPath;
+        //this.builderDirPath = path.join(projectDirPath, builderDirName);
+        //this.generatorsDirPath = path.join(this.builderDirPath, generatorsDirName);
+        //this.sourceDirPath = path.join(this.builderDirPath, sourceDirName);
+        //this.indexFilePath = path.join(this.sourceDirPath, 'index.js');
+        //this.scriptsDirName = scriptsDirName;
+
         this.fileManager = new FileManager();
-        this.indexManager = new IndexManager(this.projectDirPath);
+        this.indexManager = im;
     }
 
     initGenerator(name){
-        return this.fileManager.readDirectory(this.generatorsDirPath, ['generator.json'])
+        return this.fileManager.readDirectory(this.sm.getProject('generators.dirPath'), ['generator.json'])
             .then( found => {
                 if(!found.files || found.files.length <= 0){
                     throw Error('Current project does not have a generator, please add a generator.');
@@ -60,7 +59,7 @@ class GeneratorManager {
     }
 
     getGeneratorList(){
-        return this.fileManager.readDirectory(this.generatorsDirPath, ['generator.json'])
+        return this.fileManager.readDirectory(this.sm.getProject('generators.dirPath'), ['generator.json'])
             .then( found => {
                 if(!found.files || found.files.length <= 0){
                     throw Error('Current project does not have a generator, please add a generator.');
@@ -110,7 +109,7 @@ class GeneratorManager {
                 model: componentModel,
                 componentName: userInputObj.componentName,
                 groupName: userInputObj.groupName,
-                indexFilePath: this.indexFilePath
+                indexFilePath: this.sm.getProject('index.filePath')
             }
         };
 
@@ -145,7 +144,7 @@ class GeneratorManager {
                     }
                     dataObj.component.outputFilePath =
                         path.join(
-                            this.projectDirPath,
+                            this.sm.getProject('dirPath'),
                             pathResolver.replaceInPath(
                                 generatorObj.config.component.destDirPath,
                                 _.pick(dataObj.component, ['componentName', 'groupName'])
@@ -154,7 +153,7 @@ class GeneratorManager {
                             dataObj.component.componentName + '.' + generatorObj.config.component.fileExtension
                         );
                     dataObj.component.generatorScriptPath =
-                        path.join(generatorObj.dirPath, this.scriptsDirName, generatorObj.config.component.script);
+                        path.join(generatorObj.dirPath, this.sm.getProject('scripts.dirName'), generatorObj.config.component.script);
 
                     dataObj.modules = {};
                     if(generatorObj.config.modules && generatorObj.config.modules.length > 0){
@@ -164,12 +163,12 @@ class GeneratorManager {
 
                             dataObj.modules[module.id] = {
                                 outputFilePath: path.join(
-                                    this.projectDirPath,
+                                    this.sm.getProject('dirPath'),
                                     pathResolver.replaceInPath( module.destDirPath, replaceInfoObj ),
                                     pathResolver.replaceInPath( module.name, replaceInfoObj ) + '.js'
                                 ),
                                 name: pathResolver.replaceInPath( module.name, replaceInfoObj ),
-                                generatorScriptPath: path.join(generatorObj.dirPath, this.scriptsDirName, module.script),
+                                generatorScriptPath: path.join(generatorObj.dirPath, this.sm.getProject('scripts.dirName'), module.script),
                                 validateJS: module.validateJS
                             };
 
@@ -224,7 +223,7 @@ class GeneratorManager {
                 });
 
                 sequence = sequence.then(() => {
-                    return this.fileManager.removeFile(path.join(this.projectDirPath, '.errors'))
+                    return this.fileManager.removeFile(path.join(this.sm.getProject('dirPath'), '.errors'))
                         .then( () => {
                             return generatedObj;
                         });
@@ -287,7 +286,7 @@ class GeneratorManager {
                                 let result = formatter.formatJsFile(sourceCode);
                                 resolve(result);
                             } catch (e) {
-                                let errorFilePath = path.join(this.projectDirPath, '.errors', 'generators', path.basename(scriptFilePath));
+                                let errorFilePath = path.join(this.sm.getProject('dirPath'), '.errors', 'generators', path.basename(scriptFilePath));
                                 this.fileManager.ensureFilePath(errorFilePath)
                                     .then(() => {
                                         this.fileManager.writeFile(errorFilePath, prevResult)

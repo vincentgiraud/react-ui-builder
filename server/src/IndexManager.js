@@ -63,17 +63,15 @@ function memberExpressionToString(node, result){
 
 class IndexManager {
 
-    constructor(projectDirPath,
-                builderDirName = '.builder',
-                sourceDirName = 'src',
-                indexFileName = 'index.js' ){
+    constructor(sm){
 
-        this.indexFilePath = path.join(projectDirPath, builderDirName, sourceDirName, indexFileName);
+        this.sm = sm;
+        //this.indexFilePath = path.join(projectDirPath, builderDirName, sourceDirName, indexFileName);
         this.fileManager = new FileManager();
     }
 
     parseIndexFile(){
-        return this.fileManager.readFile(this.indexFilePath)
+        return this.fileManager.readFile(this.sm.getProject('index.filePath'))
             .then( data => {
                 if(!data){
                     throw Error('Index file is empty.');
@@ -81,7 +79,7 @@ class IndexManager {
                 try{
                     return fileParser.getFileAst(data);
                 } catch(e){
-                    throw Error(e.message + '. File path: ' + this.indexFilePath);
+                    throw Error(e.message + '. File path: ' + this.sm.getProject('index.filePath'));
                 }
             });
     }
@@ -148,7 +146,7 @@ class IndexManager {
             _.forEach(requires, item => {
                 if( item.source && item.source.indexOf('../../') === 0){
                     item.absoluteSource =
-                        path.resolve(path.dirname(this.indexFilePath), item.source);
+                        path.resolve(path.dirname(this.sm.getProject('index.filePath')), item.source);
                 }
             });
         }
@@ -159,7 +157,7 @@ class IndexManager {
                     group.components.map( component => {
                         if(component.source && component.source.indexOf('../../') === 0){
                             component.absoluteSource =
-                                path.resolve(path.dirname(this.indexFilePath), component.source);
+                                path.resolve(path.dirname(this.sm.getProject('index.filePath')), component.source);
                         }
                     });
                 }
@@ -244,7 +242,7 @@ class IndexManager {
                 return escodegen.generate(ast);
 
             }).then( fileData => {
-                return this.fileManager.writeFile(this.indexFilePath, fileData, true);
+                return this.fileManager.writeFile(this.sm.getProject('index.filePath'), fileData, true);
             }).then( () => {
                 return this.initIndex();
             });

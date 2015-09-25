@@ -5,8 +5,9 @@ import FileManager from './FileManager.js';
 
 class ClientManager {
 
-    constructor(){
-        this.client = new Client();
+    constructor(sm){
+        this.sm = sm;
+        this.client = new Client(this.sm);
         this.fileManager = new FileManager();
     }
 
@@ -24,11 +25,11 @@ class ClientManager {
 
     loadUserProfile(){
         var userProfile = {
-            login: this.client.getUser()
+            login: this.sm.getIn('client.user')
         };
         return this.client.post("/secure/getUserProfile", userProfile, true)
             .then( () => {
-                return { userName: this.client.getUser() };
+                return { userName: this.sm.getIn('client.user') };
             });
     }
 

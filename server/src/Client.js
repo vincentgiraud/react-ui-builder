@@ -2,30 +2,25 @@ import fs from 'fs-extra';
 import request from 'request';
 import FileManager from './FileManager.js';
 
-const defaultConfiguration = {
-    serviceURL: 'http://helmetrex.com/rbs'
-    //serviceURL: 'http://localhost/rbs'
-};
-
 class Client {
 
-    constructor (configuration = defaultConfiguration) {
-        this.configModel = configuration;
+    constructor (sm) {
+        this.sm = sm;
         this.fileManager = new FileManager();
     }
 
     setupUserCredentials(options){
         return new Promise( (resolve, reject) => {
-            this.configModel.user = options.user;
-            this.configModel.pass = options.pass;
+            this.sm.setIn('client.user', options.user);
+            this.sm.setIn('client.pass', options.pass);
             resolve();
         });
     }
 
     removeUserCredentials(){
         return new Promise( (resolve, reject) => {
-            this.configModel.user = null;
-            this.configModel.pass = null;
+            this.sm.setIn('client.user', null);
+            this.sm.setIn('client.pass', null);
             resolve();
         });
     }
@@ -36,7 +31,7 @@ class Client {
 
     post (methodName, body, isAuth = false) {
         return new Promise( (resolve, reject) => {
-            const url = this.configModel.serviceURL + '/' + methodName;
+            const url = this.sm.getIn('client.serviceURL') + '/' + methodName;
             var requestOptions = {
                 uri: url,
                 method: 'POST',
@@ -44,10 +39,10 @@ class Client {
                 body: body
             };
             if (isAuth) {
-                if (this.configModel.user && this.configModel.pass) {
+                if (this.sm.getIn('client.user') && this.sm.getIn('client.pass')) {
                     requestOptions.auth = {
-                        'user': this.configModel.user,
-                        'pass': this.configModel.pass,
+                        'user': this.sm.getIn('client.user'),
+                        'pass': this.sm.getIn('client.pass'),
                         'sendImmediately': true
                     }
                 } else {
@@ -66,7 +61,7 @@ class Client {
                                     reject('Got error code ' + response.statusCode + ' processing request to ' + url);
                                 }
                             } else if (error) {
-                                reject('Error connection to ' + this.configModel.serviceURL);
+                                reject('Error connection to ' + this.sm.getIn('client.serviceURL'));
                             } else {
                                 if (body.error === true) {
                                     let errorMessage = "Error: ";
@@ -81,7 +76,7 @@ class Client {
                                 }
                             }
                         } else {
-                            reject('Error connection to ' + this.configModel.serviceURL);
+                            reject('Error connection to ' + this.sm.getIn('client.serviceURL'));
                         }
                     }
                 )
@@ -94,7 +89,7 @@ class Client {
     download(methodName, body, isAuth = false) {
         return new Promise( (resolve, reject) => {
             const requestBody = body;
-            const url = this.configModel.serviceURL + methodName;
+            const url = this.sm.getIn('client.serviceURL') + methodName;
             let requestOptions = {
                 uri: url,
                 headers: {'Content-type': 'application/json'},
@@ -103,10 +98,10 @@ class Client {
                 encoding: null
             };
             if (isAuth) {
-                if (this.configModel.user && this.configModel.pass) {
+                if (this.sm.getIn('client.user') && this.sm.getIn('client.pass')) {
                     requestOptions.auth = {
-                        'user': this.configModel.user,
-                        'pass': this.configModel.pass,
+                        'user': this.sm.getIn('client.user'),
+                        'pass': this.sm.getIn('client.pass'),
                         'sendImmediately': true
                     }
                 } else {
@@ -125,12 +120,12 @@ class Client {
                                     reject('Got error code ' + response.statusCode + ' processing request to ' + url);
                                 }
                             } else if (error) {
-                                reject('Error connection to ' + this.configModel.serviceURL);
+                                reject('Error connection to ' + this.sm.getIn('client.serviceURL'));
                             } else {
                                 resolve(body);
                             }
                         } else {
-                            reject('Error connection to ' + this.configModel.serviceURL);
+                            reject('Error connection to ' + this.sm.getIn('client.serviceURL'));
                         }
                     }
                 )
@@ -143,17 +138,17 @@ class Client {
 
     downloadGet(methodName, isAuth = false) {
         return new Promise( (resolve, reject) => {
-            const url = this.configModel.serviceURL + methodName;
+            const url = this.sm.getIn('client.serviceURL') + methodName;
             let requestOptions = {
                 uri: url,
                 method: 'GET',
                 encoding: null
             };
             if (isAuth) {
-                if (this.configModel.user && this.configModel.pass) {
+                if (this.sm.getIn('client.user') && this.sm.getIn('client.pass')) {
                     requestOptions.auth = {
-                        'user': this.configModel.user,
-                        'pass': this.configModel.pass,
+                        'user': this.sm.getIn('client.user'),
+                        'pass': this.sm.getIn('client.pass'),
                         'sendImmediately': true
                     }
                 } else {
@@ -172,12 +167,12 @@ class Client {
                                     reject('Got error code ' + response.statusCode + ' processing request to ' + url);
                                 }
                             } else if (error) {
-                                reject('Error connection to ' + this.configModel.serviceURL);
+                                reject('Error connection to ' + this.sm.getIn('client.serviceURL'));
                             } else {
                                 resolve(body);
                             }
                         } else {
-                            reject('Error connection to ' + this.configModel.serviceURL);
+                            reject('Error connection to ' + this.sm.getIn('client.serviceURL'));
                         }
                     }
                 )
@@ -190,16 +185,16 @@ class Client {
 
     upload(option, isAuth = false) {
         return new Promise( (resolve, reject) => {
-            const url = this.configModel.serviceURL + option.url;
+            const url = this.sm.getIn('client.serviceURL') + option.url;
             let requestOptions = {
                 uri: url,
                 method: 'POST'
             };
             if (isAuth) {
-                if (this.configModel.user && this.configModel.pass) {
+                if (this.sm.getIn('client.user') && this.sm.getIn('client.pass')) {
                     requestOptions.auth = {
-                        'user': this.configModel.user,
-                        'pass': this.configModel.pass,
+                        'user': this.sm.getIn('client.user'),
+                        'pass': this.sm.getIn('client.pass'),
                         'sendImmediately': true
                     }
                 } else {
@@ -226,7 +221,7 @@ class Client {
                                     reject('Got error code ' + response.statusCode + ' processing request to ' + url);
                                 }
                             } else if (error) {
-                                reject('Error connection to ' + this.configModel.serviceURL);
+                                reject('Error connection to ' + this.sm.getIn('client.serviceURL'));
                             } else if (body) {
                                 if (body.error === true) {
                                     let errorMessage = "Error: ";
@@ -241,7 +236,7 @@ class Client {
                                 }
                             }
                         } else {
-                            reject('Error connection to ' + this.configModel.serviceURL);
+                            reject('Error connection to ' + this.sm.getIn('client.serviceURL'));
                         }
                     }
                 )

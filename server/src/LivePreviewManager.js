@@ -25,41 +25,43 @@ const previewTemplateDirName = 'live-preview';
 class LivePreviewManager {
 
 
-    constructor(serverDirPath){
+    constructor(sm){
 
-        this.serverDirPath = serverDirPath;
-        this.serverConfigFilePath = path.join(this.serverDirPath, configFileName);
-        this.serverTemplateDirPath = path.join(this.serverDirPath, templateDirName);
-        this.packageFilePath = path.join(this.serverDirPath, npmPackageFileName);
-        this.storageDirPath = path.join(this.serverDirPath, storageDirName);
-        this.previewTemplateDirPath = path.join(this.serverTemplateDirPath, previewTemplateDirName);
+        this.sm = sm;
+
+        //this.serverDirPath = serverDirPath;
+        //this.serverConfigFilePath = path.join(this.serverDirPath, configFileName);
+        //this.serverTemplateDirPath = path.join(this.serverDirPath, templateDirName);
+        //this.packageFilePath = path.join(this.serverDirPath, npmPackageFileName);
+        //this.storageDirPath = path.join(this.serverDirPath, storageDirName);
+        //this.previewTemplateDirPath = path.join(this.serverTemplateDirPath, previewTemplateDirName);
 
         this.fileManager = new FileManager();
         this.compiler = new ProjectCompiler();
 
     }
 
-    setProjectDirPath(projectDirPath) {
-        this.projectDirPath = projectDirPath;
-        this.builderDirPath = path.join(projectDirPath, builderDirName);
-        this.buildDirPath = path.join(this.builderDirPath, buildDirName);
-        this.generatorsDirPath = path.join(this.builderDirPath, generatorsDirName);
-        this.sourceDirPath = path.join(this.builderDirPath, sourceDirName);
-        this.indexFilePath = path.join(this.sourceDirPath, indexFileName);
-        this.docsDirPath = path.join(this.builderDirPath, docsDirName);
-        this.projectTemplateDirPath = path.join(this.builderDirPath, templateDirName);
-        this.projectPreviewTemplateDirPath = path.join(this.projectTemplateDirPath, previewTemplateDirName);
-        this.scriptsDirName = scriptsDirName;
-        this.configFilePath = path.join(this.builderDirPath, fileConfigName);
-    }
+    //setProjectDirPath(projectDirPath) {
+    //    this.projectDirPath = projectDirPath;
+    //    this.builderDirPath = path.join(projectDirPath, builderDirName);
+    //    this.buildDirPath = path.join(this.builderDirPath, buildDirName);
+    //    this.generatorsDirPath = path.join(this.builderDirPath, generatorsDirName);
+    //    this.sourceDirPath = path.join(this.builderDirPath, sourceDirName);
+    //    this.indexFilePath = path.join(this.sourceDirPath, indexFileName);
+    //    this.docsDirPath = path.join(this.builderDirPath, docsDirName);
+    //    this.projectTemplateDirPath = path.join(this.builderDirPath, templateDirName);
+    //    this.projectPreviewTemplateDirPath = path.join(this.projectTemplateDirPath, previewTemplateDirName);
+    //    this.scriptsDirName = scriptsDirName;
+    //    this.configFilePath = path.join(this.builderDirPath, fileConfigName);
+    //}
 
     doGeneration(projectModel){
 
-        var outputDirPath = path.join(this.buildDirPath, 'live-preview');
+        var outputDirPath = this.sm.getProject('livePreviewBuild.dirPath');
 
 
-        let projectHtmlTemplateFilePath = path.join(this.projectPreviewTemplateDirPath, 'Html.tpl');
-        let htmlTemplateFilePath = path.join(this.previewTemplateDirPath, 'Html.tpl');
+        let projectHtmlTemplateFilePath = path.join(this.sm.getProject('livePreviewTemplates.dirPath'), 'Html.tpl');
+        let htmlTemplateFilePath = path.join(this.sm.getServer('livePreviewTemplates.dirPath'), 'Html.tpl');
         let htmlTemplate = null;
 
         let sequence = Promise.resolve();

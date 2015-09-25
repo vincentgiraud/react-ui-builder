@@ -25,33 +25,34 @@ const siteTemplateDirName = 'static-site';
 class StaticSiteManager {
 
 
-    constructor(serverDirPath){
+    constructor(sm){
 
-        this.serverDirPath = serverDirPath;
-        this.serverConfigFilePath = path.join(this.serverDirPath, configFileName);
-        this.serverTemplateDirPath = path.join(this.serverDirPath, templateDirName);
-        this.packageFilePath = path.join(this.serverDirPath, npmPackageFileName);
-        this.storageDirPath = path.join(this.serverDirPath, storageDirName);
-        this.siteTemplateDirPath = path.join(this.serverTemplateDirPath, siteTemplateDirName);
+        this.sm = sm;
+        //this.serverDirPath = serverDirPath;
+        //this.serverConfigFilePath = path.join(this.serverDirPath, configFileName);
+        //this.serverTemplateDirPath = path.join(this.serverDirPath, templateDirName);
+        //this.packageFilePath = path.join(this.serverDirPath, npmPackageFileName);
+        //this.storageDirPath = path.join(this.serverDirPath, storageDirName);
+        //this.siteTemplateDirPath = path.join(this.serverTemplateDirPath, siteTemplateDirName);
 
         this.fileManager = new FileManager();
         this.compiler = new ProjectCompiler();
 
     }
 
-    setProjectDirPath(projectDirPath){
-        this.projectDirPath = projectDirPath;
-        this.builderDirPath = path.join(projectDirPath, builderDirName);
-        this.buildDirPath = path.join(this.builderDirPath, buildDirName);
-        this.generatorsDirPath = path.join(this.builderDirPath, generatorsDirName);
-        this.sourceDirPath = path.join(this.builderDirPath, sourceDirName);
-        this.indexFilePath = path.join(this.sourceDirPath, indexFileName);
-        this.docsDirPath = path.join(this.builderDirPath, docsDirName);
-        this.projectTemplateDirPath = path.join(this.builderDirPath, templateDirName);
-        this.projectSiteTemplateDirPath = path.join(this.projectTemplateDirPath, siteTemplateDirName);
-        this.scriptsDirName = scriptsDirName;
-        this.configFilePath = path.join(this.builderDirPath, fileConfigName);
-    }
+    //setProjectDirPath(projectDirPath){
+    //    this.projectDirPath = projectDirPath;
+    //    this.builderDirPath = path.join(projectDirPath, builderDirName);
+    //    this.buildDirPath = path.join(this.builderDirPath, buildDirName);
+    //    this.generatorsDirPath = path.join(this.builderDirPath, generatorsDirName);
+    //    this.sourceDirPath = path.join(this.builderDirPath, sourceDirName);
+    //    this.indexFilePath = path.join(this.sourceDirPath, indexFileName);
+    //    this.docsDirPath = path.join(this.builderDirPath, docsDirName);
+    //    this.projectTemplateDirPath = path.join(this.builderDirPath, templateDirName);
+    //    this.projectSiteTemplateDirPath = path.join(this.projectTemplateDirPath, siteTemplateDirName);
+    //    this.scriptsDirName = scriptsDirName;
+    //    this.configFilePath = path.join(this.builderDirPath, fileConfigName);
+    //}
 
     createPageDataObject(pageModel, indexObj){
         let dataObj = {
@@ -101,10 +102,10 @@ class StaticSiteManager {
 
     createProjectDataObject(projectModel, destDirPath, indexObj, pageContents){
         let projectDataObj = {
-            staticDirPath: path.join(this.projectDirPath, destDirPath),
-            outputDirPath: path.join(this.projectDirPath, destDirPath, 'src'),
-            bundleDirPath: path.join(this.projectDirPath, destDirPath, 'public'),
-            indexFilePath: this.indexFilePath,
+            staticDirPath: path.join(this.sm.getProject('dirPath'), destDirPath),
+            outputDirPath: path.join(this.sm.getProject('dirPath'), destDirPath, 'src'),
+            bundleDirPath: path.join(this.sm.getProject('dirPath'), destDirPath, 'public'),
+            indexFilePath: this.sm.getProject('index.filePath'),
             pages:[]
         };
         let resources = this.createResourcesDataObject(indexObj);
@@ -132,10 +133,10 @@ class StaticSiteManager {
         };
 
         let projectDataObj = this.createProjectDataObject(projectModel, destDirPath, indexObj, pageContents);
-        let projectPageTemplateFilePath = path.join(this.projectSiteTemplateDirPath, 'Page.tpl');
-        let projectHtmlTemplateFilePath = path.join(this.projectSiteTemplateDirPath, 'Html.tpl');
-        let pageTemplateFilePath = path.join(this.siteTemplateDirPath, 'Page.tpl');
-        let htmlTemplateFilePath = path.join(this.siteTemplateDirPath, 'Html.tpl');
+        let projectPageTemplateFilePath = path.join(this.sm.getProject('siteTemplates.dirPath'), 'Page.tpl');
+        let projectHtmlTemplateFilePath = path.join(this.sm.getProject('siteTemplates.dirPath'), 'Html.tpl');
+        let pageTemplateFilePath = path.join(this.sm.getServer('siteTemplates.dirPath'), 'Page.tpl');
+        let htmlTemplateFilePath = path.join(this.sm.getServer('siteTemplates.dirPath'), 'Html.tpl');
         let pageTemplate = null;
         let htmlTemplate = null;
         return this.fileManager.readFile(projectPageTemplateFilePath)
@@ -179,7 +180,7 @@ class StaticSiteManager {
 
     commitGeneration(generatedObj){
 
-        var nodeModulesPath = path.join(this.projectDirPath, 'node_modules');
+        var nodeModulesPath = this.sm.getProject('nodeModules.dirPath');
 
         let sequence = Promise.resolve();
 

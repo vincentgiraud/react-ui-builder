@@ -19,6 +19,7 @@ const appPackFileName = '__app.tar.gz';
 const modelFileName = 'model.json';
 const servicePath = '/.service';
 
+import StateManager from './StateManager.js';
 import IndexManager from './IndexManager.js';
 import GeneratorManager from './GeneratorManager.js';
 import StorageManager from './StorageManager.js';
@@ -33,16 +34,20 @@ class Api {
 
         this.systemEnv = systemEnv;
 
-        this.storageManager = new StorageManager(this.systemEnv.serverDir);
-        this.staticSiteManager = new StaticSiteManager(this.systemEnv.serverDir);
-        this.livePreviewManager = new LivePreviewManager(this.systemEnv.serverDir);
-        this.clientManager = new ClientManager();
+        this.stateManager = new StateManager();
+        this.stateManager.setServerDir(this.systemEnv.serverDir);
+
+        this.storageManager = new StorageManager(this.stateManager);
+        this.indexManager = new IndexManager(this.stateManager);
+        this.generatorManager = new GeneratorManager(this.stateManager, this.indexManager);
+        this.staticSiteManager = new StaticSiteManager(this.stateManager);
+        this.livePreviewManager = new LivePreviewManager(this.stateManager);
+        this.clientManager = new ClientManager(this.stateManager);
         this.validator = new Validator();
 
         this.app = express();
         // use middleware body parsers only for certain routes, because of the proxying post request is hanging
-        this.app.use('/builder', bodyParser.json({limit: '50mb'}), express.static(path.join(this.systemEnv.serverDir, 'html')));
-        this.app.use('/.data', bodyParser.json({limit: '50mb'}), express.static(path.join(this.systemEnv.serverDir, '.data')));
+        this.app.use('/builder', express.static(path.join(this.systemEnv.serverDir, 'html')));
         this.app.post('/invoke', bodyParser.json({limit: '50mb'}), (req, res) => {
             let methodName = req.body.methodName;
             let data = req.body.data || {};
@@ -128,19 +133,7 @@ class Api {
     setupProject(options){
         return this.validator.validateOptions(options, 'projectDirPath')
             .then( () => {
-                if(this.indexManager){
-                    delete this.indexManager;
-                }
-                this.indexManager = new IndexManager(options.projectDirPath);
-                if(this.generatorManager){
-                    delete this.generatorManager;
-                }
-                this.generatorManager = new GeneratorManager(options.projectDirPath);
-
-                this.storageManager.setProjectDirPath(options.projectDirPath);
-                this.staticSiteManager.setProjectDirPath(options.projectDirPath);
-                this.livePreviewManager.setProjectDirPath(options.projectDirPath);
-
+                this.stateManager.setProjectDir(options.projectDirPath);
                 return 'OK';
             });
     }
@@ -250,44 +243,44 @@ class Api {
             });
     }
 
-    prepareLocalProject(options){
-        let response = {};
-        let _options = {
-            projectDirPath: options.dirPath
-        };
-        return this.validator.validateEmptyDir(_options.projectDirPath)
-            .then( () => {
-                return this.setupProject(_options);
-            })
-            .then( () => {
-                return this.storageManager.copyProjectResources();
-            })
-            .then( () => {
-                let htmlDirPath = this.storageManager.getProjectBuildDirPath();
-                let htmlURLPrefix = servicePath + htmlDirPath.substr(0, 30);
-                response.htmlURLPrefix = htmlURLPrefix;
-                response.htmlForDesk = 'PageForDesk.html';
-                this.addProjectStaticRoute(htmlURLPrefix, htmlDirPath);
-            })
-            .then( () => {
-                return this.storageManager.readProjectJsonModel()
-                    .then(jsonModel => {
-                        response.model = jsonModel;
-                    });
-            })
-            .then( () => {
-                return this.indexManager.getComponentsTree()
-                    .then( componentsTree => {
-                        response.componentsTree = componentsTree;
-                    });
-            })
-            .then( () => {
-                return this.storageManager.compileProjectResources();
-            })
-            .then( () => {
-                return response;
-            });
-    }
+    //prepareLocalProject(options){
+    //    let response = {};
+    //    let _options = {
+    //        projectDirPath: options.dirPath
+    //    };
+    //    return this.validator.validateEmptyDir(_options.projectDirPath)
+    //        .then( () => {
+    //            return this.setupProject(_options);
+    //        })
+    //        .then( () => {
+    //            return this.storageManager.copyProjectResources();
+    //        })
+    //        .then( () => {
+    //            let htmlDirPath = this.storageManager.getProjectBuildDirPath();
+    //            let htmlURLPrefix = servicePath + htmlDirPath.substr(0, 30);
+    //            response.htmlURLPrefix = htmlURLPrefix;
+    //            response.htmlForDesk = 'PageForDesk.html';
+    //            this.addProjectStaticRoute(htmlURLPrefix, htmlDirPath);
+    //        })
+    //        .then( () => {
+    //            return this.storageManager.readProjectJsonModel()
+    //                .then(jsonModel => {
+    //                    response.model = jsonModel;
+    //                });
+    //        })
+    //        .then( () => {
+    //            return this.indexManager.getComponentsTree()
+    //                .then( componentsTree => {
+    //                    response.componentsTree = componentsTree;
+    //                });
+    //        })
+    //        .then( () => {
+    //            return this.storageManager.compileProjectResources();
+    //        })
+    //        .then( () => {
+    //            return response;
+    //        });
+    //}
 
     readProjectFiles(options){
         return this.storageManager.readProjectDir();

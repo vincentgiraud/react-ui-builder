@@ -9,17 +9,16 @@ const resource_keyword = '@Resources';
 
 class IndexManager {
 
-    constructor(projectDirPath,
-                builderDirName = '.builder',
-                sourceDirName = 'src',
-                indexFileName = 'index.js' ){
+    constructor(sm){
 
-        this.indexFilePath = path.join(projectDirPath, builderDirName, sourceDirName, indexFileName);
+        this.sm = sm;
+
+        //this.indexFilePath = path.join(projectDirPath, builderDirName, sourceDirName, indexFileName);
         this.fileManager = new FileManager();
     }
 
     parseIndexFile(){
-        return this.fileManager.readFile(this.indexFilePath)
+        return this.fileManager.readFile(this.sm.getProject('index.filePath'))
             .then( data => {
                 if(!data){
                     throw Error('Index file is empty.');
@@ -27,7 +26,7 @@ class IndexManager {
                 try{
                     return fileParser.getFileAst(data);
                 } catch(e){
-                    throw Error(e.message + '. File path: ' + this.indexFilePath);
+                    throw Error(e.message + '. File path: ' + this.sm.getProject('index.filePath'));
                 }
             });
     }
@@ -120,7 +119,7 @@ class IndexManager {
                 if(group.components && group.components.length > 0){
                     group.components.map( component => {
                         if(component.source && component.source.indexOf('../../') === 0){
-                            component.absoluteSource = path.resolve(this.indexFilePath, component.source);
+                            component.absoluteSource = path.resolve(this.sm.getProject('index.filePath'), component.source);
                         }
                     });
                 }
@@ -174,7 +173,7 @@ class IndexManager {
                     let sourceText = '\n// ' + resource_keyword + '\n';
                     let position = 0;
                     return this.fileManager.placeInPosition(
-                        this.indexFilePath,
+                        this.sm.getProject('index.filePath'),
                         {text: sourceText, position: position, format: true}
                     );
                 }
@@ -194,7 +193,7 @@ class IndexManager {
                 let position = blockObject.endBlockPosition > blockObject.startBlockPosition ?
                     blockObject.endBlockPosition : blockObject.startBlockPosition;
                 return this.fileManager.placeInPosition(
-                    this.indexFilePath,
+                    this.sm.getProject('index.filePath'),
                     { text: sourceText, position: position, format: true }
                 );
             })
@@ -210,7 +209,7 @@ class IndexManager {
                     let sourceText = '\n\n//' + group_keyword + ' ' + groupName + '\n';
                     let position = indexObject.endBlockPosition;
                     return this.fileManager.placeInPosition(
-                        this.indexFilePath,
+                        this.sm.getProject('index.filePath'),
                         {text: sourceText, position: position, format: true}
                     );
                 }
@@ -230,7 +229,7 @@ class IndexManager {
                     let position = blockObject.endBlockPosition > blockObject.startBlockPosition ?
                         blockObject.endBlockPosition : blockObject.startBlockPosition;
                     return this.fileManager.placeInPosition(
-                        this.indexFilePath,
+                        this.sm.getProject('index.filePath'),
                         { text: sourceText, position: position, format: true }
                     );
                 }
